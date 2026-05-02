@@ -29,21 +29,23 @@ const titleOverrides = {
 const mediaSizeOverrides = {
   projects: {
     // '2025 BrilliantBooks': {
-    //   'PortfolioFotos_Team6_1 groot.jpeg': 'large',
-    //   'PortfolioFotos_Team6_10 groot.jpeg': 'small',
+    //   'PortfolioFotos_Team6_1 groot.jpeg': 6,
+    //   'PortfolioFotos_Team6_10 groot.jpeg': 2,
     // },
   },
   archive: {
     // '2026': {
-    //   '63.png': 'large',
+    //   '63.png': 6,
     // },
   },
   photography: {
     // 'Photo 2025': {
-    //   'wildlife1.jpg': 'large',
+    //   'wildlife1.jpg': 6,
     // },
   },
 };
+
+const archiveSpanPattern = [6, 2, 4, 4, 2, 6, 4];
 
 const imageExts = new Set(['.jpg', '.jpeg', '.png', '.gif', '.webp', '.avif', '.bmp', '.svg']);
 const videoExts = new Set(['.mp4', '.webm', '.mov', '.m4v', '.ogv']);
@@ -166,14 +168,23 @@ function textToHtml(text) {
     .join('\n');
 }
 
-function normalizeMediaSize(value) {
-  return value === 'small' || value === 'medium' || value === 'large' ? value : 'medium';
+function normalizeMediaSpan(value) {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    const rounded = Math.round(value);
+    return rounded >= 1 && rounded <= 6 ? rounded : null;
+  }
+  if (typeof value !== 'string') return null;
+  const normalized = value.trim().toLowerCase();
+  return /^[1-6]$/.test(normalized) ? Number(normalized) : null;
 }
 
-function mediaSizeClass(type, dirName, fileName, configuredSize) {
-  const requested = configuredSize || mediaSizeOverrides[type]?.[dirName]?.[fileName];
-  const size = normalizeMediaSize(requested);
-  return `media-size-${size}`;
+function resolveMediaSpan({ type, dirName, fileName, pageConfig, kind = 'image', fallback = 4 }) {
+  const fileSpanKey = kind === 'image' ? 'image_spans' : 'other_file_spans';
+  const defaultSpanKey = kind === 'image' ? 'default_image_span' : 'default_other_file_span';
+  const requested = pageConfig?.[fileSpanKey]?.[fileName]
+    ?? pageConfig?.[defaultSpanKey]
+    ?? mediaSizeOverrides[type]?.[dirName]?.[fileName];
+  return normalizeMediaSpan(requested) ?? fallback;
 }
 
 function orderFilesByPreference(files, preferredOrder) {
@@ -201,8 +212,8 @@ function buildItems(baseDir, type) {
   for (const dirent of dirs) {
     const fullPath = path.join(baseDir, dirent.name);
     const parsed = parseFolderName(dirent.name);
-    const pageConfig = type === 'projects' ? readPageConfig(fullPath) : {};
-    const ignoredFiles = new Set(type === 'projects' && Array.isArray(pageConfig.ignored_files) ? pageConfig.ignored_files : []);
+    const pageConfig = readPageConfig(fullPath);
+    const ignoredFiles = new Set(Array.isArray(pageConfig.ignored_files) ? pageConfig.ignored_files : []);
     const files = listFiles(fullPath)
       .filter((file) => file !== pageConfigFile && !ignoredFiles.has(file))
       .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
@@ -253,17 +264,12 @@ function renderHead(pageTitle) {
 function renderNav() {
   return `
 <header class="site-header">
-  <nav class="nav-bar" data-nav>
-    <button class="menu-toggle" id="menu-toggle" aria-controls="menu-panel" aria-expanded="false" type="button">
-      <span class="menu-icon"></span>
-      <span class="visually-hidden">Menu</span>
-    </button>
+  <nav class="nav-bar" data-nav aria-label="Primary">
     <a class="site-title title-font" href="index.html">Jorne Scholiers</a>
-    <div class="menu-spacer"></div>
-    <div class="menu-panel" id="menu-panel" role="menu">
-      <a role="menuitem" href="about.html">about</a>
-      <a role="menuitem" href="projects.html">projects</a>
-      <a role="menuitem" href="archive.html">archive</a>
+    <div class="menu-panel">
+      <a href="about.html">about</a>
+      <a href="projects.html">index</a>
+      <a href="archive.html">archive</a>
     </div>
   </nav>
 </header>`;
@@ -348,16 +354,8 @@ function railTextColor(accent) {
   return accent === '#1e2ede' ? 'rgba(235, 235, 235, 0.92)' : 'rgba(0, 0, 0, 0.75)';
 }
 
-const archiveSizePattern = ['large', 'small', 'medium', 'medium', 'small', 'large', 'medium'];
-
 function collectionPreviewPath(baseDirName, item) {
   return item.images[0] ? toUrlPath(baseDirName, item.dirName, item.images[0]) : '';
-}
-
-function collectionMediaSizeClass(type, item, file, index) {
-  const configured = mediaSizeOverrides[type]?.[item.dirName]?.[file];
-  const fallback = archiveSizePattern[index % archiveSizePattern.length];
-  return mediaSizeClass(type, item.dirName, file, configured || fallback);
 }
 
 function renderCollectionIndex(items, {
@@ -390,12 +388,21 @@ function renderCollectionIndex(items, {
     .map((item) => {
       const accent = item.accent || palette[0];
       const markerText = railTextColor(accent);
-      const gallery = item.images
+      const orderedImages = orderFilesByPreference(item.images, item.pageConfig?.image_order);
+      const orderedOtherFiles = orderFilesByPreference(item.otherFiles, item.pageConfig?.other_file_order);
+      const gallery = orderedImages
         .map((file, idx) => {
           const src = toUrlPath(baseDirName, item.dirName, file);
-          const sizeClass = collectionMediaSizeClass(collectionType, item, file, idx);
+          const span = resolveMediaSpan({
+            type: collectionType,
+            dirName: item.dirName,
+            fileName: file,
+            pageConfig: item.pageConfig,
+            kind: 'image',
+            fallback: archiveSpanPattern[idx % archiveSpanPattern.length],
+          });
           return `
-      <figure class="${sizeClass}">
+      <figure data-span="${span}">
         <div class="media-frame">
           <img src="${src}" alt="${escapeHtml(item.title)} image ${idx + 1}" loading="lazy" decoding="async">
         </div>
@@ -406,13 +413,20 @@ function renderCollectionIndex(items, {
       const mediaBlocks = [];
       const downloadLinks = [];
 
-      item.otherFiles.forEach((file) => {
+      orderedOtherFiles.forEach((file) => {
         const href = toUrlPath(baseDirName, item.dirName, file);
         const ext = path.extname(file).toLowerCase();
-        const sizeClass = collectionMediaSizeClass(collectionType, item, file, item.images.length + mediaBlocks.length + downloadLinks.length);
+        const span = resolveMediaSpan({
+          type: collectionType,
+          dirName: item.dirName,
+          fileName: file,
+          pageConfig: item.pageConfig,
+          kind: 'other',
+          fallback: archiveSpanPattern[(orderedImages.length + mediaBlocks.length + downloadLinks.length) % archiveSpanPattern.length],
+        });
         if (ext === '.pdf') {
           mediaBlocks.push(`
-      <figure class="media-card ${sizeClass}">
+      <figure data-span="${span}" class="media-card">
         <div class="media-frame">
           <iframe class="media-embed media-embed--pdf" src="${href}" title="${escapeHtml(file)}" loading="lazy"></iframe>
         </div>
@@ -422,7 +436,7 @@ function renderCollectionIndex(items, {
         }
         if (videoExts.has(ext)) {
           mediaBlocks.push(`
-      <figure class="media-card ${sizeClass}">
+      <figure data-span="${span}" class="media-card">
         <div class="media-frame">
           <video class="media-embed media-embed--video" controls preload="metadata">
             <source src="${href}" type="video/${ext.replace('.', '')}">
@@ -513,27 +527,23 @@ function renderProjectPage(item, type) {
   const title = escapeHtml(item.title);
   const base = type === 'projects' ? 'Projects' : 'Archive';
   const pageConfig = item.pageConfig || {};
-  const galleryClass = type === 'projects'
-    ? (pageConfig.gallery_class || 'detail-gallery')
-    : 'detail-gallery';
-  const orderedImages = type === 'projects'
-    ? orderFilesByPreference(item.images, pageConfig.image_order)
-    : item.images;
-  const orderedOtherFiles = type === 'projects'
-    ? orderFilesByPreference(item.otherFiles, pageConfig.other_file_order)
-    : item.otherFiles;
+  const galleryClass = pageConfig.gallery_class || 'detail-gallery';
+  const orderedImages = orderFilesByPreference(item.images, pageConfig.image_order);
+  const orderedOtherFiles = orderFilesByPreference(item.otherFiles, pageConfig.other_file_order);
   const captionFor = (file) => escapeHtml(pageConfig.captions?.[file] || file);
   const images = orderedImages
     .map((file, idx) => {
       const src = toUrlPath(base, item.dirName, file);
-      const sizeClass = mediaSizeClass(
+      const span = resolveMediaSpan({
         type,
-        item.dirName,
-        file,
-        type === 'projects' ? pageConfig.image_sizes?.[file] : undefined,
-      );
+        dirName: item.dirName,
+        fileName: file,
+        pageConfig,
+        kind: 'image',
+        fallback: 4,
+      });
       return `
-      <figure class="${sizeClass}">
+      <figure data-span="${span}">
         <div class="media-frame">
           <img src="${src}" alt="${title} image ${idx + 1}" loading="lazy" decoding="async">
         </div>
@@ -548,16 +558,18 @@ function renderProjectPage(item, type) {
   orderedOtherFiles.forEach((file) => {
     const href = toUrlPath(base, item.dirName, file);
     const ext = path.extname(file).toLowerCase();
-    const sizeClass = mediaSizeClass(
+    const span = resolveMediaSpan({
       type,
-      item.dirName,
-      file,
-      type === 'projects' ? pageConfig.other_file_sizes?.[file] : undefined,
-    );
+      dirName: item.dirName,
+      fileName: file,
+      pageConfig,
+      kind: 'other',
+      fallback: 4,
+    });
     if (type === 'projects') {
       if (videoExts.has(ext)) {
         mediaBlocks.push(`
-      <figure class="media-card ${sizeClass}">
+      <figure data-span="${span}" class="media-card">
         <div class="media-frame">
           <video class="media-embed media-embed--video" controls preload="metadata">
             <source src="${href}" type="video/${ext.replace('.', '')}">
@@ -572,7 +584,7 @@ function renderProjectPage(item, type) {
     }
     if (ext === '.pdf') {
       mediaBlocks.push(`
-      <figure class="media-card ${sizeClass}">
+      <figure data-span="${span}" class="media-card">
         <div class="media-frame">
           <iframe class="media-embed media-embed--pdf" src="${href}" title="${escapeHtml(file)}" loading="lazy"></iframe>
         </div>
@@ -582,7 +594,7 @@ function renderProjectPage(item, type) {
     }
     if (videoExts.has(ext)) {
       mediaBlocks.push(`
-      <figure class="media-card ${sizeClass}">
+      <figure data-span="${span}" class="media-card">
         <div class="media-frame">
           <video class="media-embed media-embed--video" controls preload="metadata">
             <source src="${href}" type="video/${ext.replace('.', '')}">
@@ -646,11 +658,44 @@ function renderSimplePage({ title, heading, content }) {
 function renderAboutPage() {
   return `
 <main class="page-simple">
-  <section class="simple-block">
+  <section class="about-intro">
     <h1 class="title-font">About</h1>
     <p>I&#39;m Jorne Scholiers, I am studying Visual Design at LUCA School of Arts in Ghent. My creative style is best described as abstract, experimental and bold. I&#39;ve always been drawn to visually dense work, the kind that invites you to look closer and keep discovering new details.</p>
     <p>I&#39;m always open to opportunities or collaborations. Feel free to contact me.</p>
     <p><a href="mailto:Jorne.Scholiers@icloud.com">Jorne.Scholiers@icloud.com</a></p>
+  </section>
+  <section class="about-details">
+    <section class="about-section" aria-labelledby="about-education-title">
+      <h2 class="title-font" id="about-education-title">Education</h2>
+      <ul class="about-list">
+        <li>
+          <span class="about-role">Visual Design, LUCA School of Arts Ghent</span>
+          <span class="about-year">2023-Now</span>
+        </li>
+      </ul>
+    </section>
+    <section class="about-section" aria-labelledby="about-experience-title">
+      <h2 class="title-font" id="about-experience-title">Experience</h2>
+      <ul class="about-list">
+        <li>
+          <span class="about-role">Visual Design Graphic studio</span>
+          <span class="about-year">2023-Now</span>
+        </li>
+        <li>
+          <span class="about-role">Internship at Broos</span>
+          <span class="about-year">2026</span>
+        </li>
+      </ul>
+    </section>
+    <section class="about-section" aria-labelledby="about-exhibitions-title">
+      <h2 class="title-font" id="about-exhibitions-title">Exhibitions</h2>
+      <ul class="about-list">
+        <li>
+          <span class="about-role"><a class="about-link" href="project-2025-0-big-summer-energy.html">Antwerp Art Weekend at Monar x UGG</a></span>
+          <span class="about-year">2025</span>
+        </li>
+      </ul>
+    </section>
   </section>
   <div class="about-portrait" tabindex="0" aria-label="Portrait of Jorne Scholiers">
     <img class="about-portrait-base" src="images/ME%20Blurred.jpg" alt="Blurred portrait of Jorne Scholiers" loading="lazy" decoding="async">

@@ -1,21 +1,207 @@
 (() => {
   const nav = document.querySelector('[data-nav]');
-  const toggle = document.getElementById('menu-toggle');
-  const panel = document.getElementById('menu-panel');
+  if (nav) {
+    const legacyToggle = nav.querySelector('.menu-toggle');
+    const menuPanel = nav.querySelector('.menu-panel');
+    const titleLink = nav.querySelector('.site-title');
+    const navLinks = Array.from(nav.querySelectorAll('.menu-panel a'));
+    const normalizePath = (value) => {
+      const file = (value || '').split('/').pop()?.toLowerCase() || '';
+      return file || 'index.html';
+    };
 
-  if (toggle && nav) {
-    toggle.addEventListener('click', () => {
-      const isOpen = nav.classList.toggle('menu-open');
-      toggle.setAttribute('aria-expanded', String(isOpen));
-    });
+    if (legacyToggle) {
+      legacyToggle.setAttribute('aria-hidden', 'true');
+      legacyToggle.tabIndex = -1;
+    }
+    menuPanel?.removeAttribute('role');
+    navLinks.forEach((link) => link.removeAttribute('role'));
 
-    document.addEventListener('click', (event) => {
-      if (!nav.classList.contains('menu-open')) return;
-      if (nav.contains(event.target)) return;
-      nav.classList.remove('menu-open');
-      toggle.setAttribute('aria-expanded', 'false');
-    });
+    const currentPath = normalizePath(window.location.pathname);
+
+    let currentNavPath = null;
+    if (currentPath === 'about.html') {
+      currentNavPath = 'about.html';
+    } else if (currentPath === 'projects.html' || currentPath.startsWith('project-')) {
+      currentNavPath = 'projects.html';
+    } else if (
+      currentPath === 'archive.html' ||
+      currentPath === 'photography.html' ||
+      currentPath.startsWith('archive-')
+    ) {
+      currentNavPath = 'archive.html';
+    }
+
+    const currentLink = currentNavPath
+      ? navLinks.find((link) => normalizePath(new URL(link.href, window.location.href).pathname) === currentNavPath)
+      : null;
+
+    if (currentLink) {
+      currentLink.classList.add('is-current');
+      currentLink.setAttribute('aria-current', 'page');
+    }
   }
+
+  const normalizeMediaSpan = (value) => {
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      const rounded = Math.round(value);
+      return rounded >= 1 && rounded <= 6 ? rounded : null;
+    }
+    if (typeof value !== 'string') return null;
+    const normalized = value.trim().toLowerCase();
+    return /^[1-6]$/.test(normalized) ? Number(normalized) : null;
+  };
+
+  const clearLegacyMediaClasses = (figure) => {
+    Array.from(figure.classList)
+      .filter((className) => className.startsWith('media-span-') || className.startsWith('media-size-'))
+      .forEach((className) => figure.classList.remove(className));
+    delete figure.dataset.size;
+  };
+
+  const applyMediaSpan = (figure, span) => {
+    const safeSpan = normalizeMediaSpan(span);
+    if (!safeSpan) return;
+    clearLegacyMediaClasses(figure);
+    figure.dataset.span = String(safeSpan);
+  };
+
+  const inlineMediaSpan = (figure) => {
+    if (!figure) return null;
+    const nestedAsset = figure.querySelector('[data-span]');
+    return normalizeMediaSpan(
+      figure.dataset.span
+      ?? nestedAsset?.dataset?.span
+    );
+  };
+
+  const configuredMediaSpan = (config, fileName, kind) => {
+    if (!config || !fileName) return null;
+    const fileSpanKey = kind === 'image' ? 'image_spans' : 'other_file_spans';
+    const defaultSpanKey = kind === 'image' ? 'default_image_span' : 'default_other_file_span';
+    return normalizeMediaSpan(
+      config?.[fileSpanKey]?.[fileName]
+      ?? config?.[defaultSpanKey],
+    );
+  };
+
+  const configuredMediaOrder = (config, kind) => {
+    if (!config) return [];
+    const orderKey = kind === 'image' ? 'image_order' : 'other_file_order';
+    return Array.isArray(config?.[orderKey]) ? config[orderKey] : [];
+  };
+
+  const figureAssetSource = (figure) => {
+    const asset = figure.querySelector('img[src], iframe[src], video[src], video source[src]');
+    return asset?.getAttribute('src') || '';
+  };
+
+  const figureAssetFileName = (figure) => {
+    const src = figureAssetSource(figure);
+    if (!src) return '';
+    try {
+      const url = new URL(src, window.location.href);
+      const pathname = decodeURIComponent(url.pathname);
+      return pathname.split('/').pop() || '';
+    } catch {
+      return '';
+    }
+  };
+
+  const pageConfigCache = new Map();
+
+  const loadConfigForSection = async (section) => {
+    const firstFigure = section?.querySelector('figure');
+    const src = firstFigure ? figureAssetSource(firstFigure) : '';
+    if (!src) return null;
+
+    let configUrl = '';
+    try {
+      configUrl = new URL('page.json', new URL(src, window.location.href)).toString();
+    } catch {
+      return null;
+    }
+
+    if (!pageConfigCache.has(configUrl)) {
+      pageConfigCache.set(
+        configUrl,
+        fetch(configUrl)
+          .then((response) => (response.ok ? response.json() : null))
+          .catch(() => null),
+      );
+    }
+
+    return pageConfigCache.get(configUrl);
+  };
+
+  const reorderSectionByConfig = (section, config, kind) => {
+    if (!section || !config) return;
+    const preferredOrder = configuredMediaOrder(config, kind);
+    if (!preferredOrder.length) return;
+
+    const directFigures = Array.from(section.children).filter((child) => child.tagName === 'FIGURE');
+    if (directFigures.length < 2) return;
+
+    const orderIndex = new Map(preferredOrder.map((file, index) => [file, index]));
+    const sortedFigures = [...directFigures].sort((a, b) => {
+      const aFile = figureAssetFileName(a);
+      const bFile = figureAssetFileName(b);
+      const aIndex = orderIndex.has(aFile) ? orderIndex.get(aFile) : Number.POSITIVE_INFINITY;
+      const bIndex = orderIndex.has(bFile) ? orderIndex.get(bFile) : Number.POSITIVE_INFINITY;
+      if (aIndex !== bIndex) return aIndex - bIndex;
+      return aFile.localeCompare(bFile, undefined, { numeric: true, sensitivity: 'base' });
+    });
+
+    if (sortedFigures.every((figure, index) => figure === directFigures[index])) return;
+
+    const fragment = document.createDocumentFragment();
+    sortedFigures.forEach((figure) => fragment.appendChild(figure));
+    section.appendChild(fragment);
+  };
+
+  const applyConfiguredSpans = async (section, kind) => {
+    if (!section) return;
+    const figures = Array.from(section.querySelectorAll('figure'));
+    if (!figures.length) return;
+
+    figures.forEach((figure) => {
+      const span = inlineMediaSpan(figure);
+      if (span) {
+        applyMediaSpan(figure, span);
+      }
+    });
+
+    const config = await loadConfigForSection(section);
+    if (!config) return;
+
+    reorderSectionByConfig(section, config, kind);
+
+    const orderedFigures = Array.from(section.querySelectorAll('figure'));
+
+    orderedFigures.forEach((figure) => {
+      if (inlineMediaSpan(figure)) return;
+      const fileName = figureAssetFileName(figure);
+      const span = configuredMediaSpan(config, fileName, kind);
+      if (span) {
+        applyMediaSpan(figure, span);
+      }
+    });
+  };
+
+  const setupConfigurableMediaSpans = async () => {
+    const tasks = [];
+    if (document.body.classList.contains('page-detail')) {
+      tasks.push(applyConfiguredSpans(document.querySelector('.detail-gallery'), 'image'));
+      tasks.push(applyConfiguredSpans(document.querySelector('.detail-media'), 'other'));
+    }
+
+    document.querySelectorAll('.archive-entry').forEach((entry) => {
+      tasks.push(applyConfiguredSpans(entry.querySelector('.archive-entry-gallery'), 'image'));
+      tasks.push(applyConfiguredSpans(entry.querySelector('.detail-media'), 'other'));
+    });
+
+    await Promise.all(tasks);
+  };
 
   const titleEls = document.querySelectorAll('.title-font:not(.site-title)');
   const baseWeight = 620;
@@ -202,20 +388,20 @@
 
       const width = gallery.clientWidth;
       const count = images.length;
-      const margin = 18;
+      const margin = 16;
       const galleryRect = gallery.getBoundingClientRect();
       const viewportWidth = window.innerWidth || document.documentElement.clientWidth || width;
       const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 800;
-      const height = Math.max(460, Math.min(760, viewportHeight - 180));
-      const safeZoneWidth = clamp(width * 0.38, 320, 520);
-      const safeZoneHeight = clamp(height * 0.34, 220, 320);
+      const height = Math.max(560, Math.min(920, viewportHeight - 120));
+      const safeZoneWidth = clamp(width * 0.24, 220, 360);
+      const safeZoneHeight = clamp(height * 0.18, 140, 210);
       const maxBySide = (width - safeZoneWidth - margin * 4) / 2;
       const maxByRows = (height - safeZoneHeight - margin * 4) / 2;
-      const sizeFromCount = count >= 5 ? 180 : count === 4 ? 195 : count === 3 ? 210 : 225;
-      const baseSize = Math.max(140, Math.min(sizeFromCount, maxBySide, maxByRows * 1.1));
+      const sizeFromCount = count >= 5 ? 240 : count === 4 ? 260 : count === 3 ? 285 : 320;
+      const baseSize = Math.max(200, Math.min(sizeFromCount, maxBySide * 1.04, maxByRows * 1.16));
       const pattern = HOME_SCATTER_PATTERNS[Math.min(count, 5)] || HOME_SCATTER_PATTERNS[5];
-      const safeGapX = clamp(width * 0.035, 24, 44);
-      const safeGapY = clamp(height * 0.04, 18, 40);
+      const safeGapX = clamp(width * 0.012, 8, 18);
+      const safeGapY = clamp(height * 0.018, 10, 18);
       const safeHalfWidth = Math.round(safeZoneWidth / 2);
       const safeCenterX = clamp(
         Math.round(viewportWidth * 0.46 - galleryRect.left),
@@ -237,8 +423,9 @@
       const placed = [];
       images.forEach((img, index) => {
         img.draggable = false;
-        const imgW = baseSize;
-        const imgH = baseSize;
+        const sizeScale = 0.96 + Math.random() * 0.16;
+        const imgW = Math.round(baseSize * sizeScale);
+        const imgH = imgW;
         const { minX, maxX } = horizontalViewportBounds(gallery, imgW, margin);
         const maxY = Math.max(margin, height - imgH - margin);
         const leftSafeX = clamp(safeLeft - imgW - safeGapX, minX, maxX);
@@ -246,11 +433,13 @@
         const topSafeY = clamp(safeTop - imgH - safeGapY, margin, maxY);
         const bottomSafeY = clamp(safeBottom + safeGapY, margin, maxY);
         const anchor = pattern[index] || pattern[pattern.length - 1];
-        const jitterRange = Math.min(20, Math.round(baseSize * 0.08));
+        const jitterRange = Math.max(18, Math.round(baseSize * 0.12));
         const jitterX = (Math.random() - 0.5) * jitterRange;
         const jitterY = (Math.random() - 0.5) * jitterRange;
-        const xDepth = anchor.xDepth ?? 0.72;
-        const yDepth = anchor.yDepth ?? 0.66;
+        const xDepthBase = interpolate(anchor.xDepth ?? 0.72, 0.92, 0.45);
+        const yDepthBase = interpolate(anchor.yDepth ?? 0.66, 0.9, 0.5);
+        const xDepth = clamp(xDepthBase + (Math.random() - 0.5) * 0.12, 0.58, 0.98);
+        const yDepth = clamp(yDepthBase + (Math.random() - 0.5) * 0.12, 0.4, 0.96);
         let x = axisPositionWithinSafeLanes({
           nearEdge: anchor.xSide === 'left' ? minX : maxX,
           nearSafe: anchor.xSide === 'left' ? leftSafeX : rightSafeX,
@@ -268,12 +457,17 @@
           max: maxY,
         });
         let candidate = { x, y, w: imgW, h: imgH };
+        const overlapPadding = Math.max(18, Math.round(baseSize * 0.08));
+        const originX = x;
+        const originY = y;
 
-        for (let attempt = 0; attempt < 18 && placed.some((item) => overlaps(candidate, item, 22)); attempt += 1) {
-          const shift = Math.max(12, Math.round(baseSize * 0.12));
-          const direction = attempt % 2 === 0 ? 1 : -1;
-          const nextX = clamp(candidate.x + direction * shift, minX, maxX);
-          const nextY = clamp(candidate.y + (attempt < 8 ? shift : -shift), margin, Math.max(margin, height - imgH - margin));
+        for (let attempt = 0; attempt < 28 && placed.some((item) => overlaps(candidate, item, overlapPadding)); attempt += 1) {
+          const shift = Math.max(18, Math.round(baseSize * 0.12));
+          const ring = Math.floor(attempt / 4) + 1;
+          const directionX = attempt % 2 === 0 ? 1 : -1;
+          const directionY = attempt % 4 < 2 ? 1 : -1;
+          const nextX = clamp(originX + directionX * shift * ring, minX, maxX);
+          const nextY = clamp(originY + directionY * Math.round(shift * 0.72) * ring, margin, Math.max(margin, height - imgH - margin));
           candidate = { x: nextX, y: nextY, w: imgW, h: imgH };
         }
 
@@ -402,54 +596,6 @@
     homeGalleries.forEach(setupScatterGallery);
     setupDrag();
   }
-
-  const insertGalleryGaps = () => {
-    if (!document.body.classList.contains('page-detail')) return;
-    document.querySelectorAll('.detail-gallery').forEach((gallery) => {
-      if (gallery.querySelector('.detail-gap')) return;
-      const figures = Array.from(gallery.querySelectorAll('figure'));
-      if (figures.length < 6) return;
-      const gapCount = Math.min(3, Math.floor(figures.length / 6));
-      if (!gapCount) return;
-      const step = Math.floor(figures.length / (gapCount + 1));
-      const positions = [];
-      for (let i = 1; i <= gapCount; i += 1) {
-        positions.push(i * step);
-      }
-      positions.reverse().forEach((position) => {
-        const gap = document.createElement('div');
-        gap.className = 'detail-gap';
-        gap.setAttribute('aria-hidden', 'true');
-        gap.setAttribute('role', 'presentation');
-        const anchor = figures[position - 1];
-        if (anchor && anchor.parentNode === gallery) {
-          anchor.insertAdjacentElement('afterend', gap);
-        } else {
-          gallery.appendChild(gap);
-        }
-      });
-    });
-  };
-
-  const markWideGalleryImages = () => {
-    if (!document.body.classList.contains('page-detail') && !document.body.classList.contains('page-archive')) return;
-    document.querySelectorAll('.detail-gallery figure').forEach((figure) => {
-      const img = figure.querySelector('img');
-      if (!img) return;
-      const apply = () => {
-        if (!img.naturalWidth || !img.naturalHeight) return;
-        const ratio = img.naturalWidth / img.naturalHeight;
-        if (ratio >= 1.45) {
-          figure.classList.add('is-wide');
-        }
-      };
-      if (img.complete) {
-        apply();
-      } else {
-        img.addEventListener('load', apply, { once: true });
-      }
-    });
-  };
 
   const setupLightbox = () => {
     const isDetailPage = document.body.classList.contains('page-detail');
@@ -630,9 +776,9 @@
     resetPosition();
   };
 
-  insertGalleryGaps();
-  markWideGalleryImages();
-  setupLightbox();
+  setupConfigurableMediaSpans().finally(() => {
+    setupLightbox();
+  });
   setupPdfOverlay();
   setupAboutPortraitReveal();
 })();
