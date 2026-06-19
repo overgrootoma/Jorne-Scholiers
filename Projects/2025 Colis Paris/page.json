@@ -1,17 +1,17 @@
 {
   "meta": "2025<br>school assignment",
-  "preview_image": "images/cover photo's/Colis paris.png",
+  "preview_image": "images/cover photo's/Colis paris.webp",
   "homepage_images": [
-    "JorneScholiers_ColisPARIS_Packshot_1.jpg",
-    "JorneScholiers_ColisPARIS_Packshot_5.jpg"
+    "JorneScholiers_ColisPARIS_Packshot_1.webp",
+    "JorneScholiers_ColisPARIS_Packshot_5.webp"
   ],
   "image_spans": {},
   "other_file_spans": {},
   "image_order": [
-    "JorneScholiers_ColisPARIS_Packshot_1.jpg",
-    "JorneScholiers_ColisPARIS_Packshot_2.jpg",
-    "JorneScholiers_ColisPARIS_Packshot_3.jpg",
-    "JorneScholiers_ColisPARIS_Packshot_4.jpg",
-    "JorneScholiers_ColisPARIS_Packshot_5.jpg"
+    "JorneScholiers_ColisPARIS_Packshot_1.webp",
+    "JorneScholiers_ColisPARIS_Packshot_2.webp",
+    "JorneScholiers_ColisPARIS_Packshot_3.webp",
+    "JorneScholiers_ColisPARIS_Packshot_4.webp",
+    "JorneScholiers_ColisPARIS_Packshot_5.webp"
   ]
 }

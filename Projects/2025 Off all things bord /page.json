@@ -1,36 +1,36 @@
 {
   "meta": "2025<br>school assignment<br>group project",
-  "preview_image": "images/cover photo's/OfAllThingsBord.png",
+  "preview_image": "images/cover photo's/OfAllThingsBord.webp",
   "homepage_images": [
-    "RubenDejonge_JorneScholiers_magazine_Packshot_1.jpg",
-    "RubenDejonge_JorneScholiers_magazine_Packshot_4.jpg"
+    "RubenDejonge_JorneScholiers_magazine_Packshot_1.webp",
+    "RubenDejonge_JorneScholiers_magazine_Packshot_4.webp"
   ],
   "image_spans": {
-    "RubenDejonge_JorneScholiers_magazine_Packshot_1.jpg": 6,
-    "RubenDejonge_JorneScholiers_magazine_Packshot_2.jpg": 3,
-    "RubenDejonge_JorneScholiers_magazine_Packshot_3.jpg": 3,
-    "RubenDejonge_JorneScholiers_magazine_Packshot_4.jpg": 2,
-    "RubenDejonge_JorneScholiers_magazine_Packshot_5.jpg": 4,
-    "Packshots ZINE-10.jpg": 6,
-    "zine-2.jpg": 3,
-    "zine-3.jpg": 3,
-    "zine-4.jpg": 3,
-    "zine-bewerkt.jpg": 3
+    "RubenDejonge_JorneScholiers_magazine_Packshot_1.webp": 6,
+    "RubenDejonge_JorneScholiers_magazine_Packshot_2.webp": 3,
+    "RubenDejonge_JorneScholiers_magazine_Packshot_3.webp": 3,
+    "RubenDejonge_JorneScholiers_magazine_Packshot_4.webp": 2,
+    "RubenDejonge_JorneScholiers_magazine_Packshot_5.webp": 4,
+    "Packshots ZINE-10.webp": 6,
+    "zine-2.webp": 3,
+    "zine-3.webp": 3,
+    "zine-4.webp": 3,
+    "zine-bewerkt.webp": 3
   },
   "other_file_spans": {
     "Magazine.pdf": 6
   },
   "image_order": [
-    "RubenDejonge_JorneScholiers_magazine_Packshot_1.jpg",
-    "RubenDejonge_JorneScholiers_magazine_Packshot_2.jpg",
-    "RubenDejonge_JorneScholiers_magazine_Packshot_3.jpg",
-    "RubenDejonge_JorneScholiers_magazine_Packshot_4.jpg",
-    "RubenDejonge_JorneScholiers_magazine_Packshot_5.jpg",
-    "Packshots ZINE-10.jpg",
-    "zine-2.jpg",
-    "zine-3.jpg",
-    "zine-4.jpg",
-    "zine-bewerkt.jpg"
+    "RubenDejonge_JorneScholiers_magazine_Packshot_1.webp",
+    "RubenDejonge_JorneScholiers_magazine_Packshot_2.webp",
+    "RubenDejonge_JorneScholiers_magazine_Packshot_3.webp",
+    "RubenDejonge_JorneScholiers_magazine_Packshot_4.webp",
+    "RubenDejonge_JorneScholiers_magazine_Packshot_5.webp",
+    "Packshots ZINE-10.webp",
+    "zine-2.webp",
+    "zine-3.webp",
+    "zine-4.webp",
+    "zine-bewerkt.webp"
   ],
   "other_file_order": [
     "Magazine.pdf"
