@@ -1,0 +1,70 @@
+{
+  "meta": "2025<br>school assignment<br>group project",
+  "preview_image": "images/cover photo's/HotelIdentity.png",
+  "homepage_images": [
+    "syncope merch-2.jpg",
+    "syncope merch-3.jpg",
+    "syncope merch-4.jpg",
+    "syncope merch-5.jpg",
+    "syncope merch-6.jpg"
+  ],
+  "image_spans": {
+    "syncope merch-2.jpg": 3,
+    "syncope merch-3.jpg": 3,
+    "syncope merch-4.jpg": 3,
+    "syncope merch-5.jpg": 3,
+    "syncope merch-6.jpg": 3,
+    "syncope merch-7.jpg": 3,
+    "syncope merch-8.jpg": 3,
+    "syncope merch-9.jpg": 3,
+    "syncope merch.jpg": 3,
+    "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Instagram_01.jpg": 3,
+    "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Instagram_02.jpg": 3,
+    "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Instagram_03.jpg": 3,
+    "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Instagram_04.jpg": 3,
+    "3DHotel_1.png": 2,
+    "3DHotel_2.png": 2,
+    "3DHotel_3.png": 2,
+    "come-in-mockup.jpg": 3,
+    "do-not-disturb-mockup.jpg": 3,
+    "drinks-mockup-copy.jpg": 3,
+    "food-mockup-copy.jpg": 3
+  },
+  "other_file_spans": {
+    "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Website_Desktop.m4v": 4,
+    "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_WebsiteMobile.mp4": 2
+  },
+  "ignored_files": [
+    "3DHotel_1"
+  ],
+  "image_order": [
+    "syncope merch-2.jpg",
+    "syncope merch-3.jpg",
+    "syncope merch-4.jpg",
+    "syncope merch-5.jpg",
+    "syncope merch-6.jpg",
+    "syncope merch-7.jpg",
+    "syncope merch-8.jpg",
+    "syncope merch-9.jpg",
+    "syncope merch.jpg",
+    "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Instagram_01.jpg",
+    "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Instagram_02.jpg",
+    "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Instagram_03.jpg",
+    "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Instagram_04.jpg",
+    "3DHotel_1.png",
+    "3DHotel_2.png",
+    "3DHotel_3.png",
+    "come-in-mockup.jpg",
+    "do-not-disturb-mockup.jpg",
+    "drinks-mockup-copy.jpg",
+    "food-mockup-copy.jpg"
+  ],
+  "other_file_order": [
+    "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Website_Desktop.m4v",
+    "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_WebsiteMobile.mp4",
+    "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Houserules.pdf",
+    "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Menukaart.pdf",
+    "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Presentation.pdf",
+    "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Stijlgids.pdf"
+  ]
+}

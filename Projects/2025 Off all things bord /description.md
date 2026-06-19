@@ -1,0 +1,3 @@
+For this assignment, we were challenged to create a magazine centered around a single object. We chose "board" as the theme, exploring its many interpretations. From snowboards to traffic signs. Through experimental layouts and typography we created an interesting magazine.
+
+Each "board" was given its own article, brought to life through experimental layouts and bold typography. The magazine is held together by a flexible six-column grid, while a color system inspired by traffic signs guides the chapters. The result is a magazine that constantly shifts in meaning yet remains connected through one word.

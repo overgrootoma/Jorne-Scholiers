@@ -1,0 +1,1 @@
+This work was selected by Monar Antwerp and UGG to be presented during Antwerp Art Weekend. These photographs, an abstract experiment with photography, were originally created as part of a school project, but I recognized their potential to become more than just an exercise. Photographs layered over each other create a piece where you can keep finding new details.

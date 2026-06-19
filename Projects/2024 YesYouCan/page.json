@@ -1,0 +1,27 @@
+{
+  "meta": "2024<br>school assignment<br>group project",
+  "preview_image": "Projects/2024%20YesYouCan/JorneScholiers_OPDR06_Packshot01_DynamoEnergy.jpg",
+  "homepage_images": [
+    "JorneScholiers_OPDR06_Packshot01_DynamoEnergy.jpg",
+    "JorneScholiers_OPDR06_Packshot02_DynamoEnergy.jpg"
+  ],
+  "image_spans": {
+    "JorneScholiers_OPDR06_Label blikje 01_DynamoEnergy.jpg": 2,
+    "JorneScholiers_OPDR06_Label blikje 03_DynamoEnergy.jpg": 2,
+    "JorneScholiers_OPDR06_Label-blikje-02_DynamoEnergy.jpg": 2,
+    "JorneScholiers_OPDR06_Packshot01_DynamoEnergy.jpg": 3,
+    "JorneScholiers_OPDR06_Packshot02_DynamoEnergy.jpg": 3,
+    "JorneScholiers_OPDR06_Packshot03_DynamoEnergy.jpg": 3,
+    "JorneScholiers_OPDR06_Packshot04_DynamoEnergy.jpg": 3
+  },
+  "other_file_spans": {},
+  "image_order": [
+    "JorneScholiers_OPDR06_Label blikje 01_DynamoEnergy.jpg",
+    "JorneScholiers_OPDR06_Label blikje 03_DynamoEnergy.jpg",
+    "JorneScholiers_OPDR06_Label-blikje-02_DynamoEnergy.jpg",
+    "JorneScholiers_OPDR06_Packshot01_DynamoEnergy.jpg",
+    "JorneScholiers_OPDR06_Packshot02_DynamoEnergy.jpg",
+    "JorneScholiers_OPDR06_Packshot03_DynamoEnergy.jpg",
+    "JorneScholiers_OPDR06_Packshot04_DynamoEnergy.jpg"
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "meta": "2026<br>school assignment<br>individual project",
+  "preview_image": "Projects/2026%20Isolation/Isolation_Packshot_1.jpg",
+  "homepage_images": [
+    "Isolation_Packshot_1.jpg",
+    "Isolation_Packshot_2.jpg",
+    "Isolation_Packshot_3.jpg",
+    "Isolation_Packshot_4.jpg",
+    "Isolation_Packshot_5.jpg"
+  ],
+  "default_image_span": 3,
+  "captions": {
+    "Isolation_Packshot_1.jpg": "Isolation — Packshot 01",
+    "Isolation_Packshot_2.jpg": "Isolation — Packshot 02",
+    "Isolation_Packshot_3.jpg": "Isolation — Packshot 03",
+    "Isolation_Packshot_4.jpg": "Isolation — Packshot 04",
+    "Isolation_Packshot_5.jpg": "Isolation — Packshot 05",
+    "Isolation_Packshot_6.jpg": "Isolation — Packshot 06",
+    "Isolation_Packshot_7.jpg": "Isolation — Packshot 07",
+    "Isolation_Packshot_8.jpg": "Isolation — Packshot 08",
+    "Isolation_Packshot_9.jpg": "Isolation — Packshot 09",
+    "Isolation_Packshot_10.jpg": "Isolation — Packshot 10",
+    "Isolation_Packshot_11.jpg": "Isolation — Packshot 11",
+    "Isolation_Packshot_12.jpg": "Isolation — Packshot 12",
+    "Isolation_Packshot_13.jpg": "Isolation — Packshot 13",
+    "Isolation_Packshot_14.jpg": "Isolation — Packshot 14",
+    "Isolation_Packshot_15.jpg": "Isolation — Packshot 15",
+    "Isolation_Packshot_16.jpg": "Isolation — Packshot 16",
+    "Isolation_Packshot_17.jpg": "Isolation — Packshot 17",
+    "Isolation_Packshot_18.jpg": "Isolation — Packshot 18",
+    "Isolation_Packshot_19.jpg": "Isolation — Packshot 19",
+    "Isolation_Packshot_20.jpg": "Isolation — Packshot 20"
+  },
+  "image_order": [
+    "Isolation_Packshot_1.jpg",
+    "Isolation_Packshot_2.jpg",
+    "Isolation_Packshot_3.jpg",
+    "Isolation_Packshot_4.jpg",
+    "Isolation_Packshot_5.jpg",
+    "Isolation_Packshot_6.jpg",
+    "Isolation_Packshot_7.jpg",
+    "Isolation_Packshot_8.jpg",
+    "Isolation_Packshot_9.jpg",
+    "Isolation_Packshot_10.jpg",
+    "Isolation_Packshot_11.jpg",
+    "Isolation_Packshot_12.jpg",
+    "Isolation_Packshot_13.jpg",
+    "Isolation_Packshot_14.jpg",
+    "Isolation_Packshot_15.jpg",
+    "Isolation_Packshot_16.jpg",
+    "Isolation_Packshot_17.jpg",
+    "Isolation_Packshot_18.jpg",
+    "Isolation_Packshot_19.jpg",
+    "Isolation_Packshot_20.jpg"
+  ],
+  "youtube_showcase": {
+    "title": "Tool showcase",
+    "url": "https://youtu.be/du45HUgaIQ0"
+  },
+  "thumbnail_gallery": {
+    "title": "All generated images",
+    "directory": "All images"
+  },
+  "other_file_order": [
+    "Isolatie_Boek-compressed.pdf"
+  ]
+}
