@@ -2,6 +2,7 @@ import html
 import json
 import os
 import re
+import struct
 from urllib.parse import quote
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -15,6 +16,8 @@ VIDEO_EXTS = {'.mp4', '.webm', '.mov', '.m4v', '.ogv'}
 DESCRIPTION_FILES = ['description.md', 'description.txt', 'info.txt', 'about.txt', 'README.md']
 PAGE_CONFIG_FILE = 'page.json'
 PROJECT_ORDER = [
+    '2026 Sound Translations of Fungal Forms',
+    '2026 Isolation',
     '2025 BrilliantBooks',
     '2025 Big summer energy',
     '2025 Colis Paris',
@@ -42,12 +45,12 @@ MEDIA_SIZE_OVERRIDES = {
     },
     'archive': {
         # '2026': {
-        #     '63.png': 'large',
+        #     '63.webp': 'large',
         # },
     },
     'photography': {
         # 'Photo 2025': {
-        #     'wildlife1.jpg': 'large',
+        #     'wildlife1.webp': 'large',
         # },
     },
 }
@@ -117,6 +120,59 @@ def natural_key(value):
 def is_image(filename):
     _, ext = os.path.splitext(filename)
     return ext.lower() in IMAGE_EXTS
+
+
+def image_dimensions(path):
+    try:
+        with open(path, 'rb') as handle:
+            data = handle.read()
+    except OSError:
+        return None
+
+    if len(data) >= 24 and data.startswith(b'\x89PNG\r\n\x1a\n'):
+        return struct.unpack('>II', data[16:24])
+
+    if len(data) >= 10 and data[:6] in (b'GIF87a', b'GIF89a'):
+        return struct.unpack('<HH', data[6:10])
+
+    if len(data) >= 4 and data[:2] == b'\xff\xd8':
+        index = 2
+        while index < len(data):
+            while index < len(data) and data[index] == 0xff:
+                index += 1
+            if index >= len(data):
+                break
+            marker = data[index]
+            index += 1
+            if marker in (0xd8, 0xd9):
+                continue
+            if index + 2 > len(data):
+                break
+            length = struct.unpack('>H', data[index:index + 2])[0]
+            if length < 2 or index + length > len(data):
+                break
+            if marker in {0xc0, 0xc1, 0xc2, 0xc3, 0xc5, 0xc6, 0xc7, 0xc9, 0xca, 0xcb, 0xcd, 0xce, 0xcf}:
+                height, width = struct.unpack('>HH', data[index + 3:index + 7])
+                return width, height
+            index += length
+
+    return None
+
+
+def image_orientation(path):
+    dimensions = image_dimensions(path)
+    if not dimensions:
+        return ''
+    width, height = dimensions
+    if width > height:
+        return 'landscape'
+    if width < height:
+        return 'portrait'
+    return 'square'
+
+
+def image_span_for_orientation(orientation):
+    return 2 if orientation == 'landscape' else 1
 
 
 def read_description(path):
@@ -190,18 +246,37 @@ def order_files_by_preference(files, preferred_order):
     return ordered
 
 
+def youtube_video_id(value):
+    if not isinstance(value, str):
+        return ''
+    value = value.strip()
+    if re.match(r'^[a-zA-Z0-9_-]{11}$', value):
+        return value
+    match = re.search(r'(?:youtu\.be/|youtube\.com/(?:watch\?v=|embed/|shorts/))([a-zA-Z0-9_-]{11})', value)
+    return match.group(1) if match else ''
+
+
 def build_items(base_dir, item_type):
     items = []
     for entry in read_dir_safe(base_dir):
         if not entry.is_dir():
             continue
         parsed = parse_folder_name(entry.name)
-        page_config = read_page_config(entry.path) if item_type == 'projects' else {}
-        ignored_files = set(page_config.get('ignored_files', [])) if item_type == 'projects' else set()
+        page_config = read_page_config(entry.path)
+        ignored_files = set(page_config.get('ignored_files', []))
         files = [file for file in list_files(entry.path) if file != PAGE_CONFIG_FILE and file not in ignored_files]
         ordered_files = list(reversed(files)) if item_type in {'archive', 'photography'} else files
         images = [file for file in ordered_files if is_image(file)]
         other_files = [file for file in ordered_files if not is_image(file) and file not in DESCRIPTION_FILES]
+        thumbnail_config = page_config.get('thumbnail_gallery', {})
+        thumbnail_dir = thumbnail_config.get('directory', '') if isinstance(thumbnail_config, dict) else ''
+        thumbnail_images = (
+            sorted(
+                [file for file in list_files(os.path.join(entry.path, thumbnail_dir)) if is_image(file)],
+                key=lambda value: [int(part) if part.isdigit() else part.lower() for part in re.split(r'(\d+)', value)],
+            )
+            if thumbnail_dir else []
+        )
         description = read_description(entry.path) if item_type == 'projects' else ''
         slug_base = f"{parsed['year'] or 0:04d}-{parsed['index'] or 0}-{parsed['title'] or entry.name}"
         items.append({
@@ -212,6 +287,8 @@ def build_items(base_dir, item_type):
             'slug': slugify(slug_base),
             'images': images,
             'other_files': other_files,
+            'thumbnail_dir': thumbnail_dir,
+            'thumbnail_images': thumbnail_images,
             'description': description,
             'page_config': page_config,
         })
@@ -227,9 +304,9 @@ def render_head(page_title):
   <meta charset=\"utf-8\">
   <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
   <title>{escape_html(page_title)}</title>
-  <link rel=\"stylesheet\" media=\"screen\" href=\"https://fontlibrary.org//face/hk-grotesk\" type=\"text/css\" />
   <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">
   <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>
+  <link href=\"https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap\" rel=\"stylesheet\">
   <link href=\"https://fonts.googleapis.com/css2?family=Bitcount+Grid+Double+Ink:wght@100..900&display=swap\" rel=\"stylesheet\">
   <link rel=\"stylesheet\" href=\"Css/style.css\">
 </head>"""
@@ -333,17 +410,40 @@ def rail_text_color(accent):
     return 'rgba(235, 235, 235, 0.92)' if accent == '#1e2ede' else 'rgba(0, 0, 0, 0.75)'
 
 
-ARCHIVE_SIZE_PATTERN = ['large', 'small', 'medium', 'medium', 'small', 'large', 'medium']
-
-
 def collection_preview_path(base_dir_name, item):
     return to_url_path(base_dir_name, item['dir_name'], item['images'][0]) if item['images'] else ''
 
 
-def collection_media_size_class(collection_type, item, file, index):
-    configured = MEDIA_SIZE_OVERRIDES.get(collection_type, {}).get(item['dir_name'], {}).get(file)
-    fallback = ARCHIVE_SIZE_PATTERN[index % len(ARCHIVE_SIZE_PATTERN)]
-    return media_size_class(collection_type, item['dir_name'], file, configured or fallback)
+def normalize_media_span(value):
+    if isinstance(value, int) and 1 <= value <= 6:
+        return value
+    if isinstance(value, str) and re.match(r'^[1-6]$', value.strip()):
+        return int(value.strip())
+    return None
+
+
+def collection_media_span(collection_type, item, file, kind, fallback=1):
+    page_config = item.get('page_config', {})
+    file_span_key = 'image_spans' if kind == 'image' else 'other_file_spans'
+    default_span_key = 'default_image_span' if kind == 'image' else 'default_other_file_span'
+    configured = (
+        page_config.get(file_span_key, {}).get(file)
+        or page_config.get(default_span_key)
+        or MEDIA_SIZE_OVERRIDES.get(collection_type, {}).get(item['dir_name'], {}).get(file)
+    )
+    return normalize_media_span(configured) or fallback
+
+
+def project_media_span(item_type, item, file, kind, fallback=4):
+    page_config = item.get('page_config', {})
+    file_span_key = 'image_spans' if kind == 'image' else 'other_file_spans'
+    default_span_key = 'default_image_span' if kind == 'image' else 'default_other_file_span'
+    configured = (
+        page_config.get(file_span_key, {}).get(file)
+        or page_config.get(default_span_key)
+        or MEDIA_SIZE_OVERRIDES.get(item_type, {}).get(item['dir_name'], {}).get(file)
+    )
+    return normalize_media_span(configured) or fallback
 
 
 def render_collection_index(items, heading, intro_text, top_link_href, top_link_label, rail_aria_label, section_prefix, base_dir_name, collection_type, preview_prefix, empty_state):
@@ -366,9 +466,17 @@ def render_collection_index(items, heading, intro_text, top_link_href, top_link_
         images = []
         for idx, file in enumerate(item['images']):
             src = to_url_path(base_dir_name, item['dir_name'], file)
-            size_class = collection_media_size_class(collection_type, item, file, idx)
+            orientation = image_orientation(os.path.join(ROOT, base_dir_name, item['dir_name'], file))
+            span = collection_media_span(
+                collection_type,
+                item,
+                file,
+                'image',
+                image_span_for_orientation(orientation),
+            )
+            orientation_attr = f' data-orientation=\"{orientation}\"' if orientation else ''
             images.append(f"""
-      <figure class=\"{size_class}\">
+      <figure data-span=\"{span}\"{orientation_attr}>
         <div class=\"media-frame\">
           <img src=\"{src}\" alt=\"{escape_html(item['title'])} image {idx + 1}\" loading=\"lazy\" decoding=\"async\">
         </div>
@@ -379,10 +487,10 @@ def render_collection_index(items, heading, intro_text, top_link_href, top_link_
         for file in item['other_files']:
             href = to_url_path(base_dir_name, item['dir_name'], file)
             ext = os.path.splitext(file)[1].lower()
-            size_class = collection_media_size_class(collection_type, item, file, len(item['images']) + len(media_blocks) + len(download_links))
+            span = collection_media_span(collection_type, item, file, 'other', 2)
             if ext == '.pdf':
                 media_blocks.append(f"""
-      <figure class=\"media-card {size_class}\">
+      <figure data-span=\"{span}\" class=\"media-card\">
         <div class=\"media-frame\">
           <iframe class=\"media-embed media-embed--pdf\" src=\"{href}\" title=\"{escape_html(file)}\" loading=\"lazy\"></iframe>
         </div>
@@ -391,7 +499,7 @@ def render_collection_index(items, heading, intro_text, top_link_href, top_link_
                 continue
             if ext in VIDEO_EXTS:
                 media_blocks.append(f"""
-      <figure class=\"media-card {size_class}\">
+      <figure data-span=\"{span}\" class=\"media-card\">
         <div class=\"media-frame\">
           <video class=\"media-embed media-embed--video\" controls preload=\"metadata\">
             <source src=\"{href}\" type=\"video/{ext.lstrip('.')}\">
@@ -425,7 +533,7 @@ def render_collection_index(items, heading, intro_text, top_link_href, top_link_
     sections_html = '\n'.join(sections)
 
     return f"""
-<main class=\"page-archive\">
+<main class=\"page-archive\" id=\"{section_prefix}-top\">
   <aside class=\"archive-rail\" aria-label=\"{escape_html(rail_aria_label)}\">
     {('\n'.join(rail_links) if rail_links else '<div class="rail-empty"></div>')}
   </aside>
@@ -434,9 +542,11 @@ def render_collection_index(items, heading, intro_text, top_link_href, top_link_
     <img alt=\"Preview\" />
   </div>
   <section class=\"archive-intro\">
-    <h1 class=\"title-font\">{escape_html(heading)}</h1>
-    <p>{escape_html(intro_text)}</p>
-    <a class=\"archive-top-link btn\" href=\"{top_link_href}\">{escape_html(top_link_label)}</a>
+    <h1 class=\"title-font\"><a class=\"archive-heading-link\" href=\"#{section_prefix}-top\">{escape_html(heading)}</a></h1>
+    <div class=\"archive-intro-meta\">
+      <p>{escape_html(intro_text)}</p>
+      <a class=\"archive-top-link btn\" href=\"{top_link_href}\">{escape_html(top_link_label)}</a>
+    </div>
   </section>
   <section class=\"archive-list\">
     {sections_html or f'<div class="empty-state">{escape_html(empty_state)}</div>'}
@@ -476,7 +586,21 @@ def render_photography_index(items):
     )
 
 
-def render_project_page(item, item_type):
+def render_project_step_nav(nav):
+    if not nav:
+        return ''
+    return f"""
+  <nav class=\"project-step-nav\" aria-label=\"Project navigation\">
+    <a class=\"project-step project-step--prev\" href=\"{nav['prev']['href']}\" aria-label=\"Previous project: {escape_html(nav['prev']['title'])}\">
+      <span aria-hidden=\"true\">&lt;</span>
+    </a>
+    <a class=\"project-step project-step--next\" href=\"{nav['next']['href']}\" aria-label=\"Next project: {escape_html(nav['next']['title'])}\">
+      <span aria-hidden=\"true\">&gt;</span>
+    </a>
+  </nav>"""
+
+
+def render_project_page(item, item_type, nav=None):
     base = 'Projects' if item_type == 'projects' else 'Archive'
     title = escape_html(item['title'])
     page_config = item.get('page_config', {})
@@ -487,11 +611,10 @@ def render_project_page(item, item_type):
     images = []
     for idx, file in enumerate(ordered_images):
         src = to_url_path(base, item['dir_name'], file)
-        configured_size = page_config.get('image_sizes', {}).get(file) if item_type == 'projects' else None
-        size_class = media_size_class(item_type, item['dir_name'], file, configured_size)
+        span = project_media_span(item_type, item, file, 'image')
         caption = escape_html(page_config.get('captions', {}).get(file, file)) if item_type == 'projects' else escape_html(file)
         images.append(f"""
-      <figure class=\"{size_class}\">
+      <figure data-span=\"{span}\">
         <div class=\"media-frame\">
           <img src=\"{src}\" alt=\"{title} image {idx + 1}\" loading=\"lazy\" decoding=\"async\">
         </div>
@@ -504,12 +627,11 @@ def render_project_page(item, item_type):
         href = to_url_path(base, item['dir_name'], file)
         _, ext = os.path.splitext(file)
         ext = ext.lower()
-        configured_size = page_config.get('other_file_sizes', {}).get(file) if item_type == 'projects' else None
-        size_class = media_size_class(item_type, item['dir_name'], file, configured_size)
+        span = project_media_span(item_type, item, file, 'other')
         if item_type == 'projects':
             if ext in VIDEO_EXTS:
                 media_blocks.append(f"""
-      <figure class=\"media-card {size_class}\">
+      <figure data-span=\"{span}\" class=\"media-card\">
         <div class=\"media-frame\">
           <video class=\"media-embed media-embed--video\" controls preload=\"metadata\">
             <source src=\"{href}\" type=\"video/{ext[1:]}\">
@@ -522,7 +644,7 @@ def render_project_page(item, item_type):
             continue
         if ext == '.pdf':
             media_blocks.append(f"""
-      <figure class=\"media-card {size_class}\">
+      <figure data-span=\"{span}\" class=\"media-card\">
         <div class=\"media-frame\">
           <iframe class=\"media-embed media-embed--pdf\" src=\"{href}\" title=\"{escape_html(file)}\" loading=\"lazy\"></iframe>
         </div>
@@ -531,7 +653,7 @@ def render_project_page(item, item_type):
             continue
         if ext in VIDEO_EXTS:
             media_blocks.append(f"""
-      <figure class=\"media-card {size_class}\">
+      <figure data-span=\"{span}\" class=\"media-card\">
         <div class=\"media-frame\">
           <video class=\"media-embed media-embed--video\" controls preload=\"metadata\">
             <source src=\"{href}\" type=\"video/{ext[1:]}\">
@@ -544,6 +666,32 @@ def render_project_page(item, item_type):
 
     description_html = text_to_html(item['description'] or 'Project information will be added here.') if item_type == 'projects' else ''
     description_block = f"<section class=\"detail-description\">{description_html}</section>" if description_html else ''
+    showcase_config = page_config.get('youtube_showcase', {}) if item_type == 'projects' else {}
+    showcase_id = youtube_video_id(showcase_config.get('url') or showcase_config.get('id') or '') if isinstance(showcase_config, dict) else ''
+    showcase_title = escape_html(showcase_config.get('title', 'Video showcase')) if isinstance(showcase_config, dict) else 'Video showcase'
+    showcase_start = showcase_config.get('start', 0) if isinstance(showcase_config, dict) else 0
+    showcase_start_param = f"&amp;start={int(showcase_start)}" if isinstance(showcase_start, (int, float)) and showcase_start > 0 else ''
+    showcase_block = f"""<section class=\"detail-showcase\" aria-labelledby=\"project-showcase-title\">
+    <h2 class=\"title-font\" id=\"project-showcase-title\">{showcase_title}</h2>
+    <div class=\"youtube-frame\">
+      <iframe src=\"https://www.youtube-nocookie.com/embed/{showcase_id}?rel=0{showcase_start_param}\" title=\"{showcase_title}\" loading=\"lazy\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>
+    </div>
+  </section>""" if showcase_id else ''
+
+    thumbnail_config = page_config.get('thumbnail_gallery', {})
+    thumbnail_title = escape_html(thumbnail_config.get('title', 'All images')) if isinstance(thumbnail_config, dict) else 'All images'
+    thumbnail_items = []
+    for idx, file in enumerate(item.get('thumbnail_images', [])):
+        src = to_url_path(base, item['dir_name'], item.get('thumbnail_dir', ''), file)
+        thumbnail_items.append(f"""<figure>
+      <img src=\"{src}\" alt=\"{title} generated image {idx + 1}\" loading=\"lazy\" decoding=\"async\">
+    </figure>""")
+    thumbnail_block = f"""<section class=\"detail-thumbnail-section\" aria-labelledby=\"project-thumbnail-title\">
+    <h2 class=\"title-font\" id=\"project-thumbnail-title\">{thumbnail_title}</h2>
+    <div class=\"detail-gallery detail-thumbnail-gallery\">
+      {''.join(thumbnail_items)}
+    </div>
+  </section>""" if thumbnail_items else ''
     back_link = "<a class=\"back-link\" href=\"index.html#projects\">&larr; Back to home</a>" if item_type == 'projects' else ''
     media_section = f"<section class=\"detail-media\">{''.join(media_blocks)}</section>" if media_blocks else ''
     files_block = (
@@ -556,6 +704,7 @@ def render_project_page(item, item_type):
 
     return f"""
 <main class=\"page-detail\">
+  {render_project_step_nav(nav) if item_type == 'projects' else ''}
   <section class=\"detail-header\">
     {back_link}
     <h1 class=\"title-font\">{title}</h1>
@@ -566,6 +715,8 @@ def render_project_page(item, item_type):
     {(''.join(images) if images else '<div class="empty-state">No images yet.</div>')}
   </section>
   {media_section}
+  {showcase_block}
+  {thumbnail_block}
   {files_block}
 </main>"""
 
@@ -591,7 +742,7 @@ def render_about_page():
   </section>
   <div class=\"about-portrait\" tabindex=\"0\" aria-label=\"Portrait of Jorne Scholiers\">
     <img class=\"about-portrait-base\" src=\"images/ME%20Blurred.jpg\" alt=\"Blurred portrait of Jorne Scholiers\" loading=\"lazy\" decoding=\"async\">
-    <img class=\"about-portrait-hover\" src=\"images/ME.jpg\" alt=\"Portrait of Jorne Scholiers\" loading=\"lazy\" decoding=\"async\">
+    <img class=\"about-portrait-hover\" src=\"images/ME.webp\" alt=\"Portrait of Jorne Scholiers\" loading=\"lazy\" decoding=\"async\">
   </div>
 </main>"""
 
@@ -650,8 +801,20 @@ def build_site():
     write_file('photography.html', photography_html)
     write_file('contact.html', contact_html)
 
-    for project in projects:
-        page = render_layout(f"{project['title']} - Jorne Scholiers", 'page-detail', render_project_page(project, 'projects'))
+    for index, project in enumerate(projects):
+        prev_project = projects[(index - 1) % len(projects)]
+        next_project = projects[(index + 1) % len(projects)]
+        nav = {
+            'prev': {
+                'href': f"project-{prev_project['slug']}.html",
+                'title': prev_project['title'],
+            },
+            'next': {
+                'href': f"project-{next_project['slug']}.html",
+                'title': next_project['title'],
+            },
+        }
+        page = render_layout(f"{project['title']} - Jorne Scholiers", 'page-detail', render_project_page(project, 'projects', nav))
         write_file(f"project-{project['slug']}.html", page)
 
     for item in archive:

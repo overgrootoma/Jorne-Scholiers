@@ -8,6 +8,8 @@ const photographyDir = path.join(root, 'photography');
 
 const palette = ['#FF00D0', '#53FF45', '#1e2ede'];
 const projectOrder = [
+  '2026 Sound Translations of Fungal Forms',
+  '2026 Isolation',
   '2025 BrilliantBooks',
   '2025 Big summer energy',
   '2025 Colis Paris',
@@ -35,17 +37,15 @@ const mediaSizeOverrides = {
   },
   archive: {
     // '2026': {
-    //   '63.png': 6,
+    //   '63.webp': 6,
     // },
   },
   photography: {
     // 'Photo 2025': {
-    //   'wildlife1.jpg': 6,
+    //   'wildlife1.webp': 6,
     // },
   },
 };
-
-const archiveSpanPattern = [6, 2, 4, 4, 2, 6, 4];
 
 const imageExts = new Set(['.jpg', '.jpeg', '.png', '.gif', '.webp', '.avif', '.bmp', '.svg']);
 const videoExts = new Set(['.mp4', '.webm', '.mov', '.m4v', '.ogv']);
@@ -119,6 +119,70 @@ function listFiles(dir) {
 
 function isImage(file) {
   return imageExts.has(path.extname(file).toLowerCase());
+}
+
+function imageDimensions(filePath) {
+  if (!fs.existsSync(filePath)) return null;
+  const buffer = fs.readFileSync(filePath);
+
+  if (
+    buffer.length >= 24
+    && buffer[0] === 0x89
+    && buffer.toString('ascii', 1, 4) === 'PNG'
+  ) {
+    return {
+      width: buffer.readUInt32BE(16),
+      height: buffer.readUInt32BE(20),
+    };
+  }
+
+  const gifSignature = buffer.toString('ascii', 0, 6);
+  if (buffer.length >= 10 && (gifSignature === 'GIF87a' || gifSignature === 'GIF89a')) {
+    return {
+      width: buffer.readUInt16LE(6),
+      height: buffer.readUInt16LE(8),
+    };
+  }
+
+  if (buffer.length >= 4 && buffer[0] === 0xff && buffer[1] === 0xd8) {
+    let offset = 2;
+    while (offset < buffer.length) {
+      while (offset < buffer.length && buffer[offset] === 0xff) offset += 1;
+      if (offset >= buffer.length) break;
+      const marker = buffer[offset];
+      offset += 1;
+      if (marker === 0xd8 || marker === 0xd9) continue;
+      if (offset + 2 > buffer.length) break;
+      const length = buffer.readUInt16BE(offset);
+      if (length < 2 || offset + length > buffer.length) break;
+      if (
+        marker === 0xc0 || marker === 0xc1 || marker === 0xc2 || marker === 0xc3
+        || marker === 0xc5 || marker === 0xc6 || marker === 0xc7
+        || marker === 0xc9 || marker === 0xca || marker === 0xcb
+        || marker === 0xcd || marker === 0xce || marker === 0xcf
+      ) {
+        return {
+          width: buffer.readUInt16BE(offset + 5),
+          height: buffer.readUInt16BE(offset + 3),
+        };
+      }
+      offset += length;
+    }
+  }
+
+  return null;
+}
+
+function imageOrientation(filePath) {
+  const dimensions = imageDimensions(filePath);
+  if (!dimensions) return '';
+  if (dimensions.width > dimensions.height) return 'landscape';
+  if (dimensions.width < dimensions.height) return 'portrait';
+  return 'square';
+}
+
+function imageSpanForOrientation(orientation) {
+  return orientation === 'landscape' ? 2 : 1;
 }
 
 function readDescription(dir) {
@@ -206,6 +270,14 @@ function orderFilesByPreference(files, preferredOrder) {
   return ordered;
 }
 
+function youtubeVideoId(value) {
+  if (typeof value !== 'string') return '';
+  const trimmed = value.trim();
+  if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) return trimmed;
+  const match = trimmed.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
+  return match ? match[1] : '';
+}
+
 function buildItems(baseDir, type) {
   const dirs = readDirSafe(baseDir).filter((entry) => entry.isDirectory());
   const items = [];
@@ -220,6 +292,15 @@ function buildItems(baseDir, type) {
     const orderedFiles = type === 'archive' || type === 'photography' ? [...files].reverse() : files;
     const images = orderedFiles.filter(isImage);
     const otherFiles = orderedFiles.filter((file) => !isImage(file) && !descriptionFiles.includes(file));
+    const thumbnailConfig = pageConfig.thumbnail_gallery;
+    const thumbnailDir = typeof thumbnailConfig?.directory === 'string'
+      ? thumbnailConfig.directory
+      : '';
+    const thumbnailImages = thumbnailDir
+      ? listFiles(path.join(fullPath, thumbnailDir))
+        .filter(isImage)
+        .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+      : [];
     const description = type === 'projects' ? readDescription(fullPath) : '';
     const slugBase = `${parsed.year || '0000'}-${parsed.index || 0}-${parsed.title || dirent.name}`;
     const slug = slugify(slugBase);
@@ -232,6 +313,8 @@ function buildItems(baseDir, type) {
       slug,
       images,
       otherFiles,
+      thumbnailDir,
+      thumbnailImages,
       description,
       pageConfig,
     });
@@ -253,9 +336,9 @@ function renderHead(pageTitle) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${escapeHtml(pageTitle)}</title>
-  <link rel="stylesheet" media="screen" href="https://fontlibrary.org//face/hk-grotesk" type="text/css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Bitcount+Grid+Double+Ink:wght@100..900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="Css/style.css">
 </head>`;
@@ -393,16 +476,18 @@ function renderCollectionIndex(items, {
       const gallery = orderedImages
         .map((file, idx) => {
           const src = toUrlPath(baseDirName, item.dirName, file);
+          const orientation = imageOrientation(path.join(root, baseDirName, item.dirName, file));
           const span = resolveMediaSpan({
             type: collectionType,
             dirName: item.dirName,
             fileName: file,
             pageConfig: item.pageConfig,
             kind: 'image',
-            fallback: archiveSpanPattern[idx % archiveSpanPattern.length],
+            fallback: imageSpanForOrientation(orientation),
           });
+          const orientationAttr = orientation ? ` data-orientation="${orientation}"` : '';
           return `
-      <figure data-span="${span}">
+      <figure data-span="${span}"${orientationAttr}>
         <div class="media-frame">
           <img src="${src}" alt="${escapeHtml(item.title)} image ${idx + 1}" loading="lazy" decoding="async">
         </div>
@@ -422,7 +507,7 @@ function renderCollectionIndex(items, {
           fileName: file,
           pageConfig: item.pageConfig,
           kind: 'other',
-          fallback: archiveSpanPattern[(orderedImages.length + mediaBlocks.length + downloadLinks.length) % archiveSpanPattern.length],
+          fallback: 2,
         });
         if (ext === '.pdf') {
           mediaBlocks.push(`
@@ -474,7 +559,7 @@ function renderCollectionIndex(items, {
     .join('\n');
 
   return `
-<main class="page-archive">
+<main class="page-archive" id="${sectionPrefix}-top">
   <aside class="archive-rail" aria-label="${escapeHtml(railAriaLabel)}">
     ${railLinks || '<div class="rail-empty"></div>'}
   </aside>
@@ -483,9 +568,11 @@ function renderCollectionIndex(items, {
     <img alt="Preview" />
   </div>
   <section class="archive-intro">
-    <h1 class="title-font">${escapeHtml(heading)}</h1>
-    <p>${escapeHtml(introText)}</p>
-    <a class="archive-top-link btn" href="${topLinkHref}">${escapeHtml(topLinkLabel)}</a>
+    <h1 class="title-font"><a class="archive-heading-link" href="#${sectionPrefix}-top">${escapeHtml(heading)}</a></h1>
+    <div class="archive-intro-meta">
+      <p>${escapeHtml(introText)}</p>
+      <a class="archive-top-link btn" href="${topLinkHref}">${escapeHtml(topLinkLabel)}</a>
+    </div>
   </section>
   <section class="archive-list">
     ${sections || `<div class="empty-state">${escapeHtml(emptyState)}</div>`}
@@ -523,7 +610,20 @@ function renderPhotographyIndex(items) {
   });
 }
 
-function renderProjectPage(item, type) {
+function renderProjectStepNav(nav) {
+  if (!nav) return '';
+  return `
+  <nav class="project-step-nav" aria-label="Project navigation">
+    <a class="project-step project-step--prev" href="${nav.prev.href}" aria-label="Previous project: ${escapeHtml(nav.prev.title)}">
+      <span aria-hidden="true">&lt;</span>
+    </a>
+    <a class="project-step project-step--next" href="${nav.next.href}" aria-label="Next project: ${escapeHtml(nav.next.title)}">
+      <span aria-hidden="true">&gt;</span>
+    </a>
+  </nav>`;
+}
+
+function renderProjectPage(item, type, nav = null) {
   const title = escapeHtml(item.title);
   const base = type === 'projects' ? 'Projects' : 'Archive';
   const pageConfig = item.pageConfig || {};
@@ -615,6 +715,38 @@ function renderProjectPage(item, type) {
     ? `<section class="detail-description">${descriptionHtml}</section>`
     : '';
 
+  const showcaseConfig = type === 'projects' ? pageConfig.youtube_showcase : null;
+  const showcaseId = youtubeVideoId(showcaseConfig?.url || showcaseConfig?.id || '');
+  const showcaseTitle = escapeHtml(showcaseConfig?.title || 'Video showcase');
+  const showcaseStart = Number.parseInt(showcaseConfig?.start, 10);
+  const showcaseStartParam = Number.isFinite(showcaseStart) && showcaseStart > 0
+    ? `&amp;start=${showcaseStart}`
+    : '';
+  const showcaseBlock = showcaseId
+    ? `<section class="detail-showcase" aria-labelledby="project-showcase-title">
+    <h2 class="title-font" id="project-showcase-title">${showcaseTitle}</h2>
+    <div class="youtube-frame">
+      <iframe src="https://www.youtube-nocookie.com/embed/${showcaseId}?rel=0${showcaseStartParam}" title="${showcaseTitle}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+  </section>`
+    : '';
+
+  const thumbnailTitle = escapeHtml(pageConfig.thumbnail_gallery?.title || 'All images');
+  const thumbnailItems = (item.thumbnailImages || []).map((file, idx) => {
+    const src = toUrlPath(base, item.dirName, item.thumbnailDir, file);
+    return `<figure>
+      <img src="${src}" alt="${title} generated image ${idx + 1}" loading="lazy" decoding="async">
+    </figure>`;
+  }).join('\n');
+  const thumbnailBlock = thumbnailItems
+    ? `<section class="detail-thumbnail-section" aria-labelledby="project-thumbnail-title">
+    <h2 class="title-font" id="project-thumbnail-title">${thumbnailTitle}</h2>
+    <div class="detail-gallery detail-thumbnail-gallery">
+      ${thumbnailItems}
+    </div>
+  </section>`
+    : '';
+
   const mediaSection = mediaBlocks.length
     ? `<section class="detail-media">\n    ${mediaBlocks.join('\n')}\n  </section>`
     : '';
@@ -631,6 +763,7 @@ function renderProjectPage(item, type) {
 
   return `
 <main class="page-detail">
+  ${type === 'projects' ? renderProjectStepNav(nav) : ''}
   <section class="detail-header">
     ${backLink}
     <h1 class="title-font">${title}</h1>
@@ -641,6 +774,8 @@ function renderProjectPage(item, type) {
     ${images || '<div class="empty-state">No images yet.</div>'}
   </section>
   ${mediaSection}
+  ${showcaseBlock}
+  ${thumbnailBlock}
   ${filesBlock}
 </main>`;
 }
@@ -699,7 +834,7 @@ function renderAboutPage() {
   </section>
   <div class="about-portrait" tabindex="0" aria-label="Portrait of Jorne Scholiers">
     <img class="about-portrait-base" src="images/ME%20Blurred.jpg" alt="Blurred portrait of Jorne Scholiers" loading="lazy" decoding="async">
-    <img class="about-portrait-hover" src="images/ME.jpg" alt="Portrait of Jorne Scholiers" loading="lazy" decoding="async">
+    <img class="about-portrait-hover" src="images/ME.webp" alt="Portrait of Jorne Scholiers" loading="lazy" decoding="async">
   </div>
 </main>`;
 }
@@ -800,11 +935,22 @@ function buildSite() {
   writeFile('photography.html', photographyHtml);
   writeFile('contact.html', contactHtml);
 
-  projects.forEach((project) => {
+  projects.forEach((project, index) => {
+    const prevProject = projects[(index - 1 + projects.length) % projects.length];
+    const nextProject = projects[(index + 1) % projects.length];
     const projectHtml = renderLayout({
       title: `${project.title} - Jorne Scholiers`,
       bodyClass: 'page-detail',
-      main: renderProjectPage(project, 'projects'),
+      main: renderProjectPage(project, 'projects', {
+        prev: {
+          href: `project-${prevProject.slug}.html`,
+          title: prevProject.title,
+        },
+        next: {
+          href: `project-${nextProject.slug}.html`,
+          title: nextProject.title,
+        },
+      }),
     });
     writeFile(`project-${project.slug}.html`, projectHtml);
   });

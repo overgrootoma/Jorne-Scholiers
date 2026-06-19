@@ -203,6 +203,108 @@
     await Promise.all(tasks);
   };
 
+  const setupArchiveOrientationSpans = () => {
+    const galleries = Array.from(document.querySelectorAll('.archive-entry-gallery'));
+    if (!galleries.length) return;
+
+    const figureSpan = (figure) => normalizeMediaSpan(figure.dataset.span) || 1;
+    const figureOrientation = (figure) => (
+      figure.dataset.orientation === 'landscape' ? 'landscape' : 'portrait'
+    );
+    const createSpacer = (span) => {
+      const spacer = document.createElement('div');
+      spacer.className = 'archive-grid-spacer';
+      spacer.dataset.span = String(span);
+      spacer.setAttribute('aria-hidden', 'true');
+      return spacer;
+    };
+
+    const layoutGallery = (gallery) => {
+      gallery.querySelectorAll('.archive-grid-spacer').forEach((spacer) => spacer.remove());
+      const figures = Array.from(gallery.children).filter((child) => child.tagName === 'FIGURE');
+      let rowSpan = 0;
+      let rowOrientation = '';
+      let rowItems = 0;
+
+      figures.forEach((figure) => {
+        const span = figureSpan(figure);
+        const orientation = figureOrientation(figure);
+
+        if (!rowSpan) {
+          rowSpan = span;
+          rowOrientation = orientation;
+          rowItems = 1;
+          if (rowSpan >= 4) rowSpan = 0;
+          return;
+        }
+
+        if (rowOrientation === orientation && rowSpan + span <= 4) {
+          rowSpan += span;
+          rowItems += 1;
+          if (rowSpan >= 4) rowSpan = 0;
+          return;
+        }
+
+        if (rowItems === 1 && rowSpan + span <= 3) {
+          const remaining = 4 - rowSpan - span;
+          if (remaining > 0) {
+            figure.after(createSpacer(remaining));
+          }
+          rowSpan = 0;
+          rowOrientation = '';
+          rowItems = 0;
+          return;
+        }
+
+        const remaining = 4 - rowSpan;
+        if (remaining > 0 && remaining < 4) {
+          figure.before(createSpacer(remaining));
+        }
+        rowSpan = span >= 4 ? 0 : span;
+        rowOrientation = orientation;
+        rowItems = span >= 4 ? 0 : 1;
+      });
+    };
+
+    galleries.forEach((gallery) => {
+      const figures = Array.from(gallery.querySelectorAll('figure'));
+      let layoutQueued = false;
+      const queueLayout = () => {
+        if (layoutQueued) return;
+        layoutQueued = true;
+        window.requestAnimationFrame(() => {
+          layoutQueued = false;
+          layoutGallery(gallery);
+        });
+      };
+
+      figures.forEach((figure) => {
+        const img = figure.querySelector('img');
+        if (!img) return;
+
+        const apply = () => {
+          if (!img.naturalWidth || !img.naturalHeight) return;
+          const orientation = img.naturalWidth > img.naturalHeight
+            ? 'landscape'
+            : img.naturalWidth < img.naturalHeight
+              ? 'portrait'
+              : 'square';
+          figure.dataset.orientation = orientation;
+          applyMediaSpan(figure, orientation === 'landscape' ? 2 : 1);
+          queueLayout();
+        };
+
+        if (img.complete) {
+          apply();
+        } else {
+          img.addEventListener('load', apply, { once: true });
+        }
+      });
+
+      queueLayout();
+    });
+  };
+
   const titleEls = document.querySelectorAll('.title-font:not(.site-title)');
   const baseWeight = 620;
   const baseAxes = {
@@ -336,14 +438,11 @@
     const width = gallery.clientWidth;
     const rect = gallery.getBoundingClientRect();
     const viewportWidth = window.innerWidth || document.documentElement.clientWidth || width;
-    const minX = Math.max(margin, margin - rect.left);
-    const maxX = Math.min(
-      Math.max(margin, width - itemWidth - margin),
-      viewportWidth - margin - rect.left - itemWidth,
-    );
+    const minX = margin - rect.left;
+    const maxX = viewportWidth - margin - rect.left - itemWidth;
 
     if (maxX <= minX) {
-      const fallback = Math.max(margin, Math.min(width - itemWidth - margin, minX));
+      const fallback = (minX + maxX) / 2;
       return { minX: fallback, maxX: fallback };
     }
 
@@ -513,36 +612,27 @@
     if (!images.length) return;
 
     let zCounter = 10;
-    const clearGrabbed = () => {
+    const clearDragging = () => {
       images.forEach((img) => {
-        img.dataset.grabbed = 'false';
-        img.classList.remove('is-grabbed');
         img.classList.remove('is-dragging');
-        img.style.touchAction = 'pan-y';
       });
     };
 
-    clearGrabbed();
+    clearDragging();
 
     images.forEach((img) => {
+      img.draggable = false;
       img.addEventListener('dragstart', (event) => event.preventDefault());
       img.addEventListener('pointerdown', (event) => {
         const gallery = img.closest('.project-gallery');
         if (!gallery) return;
         if (event.button !== 0) return;
-
-        if (img.dataset.grabbed !== 'true') {
-          clearGrabbed();
-          img.dataset.grabbed = 'true';
-          img.classList.add('is-grabbed');
-          img.style.touchAction = 'none';
-          img.style.zIndex = String(zCounter++);
-          return;
-        }
+        if (img.dataset.homeScatter !== 'true') return;
 
         img.setPointerCapture(event.pointerId);
         img.classList.add('is-dragging');
         img.style.zIndex = String(zCounter++);
+        event.preventDefault();
 
         const galleryRect = gallery.getBoundingClientRect();
         const imgRect = img.getBoundingClientRect();
@@ -561,6 +651,7 @@
             }
             hasMoved = true;
           }
+          moveEvent.preventDefault();
           const width = img.offsetWidth;
           const height = img.offsetHeight;
           const { minX, maxX } = horizontalViewportBounds(gallery, width, 0);
@@ -586,7 +677,7 @@
 
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
-        clearGrabbed();
+        clearDragging();
       }
     });
   };
@@ -615,21 +706,73 @@
       <button class="lightbox-control lightbox-control--prev" type="button" aria-label="Previous image">
         <span aria-hidden="true">&lt;</span>
       </button>
-      <img alt="Enlarged project image">
+      <div class="lightbox-stage">
+        <img alt="Enlarged project image">
+        <div class="lightbox-lens" aria-hidden="true"></div>
+      </div>
+      <div class="lightbox-toolbar" aria-label="Image tools">
+        <button class="lightbox-tool lightbox-tool--magnifier" type="button" aria-label="Toggle magnifier" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="11" cy="11" r="6"></circle>
+            <path d="m16 16 5 5"></path>
+          </svg>
+        </button>
+        <label class="visually-hidden" for="lightbox-magnification">Magnification</label>
+        <input class="lightbox-slider" id="lightbox-magnification" type="range" min="1.6" max="4" step="0.2" value="2.4" aria-label="Magnification">
+      </div>
       <button class="lightbox-control lightbox-control--next" type="button" aria-label="Next image">
         <span aria-hidden="true">&gt;</span>
       </button>
     `;
     document.body.appendChild(lightbox);
     const lightboxImg = lightbox.querySelector('img');
+    const stage = lightbox.querySelector('.lightbox-stage');
+    const lens = lightbox.querySelector('.lightbox-lens');
+    const magnifierButton = lightbox.querySelector('.lightbox-tool--magnifier');
+    const magnificationSlider = lightbox.querySelector('.lightbox-slider');
     const prevButton = lightbox.querySelector('.lightbox-control--prev');
     const nextButton = lightbox.querySelector('.lightbox-control--next');
     let currentIndex = 0;
+    let magnifierActive = false;
+    let lastLensPoint = null;
 
     const isOpen = () => lightbox.classList.contains('is-visible');
+    const setMagnifierActive = (active) => {
+      magnifierActive = active;
+      lightbox.classList.toggle('magnifier-active', active);
+      magnifierButton.setAttribute('aria-pressed', String(active));
+      if (!active) {
+        lens.classList.remove('is-visible');
+      }
+    };
+
+    const updateLens = (event) => {
+      if (!magnifierActive || !lightboxImg.src) return;
+      const rect = lightboxImg.getBoundingClientRect();
+      const stageRect = stage.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      lastLensPoint = { clientX: event.clientX, clientY: event.clientY };
+
+      if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
+        lens.classList.remove('is-visible');
+        return;
+      }
+
+      const zoom = Number(magnificationSlider.value) || 2.4;
+      const lensSize = lens.offsetWidth || 180;
+      lens.style.left = `${Math.round(rect.left - stageRect.left + x - lensSize / 2)}px`;
+      lens.style.top = `${Math.round(rect.top - stageRect.top + y - lensSize / 2)}px`;
+      lens.style.backgroundImage = `url("${lightboxImg.src}")`;
+      lens.style.backgroundSize = `${rect.width * zoom}px ${rect.height * zoom}px`;
+      lens.style.backgroundPosition = `${Math.round(lensSize / 2 - x * zoom)}px ${Math.round(lensSize / 2 - y * zoom)}px`;
+      lens.classList.add('is-visible');
+    };
 
     const close = () => {
       lightbox.classList.remove('is-visible');
+      setMagnifierActive(false);
+      lastLensPoint = null;
       lightboxImg.removeAttribute('src');
       document.body.classList.remove('overlay-open');
     };
@@ -640,6 +783,8 @@
       const img = images[currentIndex];
       lightboxImg.src = img.src;
       lightboxImg.alt = img.alt || (isArchivePage ? 'Archive image' : 'Project image');
+      lens.style.backgroundImage = `url("${img.src}")`;
+      lens.classList.remove('is-visible');
       lightbox.classList.add('is-visible');
       document.body.classList.add('overlay-open');
     };
@@ -660,9 +805,29 @@
       showAt(currentIndex + 1);
     });
 
+    magnifierButton.addEventListener('click', (event) => {
+      event.stopPropagation();
+      setMagnifierActive(!magnifierActive);
+    });
+
+    magnificationSlider.addEventListener('input', (event) => {
+      event.stopPropagation();
+      if (magnifierActive && lastLensPoint) {
+        updateLens(lastLensPoint);
+      }
+    });
+
+    stage.addEventListener('pointermove', updateLens);
+    stage.addEventListener('pointerleave', () => {
+      lastLensPoint = null;
+      lens.classList.remove('is-visible');
+    });
+
     lightboxImg.addEventListener('click', (event) => {
       event.stopPropagation();
-      close();
+      if (!magnifierActive) {
+        close();
+      }
     });
 
     lightbox.addEventListener('click', (event) => {
@@ -777,6 +942,7 @@
   };
 
   setupConfigurableMediaSpans().finally(() => {
+    setupArchiveOrientationSpans();
     setupLightbox();
   });
   setupPdfOverlay();
