@@ -411,19 +411,6 @@ h6 {
   margin: 0;
 }
 
-.page-home .intro .home-interaction-hint {
-  margin: 18px 0 0;
-  font-size: 0.72rem;
-  line-height: 1.4;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(0, 0, 0, 0.68);
-}
-
-.hint-mobile {
-  display: none;
-}
-
 .page-home .intro a {
   color: var(--accent-blue);
   border-bottom: none;
@@ -605,13 +592,6 @@ h6 {
   margin: 0 0 12px;
 }
 
-.projects-intro {
-  max-width: 68ch;
-  margin: 0 0 clamp(28px, 4vw, 52px);
-  font-size: clamp(1rem, 0.3vw + 0.95rem, 1.2rem);
-  line-height: 1.5;
-}
-
 .projects-list {
   display: flex;
   flex-direction: column;
@@ -652,13 +632,15 @@ h6 {
   font-size: clamp(1.6rem, 2.4vw, 2.6rem);
   font-weight: var(--body-weight);
   letter-spacing: 0.01em;
+  overflow-wrap: anywhere;
 }
 
 .project-summary {
   margin: 6px 0 0;
   font-size: 0.95rem;
   color: rgba(0, 0, 0, 0.6);
-  max-width: 36ch;
+  max-width: 58ch;
+  overflow-wrap: anywhere;
 }
 
 .project-row:hover,
@@ -1335,18 +1317,17 @@ h6 {
   .mobile-intro {
     display: block;
     margin: 0 0 clamp(28px, 8vw, 48px);
-    border-top: 2px solid var(--text);
-    border-bottom: 2px solid var(--text);
   }
 
   .mobile-intro summary {
-    min-height: 48px;
-    display: flex;
+    min-height: 44px;
+    width: fit-content;
+    display: inline-flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 10px 0;
-    color: var(--accent-blue);
+    gap: 10px;
+    padding: 8px 12px;
+    background: var(--accent-green);
+    color: var(--black);
     font-size: 0.78rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -1360,7 +1341,7 @@ h6 {
 
   .mobile-intro summary::after {
     content: "+";
-    color: var(--text);
+    color: var(--black);
     font-size: 1.25rem;
     line-height: 1;
   }
@@ -1370,7 +1351,7 @@ h6 {
   }
 
   .mobile-intro-copy {
-    padding: 4px 0 20px;
+    padding: 16px 0 0;
   }
 
   .mobile-intro-copy p {
@@ -1382,14 +1363,6 @@ h6 {
 
   .mobile-home-index .projects-list {
     margin-top: clamp(24px, 7vw, 42px);
-  }
-
-  .hint-desktop {
-    display: none;
-  }
-
-  .hint-mobile {
-    display: inline;
   }
 
   .project-rail,
@@ -2117,8 +2090,10 @@ h6 {
     height: 100vh;
     height: 100dvh;
     min-height: 0;
-    padding-top: 96px;
-    padding-bottom: 32px;
+    max-width: none;
+    padding-top: 64px;
+    padding-right: 0;
+    padding-bottom: 0;
     align-items: stretch;
     overflow: hidden;
   }
@@ -2138,7 +2113,9 @@ h6 {
     scrollbar-gutter: stable;
     scrollbar-width: thin;
     scrollbar-color: var(--accent-blue) transparent;
+    padding-top: 32px;
     padding-right: clamp(12px, 1.5vw, 22px);
+    padding-bottom: 32px;
   }
 
   .page-about .about-intro::-webkit-scrollbar,
@@ -2154,7 +2131,15 @@ h6 {
   .page-about .about-portrait {
     position: relative;
     top: auto;
+    width: 100%;
+    max-width: none;
+    justify-self: stretch;
     overflow: hidden;
+  }
+
+  .page-about .about-portrait img {
+    object-fit: contain;
+    object-position: right center;
   }
 }
 
@@ -2228,10 +2213,7 @@ h6 {
 
 @media (max-width: 560px) {
   .project-summary {
-    display: -webkit-box;
-    overflow: hidden;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
+    max-width: none;
   }
 
   .project-thumb {

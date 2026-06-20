@@ -516,7 +516,6 @@ function renderIntro() {
 <section class="intro" id="intro">
   <h1 class="visually-hidden">Jorne Scholiers — Visual and Graphic Designer in Ghent</h1>
   ${renderIntroCopy()}
-  <p class="home-interaction-hint"><span class="hint-desktop">Drag images to rearrange them. Click an image to view the project.</span><span class="hint-mobile">Tap an image to view the project.</span></p>
 </section>`;
 }
 
@@ -532,7 +531,8 @@ function renderProjectRows(projects) {
     const image = previewImagePath(project);
     const dimensions = rootImageDimensionAttributes(image);
     const loading = index === 0 ? ' loading="eager" fetchpriority="high"' : ' loading="lazy"';
-    const summary = truncateDescription(project.description || `${project.title}, a visual design project by Jorne Scholiers.`, 190);
+    const firstParagraph = String(project.description || '').split(/\n\s*\n/)[0];
+    const summary = stripHtml(firstParagraph || `${project.title}, a visual design project by Jorne Scholiers.`);
     return `
       <a class="project-row" href="project-${project.slug}.html">
         <div class="project-info">
@@ -802,7 +802,6 @@ function renderProjectsIndex(projects) {
   <section class="projects-overview">
     ${renderMobileIntro()}
     <h1 class="title-font">Graphic design projects</h1>
-    <p class="projects-intro">Selected work by Jorne Scholiers across visual identity, editorial and packaging design, typography, experimental photography, and creative coding.</p>
     <div class="projects-list">
       ${renderProjectRows(projects) || '<div class="empty-state">Projects will be added here.</div>'}
     </div>
@@ -925,8 +924,7 @@ function renderProjectPage(item, type, nav = null) {
     ? `&amp;start=${showcaseStart}`
     : '';
   const showcaseBlock = showcaseId
-    ? `<section class="detail-showcase" aria-labelledby="project-showcase-title">
-    <h2 class="title-font" id="project-showcase-title">${showcaseTitle}</h2>
+    ? `<section class="detail-showcase" aria-label="${showcaseTitle}">
     <div class="youtube-frame">
       <iframe src="https://www.youtube-nocookie.com/embed/${showcaseId}?rel=0${showcaseStartParam}" title="${showcaseTitle}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
     </div>
@@ -942,8 +940,7 @@ function renderProjectPage(item, type, nav = null) {
     </figure>`;
   }).join('\n');
   const thumbnailBlock = thumbnailItems
-    ? `<section class="detail-thumbnail-section" aria-labelledby="project-thumbnail-title">
-    <h2 class="title-font" id="project-thumbnail-title">${thumbnailTitle}</h2>
+    ? `<section class="detail-thumbnail-section" aria-label="${thumbnailTitle}">
     <div class="detail-gallery detail-thumbnail-gallery">
       ${thumbnailItems}
     </div>
@@ -1015,10 +1012,6 @@ function renderAboutPage() {
     <section class="about-section" aria-labelledby="about-experience-title">
       <h2 class="title-font" id="about-experience-title">Experience</h2>
       <ul class="about-list">
-        <li>
-          <span class="about-role">Visual Design Graphic studio</span>
-          <span class="about-year">2023-Now</span>
-        </li>
         <li>
           <span class="about-role">Internship at Broos</span>
           <span class="about-year">2026</span>
