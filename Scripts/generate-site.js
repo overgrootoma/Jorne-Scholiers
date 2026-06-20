@@ -101,6 +101,12 @@ function truncateDescription(value, maxLength = 160) {
   return `${shortened}…`;
 }
 
+function firstSentence(value) {
+  const text = stripHtml(value);
+  const match = text.match(/^.*?[.!?](?=\s|$)/);
+  return match ? match[0] : text;
+}
+
 function absoluteUrl(relativePath = '') {
   return new URL(relativePath, siteUrl).href;
 }
@@ -528,20 +534,20 @@ function renderMobileIntro() {
 
 function renderProjectRows(projects) {
   return projects.map((project, index) => {
-    const image = previewImagePath(project);
+    const displayTitle = project.pageConfig?.index_title || project.title;
+    const image = project.pageConfig?.index_image || previewImagePath(project);
     const dimensions = rootImageDimensionAttributes(image);
     const loading = index === 0 ? ' loading="eager" fetchpriority="high"' : ' loading="lazy"';
-    const firstParagraph = String(project.description || '').split(/\n\s*\n/)[0];
-    const summary = stripHtml(firstParagraph || `${project.title}, a visual design project by Jorne Scholiers.`);
+    const summary = firstSentence(project.description || `${project.title}, a visual design project by Jorne Scholiers.`);
     return `
       <a class="project-row" href="project-${project.slug}.html">
         <div class="project-info">
-          <h2>${escapeHtml(project.title)}</h2>
+          <h2>${escapeHtml(displayTitle)}</h2>
           <div class="project-year">${escapeHtml(project.year)}</div>
           <p class="project-summary">${escapeHtml(summary)}</p>
         </div>
         <div class="project-thumb">
-          <img src="${image}" alt="Preview of ${escapeHtml(project.title)} by Jorne Scholiers"${dimensions}${loading} decoding="async">
+          <img src="${image}" alt="Preview of ${escapeHtml(displayTitle)} by Jorne Scholiers"${dimensions}${loading} decoding="async">
         </div>
       </a>`;
   }).join('');
@@ -604,7 +610,7 @@ function renderHome(projects) {
   </div>
   <section class="mobile-home-index" aria-labelledby="mobile-projects-title">
     ${renderMobileIntro()}
-    <h1 class="title-font" id="mobile-projects-title">Graphic design projects</h1>
+    <h1 class="visually-hidden" id="mobile-projects-title">Graphic design projects</h1>
     <div class="projects-list">
       ${renderProjectRows(projects) || '<div class="empty-state">Projects will be added here.</div>'}
     </div>
@@ -801,7 +807,7 @@ function renderProjectsIndex(projects) {
 <main class="page-projects">
   <section class="projects-overview">
     ${renderMobileIntro()}
-    <h1 class="title-font">Graphic design projects</h1>
+    <h1 class="visually-hidden">Graphic design projects</h1>
     <div class="projects-list">
       ${renderProjectRows(projects) || '<div class="empty-state">Projects will be added here.</div>'}
     </div>
