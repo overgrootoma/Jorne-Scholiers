@@ -6,6 +6,11 @@ const projectsDir = path.join(root, 'Projects');
 const archiveDir = path.join(root, 'Archive');
 const photographyDir = path.join(root, 'photography');
 
+const siteUrl = (process.env.SITE_URL || 'https://overgrootoma.github.io/Jorne-Scholiers/').replace(/\/?$/, '/');
+const siteName = 'Jorne Scholiers';
+const defaultSocialImage = 'images/ME.webp';
+const defaultDescription = 'Portfolio of Jorne Scholiers, a visual and graphic designer in Ghent working across identities, editorial design, typography, photography, and creative coding.';
+
 const palette = ['#FF00D0', '#53FF45', '#1e2ede'];
 const projectOrder = [
   '2026 Sound Translations of Fungal Forms',
@@ -26,6 +31,18 @@ const titleOverrides = {
   '2025 Colis Paris': 'Colis Paris',
   '2025 Off all things bord ': 'Of All Things: Bord',
   '2025 Hotel Identity': 'Hotel Identity',
+};
+
+const projectKeywords = {
+  '2026 Sound Translations of Fungal Forms': ['creative coding', 'generative design', 'sound design', 'installation design'],
+  '2026 Isolation': ['creative coding', 'generative design', 'editorial design', 'experimental photography'],
+  '2025 BrilliantBooks': ['book design', 'editorial design', 'typography'],
+  '2025 Big summer energy': ['experimental photography', 'art direction', 'exhibition design'],
+  '2025 Colis Paris': ['packaging design', 'visual identity', 'graphic design'],
+  '2025 Off all things bord ': ['editorial design', 'magazine design', 'typography'],
+  '2025 Hotel Identity': ['brand identity', 'visual identity', 'graphic design'],
+  '2024 Poster Party': ['poster design', 'typography', 'graphic design'],
+  '2024 YesYouCan': ['packaging design', 'brand identity', 'graphic design'],
 };
 
 const mediaSizeOverrides = {
@@ -61,12 +78,58 @@ function readDirSafe(dir) {
 }
 
 function escapeHtml(value) {
-  return value
+  return String(value)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+function stripHtml(value) {
+  return String(value || '')
+    .replace(/<br\s*\/?>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function truncateDescription(value, maxLength = 160) {
+  const text = stripHtml(value);
+  if (text.length <= maxLength) return text;
+  const shortened = text.slice(0, maxLength - 1).replace(/\s+\S*$/, '');
+  return `${shortened}…`;
+}
+
+function absoluteUrl(relativePath = '') {
+  return new URL(relativePath, siteUrl).href;
+}
+
+function jsonForHtml(value) {
+  return JSON.stringify(value).replace(/</g, '\\u003c');
+}
+
+function personSchema() {
+  return {
+    '@type': 'Person',
+    '@id': `${siteUrl}#jorne-scholiers`,
+    name: siteName,
+    url: siteUrl,
+    image: absoluteUrl('images/ME.webp'),
+    jobTitle: 'Visual and Graphic Designer',
+    description: defaultDescription,
+    email: 'mailto:jorne.scholiers@icloud.com',
+    sameAs: ['https://www.instagram.com/byjorne/'],
+    affiliation: {
+      '@type': 'EducationalOrganization',
+      name: 'LUCA School of Arts',
+    },
+    homeLocation: {
+      '@type': 'Place',
+      name: 'Ghent, Belgium',
+    },
+    knowsAbout: ['Graphic design', 'Visual identity', 'Editorial design', 'Typography', 'Photography', 'Creative coding'],
+  };
 }
 
 function toUrlPath(...parts) {
@@ -170,7 +233,45 @@ function imageDimensions(filePath) {
     }
   }
 
+  if (
+    buffer.length >= 30
+    && buffer.toString('ascii', 0, 4) === 'RIFF'
+    && buffer.toString('ascii', 8, 12) === 'WEBP'
+  ) {
+    const chunkType = buffer.toString('ascii', 12, 16);
+    if (chunkType === 'VP8X' && buffer.length >= 30) {
+      return {
+        width: 1 + buffer.readUIntLE(24, 3),
+        height: 1 + buffer.readUIntLE(27, 3),
+      };
+    }
+    if (chunkType === 'VP8L' && buffer.length >= 25 && buffer[20] === 0x2f) {
+      const bits = buffer.readUInt32LE(21);
+      return {
+        width: 1 + (bits & 0x3fff),
+        height: 1 + ((bits >>> 14) & 0x3fff),
+      };
+    }
+    if (
+      chunkType === 'VP8 '
+      && buffer.length >= 30
+      && buffer[23] === 0x9d
+      && buffer[24] === 0x01
+      && buffer[25] === 0x2a
+    ) {
+      return {
+        width: buffer.readUInt16LE(26) & 0x3fff,
+        height: buffer.readUInt16LE(28) & 0x3fff,
+      };
+    }
+  }
+
   return null;
+}
+
+function imageDimensionAttributes(filePath) {
+  const dimensions = imageDimensions(filePath);
+  return dimensions ? ` width="${dimensions.width}" height="${dimensions.height}"` : '';
 }
 
 function imageOrientation(filePath) {
@@ -211,6 +312,14 @@ function previewImagePath(project) {
   return project.images[0]
     ? toUrlPath('Projects', project.dirName, project.images[0])
     : '';
+}
+
+function rootImageDimensionAttributes(urlPath) {
+  try {
+    return imageDimensionAttributes(path.join(root, decodeURIComponent(urlPath)));
+  } catch (err) {
+    return '';
+  }
 }
 
 function homepageImages(project) {
@@ -329,18 +438,51 @@ function buildItems(baseDir, type) {
   return items;
 }
 
-function renderHead(pageTitle) {
+function renderHead({
+  title,
+  description = defaultDescription,
+  fileName = '',
+  canonicalFile = fileName,
+  image = defaultSocialImage,
+  imageAlt = `${siteName} visual design portfolio`,
+  pageType = 'website',
+  schema = null,
+  noIndex = false,
+}) {
+  const canonicalUrl = absoluteUrl(canonicalFile);
+  const socialImage = absoluteUrl(image);
+  const safeDescription = truncateDescription(description);
+  const robots = noIndex ? 'noindex, follow' : 'index, follow, max-image-preview:large';
+  const structuredData = schema
+    ? `\n  <script type="application/ld+json">${jsonForHtml({ '@context': 'https://schema.org', ...schema })}</script>`
+    : '';
   return `<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>${escapeHtml(pageTitle)}</title>
+  <title>${escapeHtml(title)}</title>
+  <meta name="description" content="${escapeHtml(safeDescription)}">
+  <meta name="author" content="${siteName}">
+  <meta name="robots" content="${robots}">
+  <link rel="canonical" href="${escapeHtml(canonicalUrl)}">
+  <meta property="og:locale" content="en_BE">
+  <meta property="og:type" content="${escapeHtml(pageType)}">
+  <meta property="og:site_name" content="${siteName}">
+  <meta property="og:title" content="${escapeHtml(title)}">
+  <meta property="og:description" content="${escapeHtml(safeDescription)}">
+  <meta property="og:url" content="${escapeHtml(canonicalUrl)}">
+  <meta property="og:image" content="${escapeHtml(socialImage)}">
+  <meta property="og:image:alt" content="${escapeHtml(imageAlt)}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="${escapeHtml(title)}">
+  <meta name="twitter:description" content="${escapeHtml(safeDescription)}">
+  <meta name="twitter:image" content="${escapeHtml(socialImage)}">
+  <meta name="theme-color" content="#ebebeb">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Bitcount+Grid+Double+Ink:wght@100..900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="Css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Bitcount+Grid+Double+Ink:wght@100..900&amp;family=Open+Sans:ital,wght@0,300..800;1,300..800&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="Css/style.css">${structuredData}
 </head>`;
 }
 
@@ -358,18 +500,51 @@ function renderNav() {
 </header>`;
 }
 
-function renderIntro() {
-  return `
-<section class="intro" id="intro">
-  <p>
+function renderIntroCopy() {
+  return `<p>
     Hello,<br>
     My name is <a href="about.html" class="intro-link">Jorne Scholiers</a>, a Visual Design student at LUCA School of Arts Ghent.<br><br>
     I have some <a href="projects.html">projects</a> you can look at, along with other work in my <a href="archive.html">archive</a> that shows what I've been experimenting with.<br>
     Or maybe you will like some of my <a href="photography.html">Photography</a>. Some of my projects appear on my <a href="https://www.instagram.com/byjorne/" target="_blank" rel="noopener">Instagram</a>.<br><br>
     Don't hesitate to <a href="mailto:jorne.scholiers@icloud.com">contact me</a>, I'd love to hear from you.<br>
     Oh and I am working on a little experimental <a href="https://accidentalgraphics.netlify.app/index.html" target="_blank" rel="noopener">site</a> as well :)
-  </p>
+  </p>`;
+}
+
+function renderIntro() {
+  return `
+<section class="intro" id="intro">
+  <h1 class="visually-hidden">Jorne Scholiers — Visual and Graphic Designer in Ghent</h1>
+  ${renderIntroCopy()}
+  <p class="home-interaction-hint"><span class="hint-desktop">Drag images to rearrange them. Click an image to view the project.</span><span class="hint-mobile">Tap an image to view the project.</span></p>
 </section>`;
+}
+
+function renderMobileIntro() {
+  return `<details class="mobile-intro">
+    <summary>Introduction</summary>
+    <div class="mobile-intro-copy">${renderIntroCopy()}</div>
+  </details>`;
+}
+
+function renderProjectRows(projects) {
+  return projects.map((project, index) => {
+    const image = previewImagePath(project);
+    const dimensions = rootImageDimensionAttributes(image);
+    const loading = index === 0 ? ' loading="eager" fetchpriority="high"' : ' loading="lazy"';
+    const summary = truncateDescription(project.description || `${project.title}, a visual design project by Jorne Scholiers.`, 190);
+    return `
+      <a class="project-row" href="project-${project.slug}.html">
+        <div class="project-info">
+          <h2>${escapeHtml(project.title)}</h2>
+          <div class="project-year">${escapeHtml(project.year)}</div>
+          <p class="project-summary">${escapeHtml(summary)}</p>
+        </div>
+        <div class="project-thumb">
+          <img src="${image}" alt="Preview of ${escapeHtml(project.title)} by Jorne Scholiers"${dimensions}${loading} decoding="async">
+        </div>
+      </a>`;
+  }).join('');
 }
 
 function renderHome(projects) {
@@ -383,17 +558,18 @@ function renderHome(projects) {
 
   const sections = projects
     .map((project) => {
+      const page = `project-${project.slug}.html`;
       const images = homepageImages(project).map((file, idx) => {
         const src = toUrlPath('Projects', project.dirName, file);
-        return `<img src="${src}" alt="${escapeHtml(project.title)} image ${idx + 1}" loading="lazy" decoding="async">`;
+        const dimensions = imageDimensionAttributes(path.join(projectsDir, project.dirName, file));
+        return `<img src="${src}" alt="${escapeHtml(project.title)}, a visual design project by Jorne Scholiers — image ${idx + 1}" data-project-url="${page}"${dimensions} loading="lazy" decoding="async">`;
       });
-      const page = `project-${project.slug}.html`;
       return `
       <article class="project-section" id="project-${project.slug}">
         <div class="project-sticky" style="--accent: ${project.accent}">
           <h2 class="title-font">${escapeHtml(project.title)}</h2>
           <div class="project-meta">${project.pageConfig?.meta || project.year || ''}</div>
-          <a class="btn" href="${page}">extra info</a>
+          <a class="btn" href="${page}">View project</a>
         </div>
         <div class="project-gallery">
           ${images.join('\n') || '<div class="empty-state">No images yet.</div>'}
@@ -408,22 +584,31 @@ function renderHome(projects) {
 
   return `
 <main class="page-home">
-  ${renderIntro()}
-  <aside class="project-rail" aria-label="Project quick navigation">
-    ${railBlocks || '<div class="rail-empty"></div>'}
-  </aside>
-  <div class="rail-preview" id="rail-preview">
-    <div class="rail-preview-title"></div>
-    <img alt="Preview" />
+  <div class="desktop-home-content">
+    ${renderIntro()}
+    <aside class="project-rail" aria-label="Project quick navigation">
+      ${railBlocks || '<div class="rail-empty"></div>'}
+    </aside>
+    <div class="rail-preview" id="rail-preview">
+      <div class="rail-preview-title"></div>
+      <img alt="Preview" />
+    </div>
+    <section class="projects-onepager" id="projects">
+      ${emptyState}
+    </section>
+    <a class="back-to-top" href="#intro">Back to top</a>
+    <footer class="home-footer">
+      <div>Thank you for viewing my portfolio :)</div>
+      <div>&copy; 2026 Jorne Scholiers. All rights reserved.</div>
+    </footer>
   </div>
-  <section class="projects-onepager" id="projects">
-    ${emptyState}
+  <section class="mobile-home-index" aria-labelledby="mobile-projects-title">
+    ${renderMobileIntro()}
+    <h1 class="title-font" id="mobile-projects-title">Graphic design projects</h1>
+    <div class="projects-list">
+      ${renderProjectRows(projects) || '<div class="empty-state">Projects will be added here.</div>'}
+    </div>
   </section>
-  <a class="back-to-top" href="#intro">Back to top</a>
-  <footer class="home-footer">
-    <div>Thank you for viewing my portfolio :)</div>
-    <div>&copy; 2026 Jorne Scholiers. All rights reserved.</div>
-  </footer>
 </main>`;
 }
 
@@ -486,10 +671,11 @@ function renderCollectionIndex(items, {
             fallback: imageSpanForOrientation(orientation),
           });
           const orientationAttr = orientation ? ` data-orientation="${orientation}"` : '';
+          const dimensions = imageDimensionAttributes(path.join(root, baseDirName, item.dirName, file));
           return `
       <figure data-span="${span}"${orientationAttr}>
         <div class="media-frame">
-          <img src="${src}" alt="${escapeHtml(item.title)} image ${idx + 1}" loading="lazy" decoding="async">
+          <img src="${src}" alt="${escapeHtml(item.title)} image ${idx + 1}"${dimensions} loading="lazy" decoding="async">
         </div>
       </figure>`;
         })
@@ -610,6 +796,20 @@ function renderPhotographyIndex(items) {
   });
 }
 
+function renderProjectsIndex(projects) {
+  return `
+<main class="page-projects">
+  <section class="projects-overview">
+    ${renderMobileIntro()}
+    <h1 class="title-font">Graphic design projects</h1>
+    <p class="projects-intro">Selected work by Jorne Scholiers across visual identity, editorial and packaging design, typography, experimental photography, and creative coding.</p>
+    <div class="projects-list">
+      ${renderProjectRows(projects) || '<div class="empty-state">Projects will be added here.</div>'}
+    </div>
+  </section>
+</main>`;
+}
+
 function renderProjectStepNav(nav) {
   if (!nav) return '';
   return `
@@ -634,6 +834,8 @@ function renderProjectPage(item, type, nav = null) {
   const images = orderedImages
     .map((file, idx) => {
       const src = toUrlPath(base, item.dirName, file);
+      const dimensions = imageDimensionAttributes(path.join(root, base, item.dirName, file));
+      const loading = idx === 0 ? ' loading="eager" fetchpriority="high"' : ' loading="lazy"';
       const span = resolveMediaSpan({
         type,
         dirName: item.dirName,
@@ -645,7 +847,7 @@ function renderProjectPage(item, type, nav = null) {
       return `
       <figure data-span="${span}">
         <div class="media-frame">
-          <img src="${src}" alt="${title} image ${idx + 1}" loading="lazy" decoding="async">
+          <img src="${src}" alt="${title} by Jorne Scholiers — ${captionFor(file)}"${dimensions}${loading} decoding="async">
         </div>
         <figcaption>${type === 'projects' ? captionFor(file) : escapeHtml(file)}</figcaption>
       </figure>`;
@@ -734,8 +936,9 @@ function renderProjectPage(item, type, nav = null) {
   const thumbnailTitle = escapeHtml(pageConfig.thumbnail_gallery?.title || 'All images');
   const thumbnailItems = (item.thumbnailImages || []).map((file, idx) => {
     const src = toUrlPath(base, item.dirName, item.thumbnailDir, file);
+    const dimensions = imageDimensionAttributes(path.join(root, base, item.dirName, item.thumbnailDir, file));
     return `<figure>
-      <img src="${src}" alt="${title} generated image ${idx + 1}" loading="lazy" decoding="async">
+      <img src="${src}" alt="${title} generated image ${idx + 1}"${dimensions} loading="lazy" decoding="async">
     </figure>`;
   }).join('\n');
   const thumbnailBlock = thumbnailItems
@@ -793,13 +996,13 @@ function renderSimplePage({ title, heading, content }) {
 function renderAboutPage() {
   return `
 <main class="page-simple">
-  <section class="about-intro">
+  <section class="about-intro" tabindex="0" aria-label="Biography and contact information">
     <h1 class="title-font">About</h1>
     <p>I&#39;m Jorne Scholiers, I am studying Visual Design at LUCA School of Arts in Ghent. My creative style is best described as abstract, experimental and bold. I&#39;ve always been drawn to visually dense work, the kind that invites you to look closer and keep discovering new details.</p>
     <p>I&#39;m always open to opportunities or collaborations. Feel free to contact me.</p>
     <p><a href="mailto:Jorne.Scholiers@icloud.com">Jorne.Scholiers@icloud.com</a></p>
   </section>
-  <section class="about-details">
+  <section class="about-details" tabindex="0" aria-label="Education, experience, and exhibitions">
     <section class="about-section" aria-labelledby="about-education-title">
       <h2 class="title-font" id="about-education-title">Education</h2>
       <ul class="about-list">
@@ -833,24 +1036,58 @@ function renderAboutPage() {
     </section>
   </section>
   <div class="about-portrait" tabindex="0" aria-label="Portrait of Jorne Scholiers">
-    <img class="about-portrait-base" src="images/ME%20Blurred.jpg" alt="Blurred portrait of Jorne Scholiers" loading="lazy" decoding="async">
-    <img class="about-portrait-hover" src="images/ME.webp" alt="Portrait of Jorne Scholiers" loading="lazy" decoding="async">
+    <img class="about-portrait-base" src="images/ME%20Blurred.jpg" alt="Blurred portrait of Jorne Scholiers"${imageDimensionAttributes(path.join(root, 'images', 'ME Blurred.jpg'))} loading="eager" fetchpriority="high" decoding="async">
+    <img class="about-portrait-hover" src="images/ME.webp" alt="Portrait of Jorne Scholiers"${imageDimensionAttributes(path.join(root, 'images', 'ME.webp'))} loading="lazy" decoding="async">
   </div>
 </main>`;
 }
 
-function renderLayout({ title, bodyClass, main }) {
-  return `${renderHead(title)}
+function renderLayout({ title, description, fileName, canonicalFile, image, imageAlt, pageType, schema, noIndex, bodyClass, main }) {
+  const accessibleMain = main.replace('<main', '<main id="main-content"');
+  return `${renderHead({ title, description, fileName, canonicalFile, image, imageAlt, pageType, schema, noIndex })}
 <body class="${bodyClass}">
+  <a class="skip-link" href="#main-content">Skip to content</a>
   ${renderNav()}
-  ${main}
+  ${accessibleMain}
   <script src="Scripts/site.js" defer></script>
 </body>
 </html>`;
 }
 
 function writeFile(fileName, content) {
-  fs.writeFileSync(path.join(root, fileName), content, 'utf8');
+  fs.writeFileSync(path.join(root, fileName), content.replace(/[ \t]+$/gm, ''), 'utf8');
+}
+
+function writeSearchFiles(pageNames) {
+  const urls = pageNames.map((fileName) => `  <url><loc>${escapeHtml(absoluteUrl(fileName))}</loc></url>`).join('\n');
+  writeFile('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls}
+</urlset>
+`);
+  writeFile('robots.txt', `User-agent: *
+Allow: /
+
+Sitemap: ${absoluteUrl('sitemap.xml')}
+`);
+}
+
+function writeLegacyRedirect(fileName, canonicalFile, label) {
+  const destination = escapeHtml(canonicalFile);
+  const head = renderHead({
+    title: `${label} | ${siteName}`,
+    description: `This page has moved to the current ${label} project page.`,
+    fileName,
+    canonicalFile,
+    noIndex: true,
+  }).replace('</head>', `  <meta http-equiv="refresh" content="0; url=${destination}">\n</head>`);
+  writeFile(fileName, `${head}
+<body>
+  <main class="page-simple">
+    <p>This page has moved to <a href="${destination}">${escapeHtml(label)}</a>.</p>
+  </main>
+</body>
+</html>`);
 }
 
 function buildSite() {
@@ -896,50 +1133,100 @@ function buildSite() {
   });
 
   const homeHtml = renderLayout({
-    title: 'Jorne Scholiers',
+    title: 'Jorne Scholiers — Visual & Graphic Designer, Ghent',
+    description: defaultDescription,
+    fileName: '',
+    image: projects[0] ? previewImagePath(projects[0]) : defaultSocialImage,
+    imageAlt: 'Selected visual design work by Jorne Scholiers',
+    schema: {
+      '@graph': [
+        personSchema(),
+        {
+          '@type': 'WebSite',
+          '@id': `${siteUrl}#website`,
+          name: `${siteName} — Visual Design Portfolio`,
+          url: siteUrl,
+          description: defaultDescription,
+          author: { '@id': `${siteUrl}#jorne-scholiers` },
+          inLanguage: 'en',
+        },
+      ],
+    },
     bodyClass: 'page-home',
     main: renderHome(projects),
   });
 
+  const projectsHtml = renderLayout({
+    title: 'Graphic Design Projects | Jorne Scholiers',
+    description: 'Explore graphic and visual design projects by Jorne Scholiers, including identities, editorial design, typography, packaging, photography, and creative coding.',
+    fileName: 'projects.html',
+    image: projects[0] ? previewImagePath(projects[0]) : defaultSocialImage,
+    schema: {
+      '@type': 'CollectionPage',
+      name: 'Graphic Design Projects by Jorne Scholiers',
+      url: absoluteUrl('projects.html'),
+      author: { '@id': `${siteUrl}#jorne-scholiers` },
+    },
+    bodyClass: 'page-projects',
+    main: renderProjectsIndex(projects),
+  });
+
   const archiveHtml = renderLayout({
-    title: 'Archive - Jorne Scholiers',
+    title: 'Design Archive | Jorne Scholiers',
+    description: 'An archive of experiments, drafts, visual studies, and side projects by Ghent-based visual designer Jorne Scholiers.',
+    fileName: 'archive.html',
+    schema: { '@type': 'CollectionPage', name: 'Design Archive by Jorne Scholiers', url: absoluteUrl('archive.html') },
     bodyClass: 'page-archive',
     main: renderArchiveIndex(archive),
   });
 
   const aboutHtml = renderLayout({
-    title: 'About - Jorne Scholiers',
+    title: 'About Jorne Scholiers | Visual Designer in Ghent',
+    description: 'Meet Jorne Scholiers, a visual and graphic designer studying at LUCA School of Arts in Ghent, Belgium, with a bold and experimental practice.',
+    fileName: 'about.html',
+    image: 'images/ME.webp',
+    imageAlt: 'Portrait of visual designer Jorne Scholiers',
+    schema: personSchema(),
     bodyClass: 'page-simple page-about',
     main: renderAboutPage(),
   });
 
   const photographyHtml = renderLayout({
-    title: 'Photography - Jorne Scholiers',
+    title: 'Experimental Photography | Jorne Scholiers',
+    description: 'Selected experimental photography and ongoing photographic series by visual designer Jorne Scholiers in Ghent.',
+    fileName: 'photography.html',
+    image: photography[0]?.images[0] ? toUrlPath('photography', photography[0].dirName, photography[0].images[0]) : defaultSocialImage,
+    schema: { '@type': 'CollectionPage', name: 'Photography by Jorne Scholiers', url: absoluteUrl('photography.html') },
     bodyClass: 'page-archive page-photography',
     main: renderPhotographyIndex(photography),
   });
 
-  const contactHtml = renderLayout({
-    title: 'Contact - Jorne Scholiers',
-    bodyClass: 'page-simple',
-    main: renderSimplePage({
-      title: 'Contact',
-      heading: 'Contact',
-      content: '<p>Email: <a href="mailto:hello@jornescholiers.com">hello@jornescholiers.com</a></p>',
-    }),
-  });
-
   writeFile('index.html', homeHtml);
+  writeFile('projects.html', projectsHtml);
   writeFile('archive.html', archiveHtml);
   writeFile('about.html', aboutHtml);
   writeFile('photography.html', photographyHtml);
-  writeFile('contact.html', contactHtml);
 
   projects.forEach((project, index) => {
     const prevProject = projects[(index - 1 + projects.length) % projects.length];
     const nextProject = projects[(index + 1) % projects.length];
     const projectHtml = renderLayout({
-      title: `${project.title} - Jorne Scholiers`,
+      title: `${project.title} | Jorne Scholiers`,
+      description: project.description || `${project.title}, a visual design project by Jorne Scholiers.`,
+      fileName: `project-${project.slug}.html`,
+      image: previewImagePath(project) || defaultSocialImage,
+      imageAlt: `${project.title}, a project by Jorne Scholiers`,
+      pageType: 'article',
+      schema: {
+        '@type': 'CreativeWork',
+        name: project.title,
+        url: absoluteUrl(`project-${project.slug}.html`),
+        description: truncateDescription(project.description || `${project.title}, a visual design project by Jorne Scholiers.`, 300),
+        image: absoluteUrl(previewImagePath(project) || defaultSocialImage),
+        dateCreated: String(project.year || ''),
+        creator: { '@id': `${siteUrl}#jorne-scholiers` },
+        keywords: (projectKeywords[project.dirName] || ['visual design', 'graphic design']).join(', '),
+      },
       bodyClass: 'page-detail',
       main: renderProjectPage(project, 'projects', {
         prev: {
@@ -955,14 +1242,17 @@ function buildSite() {
     writeFile(`project-${project.slug}.html`, projectHtml);
   });
 
-  archive.forEach((item) => {
-    const archivePage = renderLayout({
-      title: `${item.title} - Archive`,
-      bodyClass: 'page-detail',
-      main: renderProjectPage(item, 'archive'),
-    });
-    writeFile(`archive-${item.slug}.html`, archivePage);
-  });
+  writeLegacyRedirect('project-poster-party.html', 'project-2024-0-poster-party.html', 'Poster Party');
+  writeLegacyRedirect('project-yesyoucan.html', 'project-2024-0-yesyoucan.html', 'YesYouCan');
+
+  writeSearchFiles([
+    '',
+    'about.html',
+    'projects.html',
+    'archive.html',
+    'photography.html',
+    ...projects.map((project) => `project-${project.slug}.html`),
+  ]);
 }
 
 if (require.main === module) {

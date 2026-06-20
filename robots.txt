@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://overgrootoma.github.io/Jorne-Scholiers/sitemap.xml

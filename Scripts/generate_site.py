@@ -3,6 +3,7 @@ import json
 import os
 import re
 import struct
+import subprocess
 from urllib.parse import quote
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -756,7 +757,7 @@ def write_file(name, content):
         handle.write(content)
 
 
-def build_site():
+def build_site_legacy():
     projects = build_items(PROJECTS_DIR, 'projects')
     archive = build_items(ARCHIVE_DIR, 'archive')
     photography = build_items(PHOTOGRAPHY_DIR, 'photography')
@@ -820,6 +821,15 @@ def build_site():
     for item in archive:
         page = render_layout(f"{item['title']} - Archive", 'page-detail', render_project_page(item, 'archive'))
         write_file(f"archive-{item['slug']}.html", page)
+
+
+def build_site():
+    """Use the canonical JavaScript generator so deleted outputs stay deleted."""
+    subprocess.run(
+        ['node', os.path.join(ROOT, 'Scripts', 'generate-site.js')],
+        cwd=ROOT,
+        check=True,
+    )
 
 
 if __name__ == '__main__':

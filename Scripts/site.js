@@ -22,7 +22,11 @@
     let currentNavPath = null;
     if (currentPath === 'about.html') {
       currentNavPath = 'about.html';
-    } else if (currentPath === 'projects.html' || currentPath.startsWith('project-')) {
+    } else if (
+      currentPath === 'projects.html'
+      || currentPath.startsWith('project-')
+      || (currentPath === 'index.html' && window.matchMedia('(max-width: 900px)').matches)
+    ) {
       currentNavPath = 'projects.html';
     } else if (
       currentPath === 'archive.html' ||
@@ -349,8 +353,10 @@
     el.style.setProperty('--axis-ypn2', axes.ypn2);
   };
 
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   titleEls.forEach((el) => {
     applyAxes(el, baseWeight, baseAxes);
+    if (prefersReducedMotion) return;
     const interval = 2800 + Math.random() * 2200;
     setInterval(() => {
       applyAxes(el, randomWeight(), randomAxes());
@@ -496,7 +502,7 @@
       const safeZoneHeight = clamp(height * 0.18, 140, 210);
       const maxBySide = (width - safeZoneWidth - margin * 4) / 2;
       const maxByRows = (height - safeZoneHeight - margin * 4) / 2;
-      const sizeFromCount = count >= 5 ? 240 : count === 4 ? 260 : count === 3 ? 285 : 320;
+      const sizeFromCount = count >= 5 ? 260 : count === 4 ? 280 : count === 3 ? 305 : 340;
       const baseSize = Math.max(200, Math.min(sizeFromCount, maxBySide * 1.04, maxByRows * 1.16));
       const pattern = HOME_SCATTER_PATTERNS[Math.min(count, 5)] || HOME_SCATTER_PATTERNS[5];
       const safeGapX = clamp(width * 0.012, 8, 18);
@@ -621,7 +627,29 @@
     clearDragging();
 
     images.forEach((img) => {
+      const projectUrl = img.dataset.projectUrl;
+      let suppressClickUntil = 0;
+
       img.draggable = false;
+      if (projectUrl) {
+        img.tabIndex = 0;
+        img.setAttribute('role', 'link');
+        img.setAttribute('aria-label', `${img.alt}. Open project information.`);
+        img.title = 'Click to view project information or drag to reposition';
+        img.addEventListener('click', (event) => {
+          if (Date.now() < suppressClickUntil) {
+            event.preventDefault();
+            return;
+          }
+          window.location.assign(projectUrl);
+        });
+        img.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            window.location.assign(projectUrl);
+          }
+        });
+      }
       img.addEventListener('dragstart', (event) => event.preventDefault());
       img.addEventListener('pointerdown', (event) => {
         const gallery = img.closest('.project-gallery');
@@ -632,8 +660,6 @@
         img.setPointerCapture(event.pointerId);
         img.classList.add('is-dragging');
         img.style.zIndex = String(zCounter++);
-        event.preventDefault();
-
         const galleryRect = gallery.getBoundingClientRect();
         const imgRect = img.getBoundingClientRect();
         const offsetX = event.clientX - imgRect.left;
@@ -646,7 +672,7 @@
           if (!hasMoved) {
             const dx = moveEvent.clientX - startX;
             const dy = moveEvent.clientY - startY;
-            if (Math.hypot(dx, dy) < 1) {
+            if (Math.hypot(dx, dy) < 5) {
               return;
             }
             hasMoved = true;
@@ -662,7 +688,10 @@
           img.style.top = `${Math.round(nextY)}px`;
         };
 
-        const onUp = () => {
+        const onUp = (upEvent) => {
+          if (hasMoved && upEvent.type !== 'pointercancel') {
+            suppressClickUntil = Date.now() + 400;
+          }
           img.classList.remove('is-dragging');
           img.removeEventListener('pointermove', onMove);
           img.removeEventListener('pointerup', onUp);
@@ -702,7 +731,13 @@
 
     const lightbox = document.createElement('div');
     lightbox.className = 'image-lightbox';
+    lightbox.setAttribute('role', 'dialog');
+    lightbox.setAttribute('aria-modal', 'true');
+    lightbox.setAttribute('aria-label', 'Project image viewer');
+    lightbox.setAttribute('aria-hidden', 'true');
+    lightbox.inert = true;
     lightbox.innerHTML = `
+      <button class="lightbox-close" type="button" aria-label="Close image viewer">Close</button>
       <button class="lightbox-control lightbox-control--prev" type="button" aria-label="Previous image">
         <span aria-hidden="true">&lt;</span>
       </button>
@@ -730,11 +765,13 @@
     const lens = lightbox.querySelector('.lightbox-lens');
     const magnifierButton = lightbox.querySelector('.lightbox-tool--magnifier');
     const magnificationSlider = lightbox.querySelector('.lightbox-slider');
+    const closeButton = lightbox.querySelector('.lightbox-close');
     const prevButton = lightbox.querySelector('.lightbox-control--prev');
     const nextButton = lightbox.querySelector('.lightbox-control--next');
     let currentIndex = 0;
     let magnifierActive = false;
     let lastLensPoint = null;
+    let lastFocusedElement = null;
 
     const isOpen = () => lightbox.classList.contains('is-visible');
     const setMagnifierActive = (active) => {
@@ -771,14 +808,24 @@
 
     const close = () => {
       lightbox.classList.remove('is-visible');
+      lightbox.setAttribute('aria-hidden', 'true');
+      lightbox.inert = true;
       setMagnifierActive(false);
       lastLensPoint = null;
       lightboxImg.removeAttribute('src');
       document.body.classList.remove('overlay-open');
+      if (lastFocusedElement instanceof HTMLElement) {
+        lastFocusedElement.focus();
+      }
+      lastFocusedElement = null;
     };
 
     const showAt = (index) => {
       if (!images.length) return;
+      const wasOpen = isOpen();
+      if (!wasOpen) {
+        lastFocusedElement = document.activeElement;
+      }
       currentIndex = (index + images.length) % images.length;
       const img = images[currentIndex];
       lightboxImg.src = img.src;
@@ -786,13 +833,32 @@
       lens.style.backgroundImage = `url("${img.src}")`;
       lens.classList.remove('is-visible');
       lightbox.classList.add('is-visible');
+      lightbox.setAttribute('aria-hidden', 'false');
+      lightbox.inert = false;
       document.body.classList.add('overlay-open');
+      if (!wasOpen) {
+        window.requestAnimationFrame(() => closeButton.focus());
+      }
     };
 
     images.forEach((img, index) => {
+      img.tabIndex = 0;
+      img.setAttribute('role', 'button');
+      img.setAttribute('aria-label', `${img.alt || 'Project image'}. Open larger image.`);
       img.addEventListener('click', () => {
         showAt(index);
       });
+      img.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          showAt(index);
+        }
+      });
+    });
+
+    closeButton.addEventListener('click', (event) => {
+      event.stopPropagation();
+      close();
     });
 
     prevButton.addEventListener('click', (event) => {
@@ -846,6 +912,18 @@
         event.preventDefault();
         showAt(currentIndex + 1);
       }
+      if (event.key === 'Tab') {
+        const focusable = Array.from(lightbox.querySelectorAll('button, input')).filter((element) => !element.disabled);
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
     });
   };
 
@@ -857,6 +935,7 @@
     const overlay = document.createElement('div');
     overlay.className = 'pdf-lightbox';
     overlay.setAttribute('aria-hidden', 'true');
+    overlay.inert = true;
     overlay.innerHTML = `
       <div class="pdf-lightbox__panel" role="dialog" aria-modal="true" aria-label="PDF preview">
         <button class="pdf-lightbox__close" type="button" aria-label="Close PDF">Close</button>
@@ -867,22 +946,31 @@
 
     const frame = overlay.querySelector('.pdf-lightbox__frame');
     const closeButton = overlay.querySelector('.pdf-lightbox__close');
+    let lastFocusedElement = null;
 
     const isOpen = () => overlay.classList.contains('is-visible');
 
     const open = (href, label) => {
+      lastFocusedElement = document.activeElement;
       frame.src = href;
       frame.setAttribute('title', label || 'PDF preview');
       overlay.classList.add('is-visible');
       overlay.setAttribute('aria-hidden', 'false');
+      overlay.inert = false;
       document.body.classList.add('overlay-open');
+      window.requestAnimationFrame(() => closeButton.focus());
     };
 
     const close = () => {
       overlay.classList.remove('is-visible');
       overlay.setAttribute('aria-hidden', 'true');
+      overlay.inert = true;
       frame.removeAttribute('src');
       document.body.classList.remove('overlay-open');
+      if (lastFocusedElement instanceof HTMLElement) {
+        lastFocusedElement.focus();
+      }
+      lastFocusedElement = null;
     };
 
     pdfLinks.forEach((link) => {
@@ -906,6 +994,10 @@
       if (!isOpen()) return;
       if (event.key === 'Escape') {
         close();
+      }
+      if (event.key === 'Tab') {
+        event.preventDefault();
+        closeButton.focus();
       }
     });
   };
