@@ -209,7 +209,11 @@
   </p></div>
   </details>
     <h1 class="visually-hidden" id="mobile-projects-title">Graphic design projects</h1>
-    <div class="projects-list">
+    <div class="projects-view-toggle" role="group" aria-label="Project index view">
+      <button class="projects-view-toggle__button is-active" type="button" data-projects-view="list" aria-pressed="true">List</button>
+      <button class="projects-view-toggle__button" type="button" data-projects-view="grid" aria-pressed="false">Grid</button>
+    </div>
+    <div class="projects-list" data-projects-list data-view="list">
 
       <a class="project-row" href="project-2026-0-sound-translations-of-fungal-forms.html">
         <div class="project-info">

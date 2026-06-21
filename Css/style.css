@@ -928,9 +928,9 @@ h6 {
   line-height: 1.35;
 }
 
-.archive-top-link {
-  display: inline-flex;
-  margin-top: 12px;
+.archive-view-toggle {
+  justify-content: flex-end;
+  margin: 12px 0 0;
 }
 
 .archive-list {
@@ -1440,7 +1440,7 @@ h6 {
   }
 
   .mobile-home-index .projects-list {
-    margin-top: clamp(24px, 7vw, 42px);
+    margin-top: 0;
   }
 
   .project-rail,
@@ -1484,6 +1484,10 @@ h6 {
     justify-self: start;
     text-align: left;
     max-width: none;
+  }
+
+  .archive-view-toggle {
+    justify-content: flex-start;
   }
 
   .archive-entry-gallery figure {
@@ -1925,14 +1929,29 @@ body.footer-visible .project-step-nav {
 
 @media (max-width: 700px) {
   .lightbox-close {
-    top: 72px;
+    top: max(12px, env(safe-area-inset-top));
     left: 12px;
   }
 
   .lightbox-toolbar {
-    top: 72px;
+    top: max(12px, env(safe-area-inset-top));
     right: 12px;
     gap: 8px;
+  }
+
+  .lightbox-stage {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    padding: 64px 42px;
+  }
+
+  .image-lightbox img {
+    max-width: 100%;
+    max-height: calc(100vh - 128px);
+    max-height: calc(100dvh - 128px);
   }
 
   .lightbox-slider {
@@ -1945,11 +1964,11 @@ body.footer-visible .project-step-nav {
   }
 
   .image-lightbox .lightbox-control--prev {
-    left: 12px;
+    left: 2px;
   }
 
   .image-lightbox .lightbox-control--next {
-    right: 12px;
+    right: 2px;
   }
 }
 

@@ -616,7 +616,11 @@ function renderHome(projects) {
   <section class="mobile-home-index" aria-labelledby="mobile-projects-title">
     ${renderMobileIntro()}
     <h1 class="visually-hidden" id="mobile-projects-title">Graphic design projects</h1>
-    <div class="projects-list">
+    <div class="projects-view-toggle" role="group" aria-label="Project index view">
+      <button class="projects-view-toggle__button is-active" type="button" data-projects-view="list" aria-pressed="true">List</button>
+      <button class="projects-view-toggle__button" type="button" data-projects-view="grid" aria-pressed="false">Grid</button>
+    </div>
+    <div class="projects-list" data-projects-list data-view="list">
       ${renderProjectRows(projects, { compact: true }) || '<div class="empty-state">Projects will be added here.</div>'}
     </div>
   </section>
@@ -640,8 +644,7 @@ function collectionPreviewPath(baseDirName, item) {
 function renderCollectionIndex(items, {
   heading,
   introText,
-  topLinkHref,
-  topLinkLabel,
+  activeCollection,
   railAriaLabel,
   sectionPrefix,
   baseDirName,
@@ -768,7 +771,10 @@ function renderCollectionIndex(items, {
     <h1 class="title-font"><a class="archive-heading-link" href="#${sectionPrefix}-top">${escapeHtml(heading)}</a></h1>
     <div class="archive-intro-meta">
       <p>${escapeHtml(introText)}</p>
-      <a class="archive-top-link btn" href="${topLinkHref}">${escapeHtml(topLinkLabel)}</a>
+      <nav class="projects-view-toggle archive-view-toggle" aria-label="Archive view">
+        <a class="projects-view-toggle__button${activeCollection === 'designs' ? ' is-active' : ''}" href="archive.html"${activeCollection === 'designs' ? ' aria-current="page"' : ''}>Designs</a>
+        <a class="projects-view-toggle__button${activeCollection === 'photography' ? ' is-active' : ''}" href="photography.html"${activeCollection === 'photography' ? ' aria-current="page"' : ''}>Photography</a>
+      </nav>
     </div>
   </section>
   <section class="archive-list">
@@ -781,8 +787,7 @@ function renderArchiveIndex(items) {
   return renderCollectionIndex(items, {
     heading: 'Archive',
     introText: 'Experiments, drafts, and side quests.',
-    topLinkHref: 'photography.html',
-    topLinkLabel: 'Photography',
+    activeCollection: 'designs',
     railAriaLabel: 'Archive years navigation',
     sectionPrefix: 'archive',
     baseDirName: 'Archive',
@@ -796,8 +801,7 @@ function renderPhotographyIndex(items) {
   return renderCollectionIndex(items, {
     heading: 'Photography',
     introText: 'Selected photography work and ongoing series.',
-    topLinkHref: 'archive.html',
-    topLinkLabel: 'Archive',
+    activeCollection: 'photography',
     railAriaLabel: 'Photography years navigation',
     sectionPrefix: 'photography',
     baseDirName: 'photography',

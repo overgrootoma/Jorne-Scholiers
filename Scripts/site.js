@@ -715,7 +715,6 @@
     const isDetailPage = document.body.classList.contains('page-detail');
     const isArchivePage = document.body.classList.contains('page-archive');
     if (!isDetailPage && !isArchivePage) return;
-    if (window.innerWidth <= 900) return;
 
     const selector = isDetailPage
       ? '.detail-gallery img'
