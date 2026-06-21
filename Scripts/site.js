@@ -412,29 +412,29 @@
   const HOME_SCATTER_VIEWPORT_MARGIN = 18;
   const HOME_SCATTER_PATTERNS = {
     1: [
-      { xSide: 'left', ySide: 'top', xDepth: 0.86, yDepth: 0.76 },
+      { xSide: 'left', ySide: 'bottom', xDepth: 0.42, yDepth: 0.38 },
     ],
     2: [
-      { xSide: 'left', ySide: 'top', xDepth: 0.86, yDepth: 0.76 },
-      { xSide: 'right', ySide: 'bottom', xDepth: 0.84, yDepth: 0.58 },
+      { xSide: 'left', ySide: 'top', xDepth: 0.24, yDepth: 0.3 },
+      { xSide: 'right', ySide: 'bottom', xDepth: 0.5, yDepth: 0.42 },
     ],
     3: [
-      { xSide: 'left', ySide: 'top', xDepth: 0.86, yDepth: 0.76 },
-      { xSide: 'right', ySide: 'top', xDepth: 0.82, yDepth: 0.62 },
-      { xSide: 'left', ySide: 'bottom', xDepth: 0.88, yDepth: 0.56 },
+      { xSide: 'left', ySide: 'top', xDepth: 0.18, yDepth: 0.2 },
+      { xSide: 'right', ySide: 'top', xDepth: 0.58, yDepth: 0.68 },
+      { xSide: 'left', ySide: 'bottom', xDepth: 0.7, yDepth: 0.32 },
     ],
     4: [
-      { xSide: 'left', ySide: 'top', xDepth: 0.86, yDepth: 0.76 },
-      { xSide: 'right', ySide: 'top', xDepth: 0.82, yDepth: 0.6 },
-      { xSide: 'left', ySide: 'bottom', xDepth: 0.88, yDepth: 0.54 },
-      { xSide: 'right', ySide: 'bottom', xDepth: 0.84, yDepth: 0.5 },
+      { xSide: 'left', ySide: 'top', xDepth: 0.16, yDepth: 0.18 },
+      { xSide: 'right', ySide: 'top', xDepth: 0.64, yDepth: 0.72 },
+      { xSide: 'left', ySide: 'bottom', xDepth: 0.72, yDepth: 0.42 },
+      { xSide: 'right', ySide: 'bottom', xDepth: 0.2, yDepth: 0.16 },
     ],
     5: [
-      { xSide: 'left', ySide: 'top', xDepth: 0.86, yDepth: 0.78 },
-      { xSide: 'right', ySide: 'top', xDepth: 0.82, yDepth: 0.6 },
-      { xSide: 'left', ySide: 'bottom', xDepth: 0.9, yDepth: 0.52 },
-      { xSide: 'right', ySide: 'bottom', xDepth: 0.84, yDepth: 0.48 },
-      { xSide: 'left', ySide: 'top', xDepth: 0.66, yDepth: 0.24 },
+      { xSide: 'left', ySide: 'top', xDepth: 0.12, yDepth: 0.12 },
+      { xSide: 'right', ySide: 'top', xDepth: 0.62, yDepth: 0.74 },
+      { xSide: 'left', ySide: 'bottom', xDepth: 0.68, yDepth: 0.48 },
+      { xSide: 'right', ySide: 'bottom', xDepth: 0.16, yDepth: 0.14 },
+      { xSide: 'left', ySide: 'top', xDepth: 0.86, yDepth: 0.9 },
     ],
   };
 
@@ -502,8 +502,8 @@
       const safeZoneHeight = clamp(height * 0.18, 140, 210);
       const maxBySide = (width - safeZoneWidth - margin * 4) / 2;
       const maxByRows = (height - safeZoneHeight - margin * 4) / 2;
-      const sizeFromCount = count >= 5 ? 260 : count === 4 ? 280 : count === 3 ? 305 : 340;
-      const baseSize = Math.max(200, Math.min(sizeFromCount, maxBySide * 1.04, maxByRows * 1.16));
+      const sizeFromCount = count >= 5 ? 210 : count === 4 ? 225 : count === 3 ? 245 : 270;
+      const baseSize = Math.max(160, Math.min(sizeFromCount, maxBySide * 1.04, maxByRows * 1.16));
       const pattern = HOME_SCATTER_PATTERNS[Math.min(count, 5)] || HOME_SCATTER_PATTERNS[5];
       const safeGapX = clamp(width * 0.012, 8, 18);
       const safeGapY = clamp(height * 0.018, 10, 18);
@@ -528,8 +528,7 @@
       const placed = [];
       images.forEach((img, index) => {
         img.draggable = false;
-        const sizeScale = 0.96 + Math.random() * 0.16;
-        const imgW = Math.round(baseSize * sizeScale);
+        const imgW = Math.round(baseSize);
         const imgH = imgW;
         const { minX, maxX } = horizontalViewportBounds(gallery, imgW, margin);
         const maxY = Math.max(margin, height - imgH - margin);
@@ -538,18 +537,13 @@
         const topSafeY = clamp(safeTop - imgH - safeGapY, margin, maxY);
         const bottomSafeY = clamp(safeBottom + safeGapY, margin, maxY);
         const anchor = pattern[index] || pattern[pattern.length - 1];
-        const jitterRange = Math.max(18, Math.round(baseSize * 0.12));
-        const jitterX = (Math.random() - 0.5) * jitterRange;
-        const jitterY = (Math.random() - 0.5) * jitterRange;
-        const xDepthBase = interpolate(anchor.xDepth ?? 0.72, 0.92, 0.45);
-        const yDepthBase = interpolate(anchor.yDepth ?? 0.66, 0.9, 0.5);
-        const xDepth = clamp(xDepthBase + (Math.random() - 0.5) * 0.12, 0.58, 0.98);
-        const yDepth = clamp(yDepthBase + (Math.random() - 0.5) * 0.12, 0.4, 0.96);
+        const xDepth = clamp(anchor.xDepth ?? 0.5, 0.08, 0.94);
+        const yDepth = clamp(anchor.yDepth ?? 0.5, 0.08, 0.94);
         let x = axisPositionWithinSafeLanes({
           nearEdge: anchor.xSide === 'left' ? minX : maxX,
           nearSafe: anchor.xSide === 'left' ? leftSafeX : rightSafeX,
           depth: xDepth,
-          jitter: jitterX,
+          jitter: 0,
           min: minX,
           max: maxX,
         });
@@ -557,7 +551,7 @@
           nearEdge: anchor.ySide === 'top' ? margin : maxY,
           nearSafe: anchor.ySide === 'top' ? topSafeY : bottomSafeY,
           depth: yDepth,
-          jitter: jitterY,
+          jitter: 0,
           min: margin,
           max: maxY,
         });
@@ -1033,10 +1027,51 @@
     resetPosition();
   };
 
+  const setupFooterVisibility = () => {
+    const footer = document.querySelector('.site-footer');
+    if (!footer) return;
+
+    const updateVisibility = () => {
+      const documentHeight = document.documentElement.scrollHeight;
+      const isAtBottom = window.scrollY + window.innerHeight >= documentHeight - 2;
+      footer.classList.toggle('is-visible', isAtBottom);
+      document.body.classList.toggle('footer-visible', isAtBottom);
+      footer.toggleAttribute('inert', !isAtBottom);
+      footer.setAttribute('aria-hidden', String(!isAtBottom));
+    };
+
+    window.addEventListener('scroll', updateVisibility, { passive: true });
+    window.addEventListener('resize', updateVisibility);
+    window.addEventListener('portfolio:layoutchange', updateVisibility);
+    updateVisibility();
+  };
+
+  const setupProjectsViewToggle = () => {
+    const projectsList = document.querySelector('[data-projects-list]');
+    const buttons = Array.from(document.querySelectorAll('[data-projects-view]'));
+    if (!projectsList || !buttons.length) return;
+
+    const setView = (view) => {
+      projectsList.dataset.view = view;
+      buttons.forEach((button) => {
+        const isActive = button.dataset.projectsView === view;
+        button.classList.toggle('is-active', isActive);
+        button.setAttribute('aria-pressed', String(isActive));
+      });
+      window.dispatchEvent(new Event('portfolio:layoutchange'));
+    };
+
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => setView(button.dataset.projectsView));
+    });
+  };
+
   setupConfigurableMediaSpans().finally(() => {
     setupArchiveOrientationSpans();
     setupLightbox();
   });
   setupPdfOverlay();
   setupAboutPortraitReveal();
+  setupFooterVisibility();
+  setupProjectsViewToggle();
 })();

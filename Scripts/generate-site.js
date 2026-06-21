@@ -532,19 +532,21 @@ function renderMobileIntro() {
   </details>`;
 }
 
-function renderProjectRows(projects) {
+function renderProjectRows(projects, { compact = false } = {}) {
   return projects.map((project, index) => {
     const displayTitle = project.pageConfig?.index_title || project.title;
     const image = project.pageConfig?.index_image || previewImagePath(project);
     const dimensions = rootImageDimensionAttributes(image);
     const loading = index === 0 ? ' loading="eager" fetchpriority="high"' : ' loading="lazy"';
-    const summary = firstSentence(project.description || `${project.title}, a visual design project by Jorne Scholiers.`);
+    const summary = compact
+      ? '<span class="project-row-action">View project</span>'
+      : `<p class="project-summary">${escapeHtml(firstSentence(project.description || `${project.title}, a visual design project by Jorne Scholiers.`))}</p>`;
     return `
       <a class="project-row" href="project-${project.slug}.html">
         <div class="project-info">
           <h2>${escapeHtml(displayTitle)}</h2>
           <div class="project-year">${escapeHtml(project.year)}</div>
-          <p class="project-summary">${escapeHtml(summary)}</p>
+          ${summary}
         </div>
         <div class="project-thumb">
           <img src="${image}" alt="Preview of ${escapeHtml(displayTitle)} by Jorne Scholiers"${dimensions}${loading} decoding="async">
@@ -553,15 +555,28 @@ function renderProjectRows(projects) {
   }).join('');
 }
 
-function renderHome(projects) {
+function renderProjectRail(projects, { linkToSections = false, currentSlug = null } = {}) {
   const railBlocks = projects
-    .map((project, index) => {
-      const previewImage = previewImagePath(project);
+    .map((project) => {
+      const previewImage = project.pageConfig?.index_image || previewImagePath(project);
       const title = escapeHtml(project.title);
-      return `<a class="rail-block" href="#project-${project.slug}" style="--rail-color: ${project.accent}" data-title="${title}" data-image="${previewImage}" aria-label="${title}"></a>`;
+      const href = linkToSections ? `#project-${project.slug}` : `project-${project.slug}.html`;
+      const current = project.slug === currentSlug ? ' is-current' : '';
+      const ariaCurrent = project.slug === currentSlug ? ' aria-current="page"' : '';
+      return `<a class="rail-block${current}" href="${href}" style="--rail-color: ${project.accent}" data-title="${title}" data-image="${previewImage}" aria-label="${title}"${ariaCurrent}></a>`;
     })
     .join('\n');
 
+  return `<aside class="project-rail" aria-label="Project quick navigation">
+      ${railBlocks || '<div class="rail-empty"></div>'}
+    </aside>
+    <div class="rail-preview" id="rail-preview">
+      <div class="rail-preview-title"></div>
+      <img alt="Project preview" />
+    </div>`;
+}
+
+function renderHome(projects) {
   const sections = projects
     .map((project) => {
       const page = `project-${project.slug}.html`;
@@ -574,7 +589,7 @@ function renderHome(projects) {
       <article class="project-section" id="project-${project.slug}">
         <div class="project-sticky" style="--accent: ${project.accent}">
           <h2 class="title-font">${escapeHtml(project.title)}</h2>
-          <div class="project-meta">${project.pageConfig?.meta || project.year || ''}</div>
+          <div class="project-meta">${escapeHtml(project.year || '')}</div>
           <a class="btn" href="${page}">View project</a>
         </div>
         <div class="project-gallery">
@@ -592,27 +607,17 @@ function renderHome(projects) {
 <main class="page-home">
   <div class="desktop-home-content">
     ${renderIntro()}
-    <aside class="project-rail" aria-label="Project quick navigation">
-      ${railBlocks || '<div class="rail-empty"></div>'}
-    </aside>
-    <div class="rail-preview" id="rail-preview">
-      <div class="rail-preview-title"></div>
-      <img alt="Preview" />
-    </div>
+    ${renderProjectRail(projects, { linkToSections: true })}
     <section class="projects-onepager" id="projects">
       ${emptyState}
     </section>
     <a class="back-to-top" href="#intro">Back to top</a>
-    <footer class="home-footer">
-      <div>Thank you for viewing my portfolio :)</div>
-      <div>&copy; 2026 Jorne Scholiers. All rights reserved.</div>
-    </footer>
   </div>
   <section class="mobile-home-index" aria-labelledby="mobile-projects-title">
     ${renderMobileIntro()}
     <h1 class="visually-hidden" id="mobile-projects-title">Graphic design projects</h1>
     <div class="projects-list">
-      ${renderProjectRows(projects) || '<div class="empty-state">Projects will be added here.</div>'}
+      ${renderProjectRows(projects, { compact: true }) || '<div class="empty-state">Projects will be added here.</div>'}
     </div>
   </section>
 </main>`;
@@ -808,7 +813,11 @@ function renderProjectsIndex(projects) {
   <section class="projects-overview">
     ${renderMobileIntro()}
     <h1 class="visually-hidden">Graphic design projects</h1>
-    <div class="projects-list">
+    <div class="projects-view-toggle" role="group" aria-label="Project index view">
+      <button class="projects-view-toggle__button is-active" type="button" data-projects-view="list" aria-pressed="true">List</button>
+      <button class="projects-view-toggle__button" type="button" data-projects-view="grid" aria-pressed="false">Grid</button>
+    </div>
+    <div class="projects-list" data-projects-list data-view="list">
       ${renderProjectRows(projects) || '<div class="empty-state">Projects will be added here.</div>'}
     </div>
   </section>
@@ -820,10 +829,12 @@ function renderProjectStepNav(nav) {
   return `
   <nav class="project-step-nav" aria-label="Project navigation">
     <a class="project-step project-step--prev" href="${nav.prev.href}" aria-label="Previous project: ${escapeHtml(nav.prev.title)}">
-      <span aria-hidden="true">&lt;</span>
+      <span class="project-step-arrow" aria-hidden="true">&lt;</span>
+      <span class="project-step-label">${escapeHtml(nav.prev.label || nav.prev.title)}</span>
     </a>
     <a class="project-step project-step--next" href="${nav.next.href}" aria-label="Next project: ${escapeHtml(nav.next.title)}">
-      <span aria-hidden="true">&gt;</span>
+      <span class="project-step-label">${escapeHtml(nav.next.label || nav.next.title)}</span>
+      <span class="project-step-arrow" aria-hidden="true">&gt;</span>
     </a>
   </nav>`;
 }
@@ -969,7 +980,7 @@ function renderProjectPage(item, type, nav = null) {
 
   return `
 <main class="page-detail">
-  ${type === 'projects' ? renderProjectStepNav(nav) : ''}
+  ${type === 'projects' && nav?.projects ? renderProjectRail(nav.projects, { currentSlug: item.slug }) : ''}
   <section class="detail-header">
     ${backLink}
     <h1 class="title-font">${title}</h1>
@@ -983,6 +994,7 @@ function renderProjectPage(item, type, nav = null) {
   ${showcaseBlock}
   ${thumbnailBlock}
   ${filesBlock}
+  ${type === 'projects' ? renderProjectStepNav(nav) : ''}
 </main>`;
 }
 
@@ -1041,6 +1053,20 @@ function renderAboutPage() {
 </main>`;
 }
 
+function renderFooter() {
+  return `<footer class="site-footer">
+    <div class="site-footer-copy">
+      <div>Thank you for viewing my portfolio :)</div>
+      <div>&copy; 2026 Jorne Scholiers. All rights reserved.</div>
+    </div>
+    <ul class="site-footer-links">
+      <li><a href="https://accidentalgraphics.netlify.app/index.html" target="_blank" rel="noopener">Accidental Graphics</a></li>
+      <li><a href="https://www.instagram.com/byjorne/" target="_blank" rel="noopener">Instagram</a></li>
+      <li><a href="mailto:jorne.scholiers@icloud.com">Mail</a></li>
+    </ul>
+  </footer>`;
+}
+
 function renderLayout({ title, description, fileName, canonicalFile, image, imageAlt, pageType, schema, noIndex, bodyClass, main }) {
   const accessibleMain = main.replace('<main', '<main id="main-content"');
   return `${renderHead({ title, description, fileName, canonicalFile, image, imageAlt, pageType, schema, noIndex })}
@@ -1048,6 +1074,7 @@ function renderLayout({ title, description, fileName, canonicalFile, image, imag
   <a class="skip-link" href="#main-content">Skip to content</a>
   ${renderNav()}
   ${accessibleMain}
+  ${renderFooter()}
   <script src="Scripts/site.js" defer></script>
 </body>
 </html>`;
@@ -1085,6 +1112,7 @@ function writeLegacyRedirect(fileName, canonicalFile, label) {
   <main class="page-simple">
     <p>This page has moved to <a href="${destination}">${escapeHtml(label)}</a>.</p>
   </main>
+  ${renderFooter()}
 </body>
 </html>`);
 }
@@ -1228,13 +1256,16 @@ function buildSite() {
       },
       bodyClass: 'page-detail',
       main: renderProjectPage(project, 'projects', {
+        projects,
         prev: {
           href: `project-${prevProject.slug}.html`,
           title: prevProject.title,
+          label: prevProject.pageConfig?.index_title || prevProject.title,
         },
         next: {
           href: `project-${nextProject.slug}.html`,
           title: nextProject.title,
+          label: nextProject.pageConfig?.index_title || nextProject.title,
         },
       }),
     });
