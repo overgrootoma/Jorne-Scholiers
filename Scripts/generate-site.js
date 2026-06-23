@@ -333,8 +333,13 @@ function homepageImages(project) {
   if (!Array.isArray(preferred) || !preferred.length) {
     return project.images.slice(0, 5);
   }
-  const available = new Set(project.images);
-  const selected = preferred.filter((file) => available.has(file));
+  const projectDir = path.join(projectsDir, project.dirName);
+  const selected = preferred.filter((file) => {
+    if (typeof file !== 'string' || !isImage(file)) return false;
+    const normalized = path.normalize(file);
+    if (path.isAbsolute(normalized) || normalized.startsWith('..')) return false;
+    return fs.existsSync(path.join(projectDir, normalized));
+  });
   return selected.length ? selected : project.images.slice(0, 5);
 }
 
@@ -499,7 +504,6 @@ function renderNav() {
     <a class="site-title title-font" href="index.html">Jorne Scholiers</a>
     <div class="menu-panel">
       <a href="about.html">about</a>
-      <a href="projects.html">index</a>
       <a href="archive.html">archive</a>
     </div>
   </nav>
@@ -510,7 +514,7 @@ function renderIntroCopy() {
   return `<p>
     Hello,<br>
     My name is <a href="about.html" class="intro-link">Jorne Scholiers</a>, a Visual Design student at LUCA School of Arts Ghent.<br><br>
-    I have some <a href="projects.html">projects</a> you can look at, along with other work in my <a href="archive.html">archive</a> that shows what I've been experimenting with.<br>
+    I have some <a href="index.html#project-grid">projects</a> you can look at, along with other work in my <a href="archive.html">archive</a> that shows what I've been experimenting with.<br>
     Or maybe you will like some of my <a href="photography.html">Photography</a>. Some of my projects appear on my <a href="https://www.instagram.com/byjorne/" target="_blank" rel="noopener">Instagram</a>.<br><br>
     Don't hesitate to <a href="mailto:jorne.scholiers@icloud.com">contact me</a>, I'd love to hear from you.<br>
     Oh and I am working on a little experimental <a href="https://accidentalgraphics.netlify.app/index.html" target="_blank" rel="noopener">site</a> as well :)
@@ -563,7 +567,7 @@ function renderProjectRail(projects, { linkToSections = false, currentSlug = nul
       const href = linkToSections ? `#project-${project.slug}` : `project-${project.slug}.html`;
       const current = project.slug === currentSlug ? ' is-current' : '';
       const ariaCurrent = project.slug === currentSlug ? ' aria-current="page"' : '';
-      return `<a class="rail-block${current}" href="${href}" style="--rail-color: ${project.accent}" data-title="${title}" data-image="${previewImage}" aria-label="${title}"${ariaCurrent}></a>`;
+      return `<a class="rail-block${current}" href="${href}" style="--rail-color: ${project.accent}; --rail-text-color: ${railTextColor(project.accent)}" data-title="${title}" data-image="${previewImage}" aria-label="${title}"${ariaCurrent}><span>${title}</span></a>`;
     })
     .join('\n');
 
@@ -576,14 +580,37 @@ function renderProjectRail(projects, { linkToSections = false, currentSlug = nul
     </div>`;
 }
 
+function renderHomeProjectGrid(projects) {
+  const cards = projects.map((project, index) => {
+    const title = project.pageConfig?.index_title || project.title;
+    const image = project.pageConfig?.index_image || previewImagePath(project);
+    const dimensions = rootImageDimensionAttributes(image);
+    const loading = index < 3 ? ' loading="eager"' : ' loading="lazy"';
+    return `<a class="home-grid-card" href="project-${project.slug}.html" style="--grid-card-color: ${project.accent}; --grid-card-text: ${railTextColor(project.accent)}">
+      <span class="home-grid-card-image"><img src="${escapeHtml(image)}" alt="Preview of ${escapeHtml(title)}"${dimensions}${loading} decoding="async"></span>
+      <span class="home-grid-card-info"><strong>${escapeHtml(title)}</strong><span>${escapeHtml(project.year || '')}</span></span>
+    </a>`;
+  }).join('\n');
+
+  return `<section class="home-project-grid" id="project-grid" aria-label="All projects in grid view" hidden>
+    <a class="home-grid-close" href="index.html#intro">Full view</a>
+    <div class="home-project-grid-cards">${cards}</div>
+  </section>`;
+}
+
 function renderHome(projects) {
   const sections = projects
     .map((project) => {
       const page = `project-${project.slug}.html`;
       const images = homepageImages(project).map((file, idx) => {
-        const src = toUrlPath('Projects', project.dirName, file);
-        const dimensions = imageDimensionAttributes(path.join(projectsDir, project.dirName, file));
-        return `<img src="${src}" alt="${escapeHtml(project.title)}, a visual design project by Jorne Scholiers — image ${idx + 1}" data-project-url="${page}"${dimensions} loading="lazy" decoding="async">`;
+        const fileParts = file.split(/[\\/]/).filter(Boolean);
+        const src = toUrlPath('Projects', project.dirName, ...fileParts);
+        const dimensions = imageDimensionAttributes(path.join(projectsDir, project.dirName, ...fileParts));
+        const requestedScale = Number(project.pageConfig?.homepage_image_scales?.[file]);
+        const scale = Number.isFinite(requestedScale)
+          ? Math.min(Math.max(requestedScale, 0.45), 1.4)
+          : 1;
+        return `<img src="${src}" alt="${escapeHtml(project.title)}, a visual design project by Jorne Scholiers — image ${idx + 1}" data-project-url="${page}" data-home-scale="${scale}"${dimensions} loading="lazy" decoding="async">`;
       });
       return `
       <article class="project-section" id="project-${project.slug}">
@@ -608,6 +635,7 @@ function renderHome(projects) {
   <div class="desktop-home-content">
     ${renderIntro()}
     ${renderProjectRail(projects, { linkToSections: true })}
+    ${renderHomeProjectGrid(projects)}
     <section class="projects-onepager" id="projects">
       ${emptyState}
     </section>
@@ -850,7 +878,6 @@ function renderProjectPage(item, type, nav = null) {
   const galleryClass = pageConfig.gallery_class || 'detail-gallery';
   const orderedImages = orderFilesByPreference(item.images, pageConfig.image_order);
   const orderedOtherFiles = orderFilesByPreference(item.otherFiles, pageConfig.other_file_order);
-  const captionFor = (file) => escapeHtml(pageConfig.captions?.[file] || file);
   const images = orderedImages
     .map((file, idx) => {
       const src = toUrlPath(base, item.dirName, file);
@@ -867,9 +894,9 @@ function renderProjectPage(item, type, nav = null) {
       return `
       <figure data-span="${span}">
         <div class="media-frame">
-          <img src="${src}" alt="${title} by Jorne Scholiers — ${captionFor(file)}"${dimensions}${loading} decoding="async">
+          <img src="${src}" alt="${title} by Jorne Scholiers — image ${idx + 1}"${dimensions}${loading} decoding="async">
         </div>
-        <figcaption>${type === 'projects' ? captionFor(file) : escapeHtml(file)}</figcaption>
+        ${type === 'projects' ? '' : `<figcaption>${escapeHtml(file)}</figcaption>`}
       </figure>`;
     })
     .join('\n');
@@ -897,11 +924,11 @@ function renderProjectPage(item, type, nav = null) {
             <source src="${href}" type="video/${ext.replace('.', '')}">
           </video>
         </div>
-        <figcaption class="media-caption">${captionFor(file)}</figcaption>
       </figure>`);
         return;
       }
-      downloadLinks.push(`<li><a class="media-link" href="${href}" target="_blank" rel="noopener">Open ${escapeHtml(file)}</a></li>`);
+      const fileLabel = ext === '.pdf' ? 'Open PDF' : 'Open file';
+      downloadLinks.push(`<li><a class="media-link" href="${href}" target="_blank" rel="noopener">${fileLabel}</a></li>`);
       return;
     }
     if (ext === '.pdf') {
@@ -1061,7 +1088,8 @@ function renderFooter() {
   return `<footer class="site-footer">
     <div class="site-footer-copy">
       <div>Thank you for viewing my portfolio :)</div>
-      <div>&copy; 2026 Jorne Scholiers. All rights reserved.</div>
+      <div>&copy; 2026 Jorne Scholiers.</div>
+      <div>All rights reserved.</div>
     </div>
     <ul class="site-footer-links">
       <li><a href="https://accidentalgraphics.netlify.app/index.html" target="_blank" rel="noopener">Accidental Graphics</a></li>
@@ -1187,21 +1215,6 @@ function buildSite() {
     main: renderHome(projects),
   });
 
-  const projectsHtml = renderLayout({
-    title: 'Graphic Design Projects | Jorne Scholiers',
-    description: 'Explore graphic and visual design projects by Jorne Scholiers, including identities, editorial design, typography, packaging, photography, and creative coding.',
-    fileName: 'projects.html',
-    image: projects[0] ? previewImagePath(projects[0]) : defaultSocialImage,
-    schema: {
-      '@type': 'CollectionPage',
-      name: 'Graphic Design Projects by Jorne Scholiers',
-      url: absoluteUrl('projects.html'),
-      author: { '@id': `${siteUrl}#jorne-scholiers` },
-    },
-    bodyClass: 'page-projects',
-    main: renderProjectsIndex(projects),
-  });
-
   const archiveHtml = renderLayout({
     title: 'Design Archive | Jorne Scholiers',
     description: 'An archive of experiments, drafts, visual studies, and side projects by Ghent-based visual designer Jorne Scholiers.',
@@ -1233,7 +1246,7 @@ function buildSite() {
   });
 
   writeFile('index.html', homeHtml);
-  writeFile('projects.html', projectsHtml);
+  fs.rmSync(path.join(root, 'projects.html'), { force: true });
   writeFile('archive.html', archiveHtml);
   writeFile('about.html', aboutHtml);
   writeFile('photography.html', photographyHtml);
@@ -1282,7 +1295,6 @@ function buildSite() {
   writeSearchFiles([
     '',
     'about.html',
-    'projects.html',
     'archive.html',
     'photography.html',
     ...projects.map((project) => `project-${project.slug}.html`),
