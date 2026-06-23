@@ -944,13 +944,21 @@
     const nextButton = lightbox.querySelector('.lightbox-control--next');
     let currentIndex = 0;
     let magnifierActive = false;
+    let pointerOverLightboxImage = false;
     let lastLensPoint = null;
     let lastFocusedElement = null;
 
     const isOpen = () => lightbox.classList.contains('is-visible');
+    const syncMagnifierCursor = () => {
+      document.body.classList.toggle(
+        'magnifier-cursor-hidden',
+        magnifierActive && pointerOverLightboxImage,
+      );
+    };
     const setMagnifierActive = (active) => {
       magnifierActive = active;
       lightbox.classList.toggle('magnifier-active', active);
+      syncMagnifierCursor();
       magnifierButton.setAttribute('aria-pressed', String(active));
       if (!active) {
         lens.classList.remove('is-visible');
@@ -984,6 +992,7 @@
       lightbox.classList.remove('is-visible');
       lightbox.setAttribute('aria-hidden', 'true');
       lightbox.inert = true;
+      pointerOverLightboxImage = false;
       setMagnifierActive(false);
       lastLensPoint = null;
       lightboxImg.removeAttribute('src');
@@ -1069,6 +1078,16 @@
       if (!magnifierActive) {
         close();
       }
+    });
+
+    lightboxImg.addEventListener('pointerenter', () => {
+      pointerOverLightboxImage = true;
+      syncMagnifierCursor();
+    });
+
+    lightboxImg.addEventListener('pointerleave', () => {
+      pointerOverLightboxImage = false;
+      syncMagnifierCursor();
     });
 
     lightbox.addEventListener('click', (event) => {
@@ -1188,10 +1207,12 @@
       portrait.style.setProperty('--about-reveal-x', `${Math.round(x)}px`);
       portrait.style.setProperty('--about-reveal-y', `${Math.round(y)}px`);
       portrait.classList.add('is-revealing');
+      document.body.classList.add('about-cursor-hidden');
     };
 
     const resetPosition = () => {
       portrait.classList.remove('is-revealing');
+      document.body.classList.remove('about-cursor-hidden');
       portrait.style.setProperty('--about-reveal-x', '50%');
       portrait.style.setProperty('--about-reveal-y', '50%');
     };

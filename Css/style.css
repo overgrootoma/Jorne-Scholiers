@@ -223,6 +223,22 @@ h6 {
   font-weight: 400;
 }
 
+:where(
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  .project-step-label,
+  .home-grid-card-info strong,
+  .rail-preview-title,
+  .archive-year-marker
+) {
+  font-family: var(--title-font);
+  font-optical-sizing: auto;
+}
+
 .site-header {
   position: fixed;
   inset: 0 0 auto 0;
@@ -1053,6 +1069,11 @@ body.home-grid-active main.page-home {
 
 .home-cursor-ball.is-visible {
   opacity: 1;
+}
+
+body.about-cursor-hidden .home-cursor-ball,
+body.magnifier-cursor-hidden .home-cursor-ball {
+  opacity: 0 !important;
 }
 
 @media (min-width: 901px) and (hover: hover) and (pointer: fine) {
@@ -2599,6 +2620,14 @@ body.home-grid-active main.page-home {
 
   .page-about .about-portrait img {
     height: auto;
+  }
+
+  .page-about .about-portrait-base {
+    display: none;
+  }
+
+  .page-about .about-portrait-hover {
+    z-index: 2;
   }
 
   .page-home main {
