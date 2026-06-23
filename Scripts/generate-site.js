@@ -664,6 +664,7 @@ function renderHome(projects) {
   return `
 <main class="page-home home-exhibition">
   <h1 class="visually-hidden">Jorne Scholiers — selected visual design projects</h1>
+  <div class="home-logo-slot" aria-hidden="true"></div>
   <aside class="home-information" aria-label="Information">
     <div class="home-about-columns">
       <section class="home-about-primary">

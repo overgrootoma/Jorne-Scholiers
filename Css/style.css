@@ -4494,3 +4494,35 @@ body.page-detail .site-footer.is-visible {
 .home-education .home-info-list li {
   white-space: nowrap;
 }
+
+/* Reserved homepage logo area. Add the asset at images/logo.png. */
+.page-home main.home-exhibition {
+  padding-top: clamp(112px, 15vh, 160px);
+}
+
+.home-logo-slot {
+  position: absolute;
+  top: clamp(20px, 3vh, 34px);
+  left: clamp(20px, 3vw, 48px);
+  z-index: 5;
+  width: clamp(150px, 18vw, 260px);
+  height: clamp(46px, 7vh, 80px);
+  background-image: url("../images/logo.png");
+  background-repeat: no-repeat;
+  background-position: left top;
+  background-size: contain;
+  pointer-events: none;
+}
+
+@media (max-width: 650px) {
+  .page-home main.home-exhibition {
+    padding-top: 104px;
+  }
+
+  .home-logo-slot {
+    top: 18px;
+    left: 14px;
+    width: min(52vw, 210px);
+    height: 58px;
+  }
+}
