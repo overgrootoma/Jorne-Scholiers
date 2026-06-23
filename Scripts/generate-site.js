@@ -11,7 +11,34 @@ const siteName = 'Jorne Scholiers';
 const defaultSocialImage = 'images/ME.webp';
 const defaultDescription = 'Portfolio of Jorne Scholiers, a visual and graphic designer in Ghent working across identities, editorial design, typography, photography, and creative coding.';
 
-const palette = ['#FF00D0', '#53FF45', '#1e2ede'];
+const palette = ['#0000FF'];
+// Edit these lists to update the quiet information columns on the homepage.
+const homepageProfile = {
+  personal: [
+    'Jorne Scholiers',
+    '2005',
+    'Visual Designer',
+    'Belgium',
+  ],
+  exhibitions: [
+    {
+      label: 'Antwerp Art Weekend — MONAR X UGG, 2025',
+      href: 'project-2025-0-big-summer-energy.html',
+    },
+  ],
+  experience: [
+    'Intern at Broos Stoffels',
+  ],
+  education: [
+    'Graphic Studio, Visual Design — 2023–2026',
+  ],
+  links: [
+    { label: 'Accidental Graphics', href: 'https://overgrootoma.github.io/Accidental-Graphics/index.html' },
+    { label: 'Instagram', href: 'https://www.instagram.com/byjorne/' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/jorne-scholiers-28555923b/' },
+    { label: 'Email', href: 'mailto:jorne.scholiers@icloud.com' },
+  ],
+};
 const projectOrder = [
   '2026 Sound Translations of Fungal Forms',
   '2026 Isolation',
@@ -125,7 +152,10 @@ function personSchema() {
     jobTitle: 'Visual and Graphic Designer',
     description: defaultDescription,
     email: 'mailto:jorne.scholiers@icloud.com',
-    sameAs: ['https://www.instagram.com/byjorne/'],
+    sameAs: [
+      'https://www.instagram.com/byjorne/',
+      'https://www.linkedin.com/in/jorne-scholiers-28555923b/',
+    ],
     affiliation: {
       '@type': 'EducationalOrganization',
       name: 'LUCA School of Arts',
@@ -506,19 +536,6 @@ function renderHead({
 </head>`;
 }
 
-function renderNav() {
-  return `
-<header class="site-header">
-  <nav class="nav-bar" data-nav aria-label="Primary">
-    <a class="site-title title-font" href="index.html">Jorne Scholiers</a>
-    <div class="menu-panel">
-      <a href="about.html">about</a>
-      <a href="archive.html">archive</a>
-    </div>
-  </nav>
-</header>`;
-}
-
 function renderIntroCopy() {
   return `<p>
     Hello,<br>
@@ -526,7 +543,7 @@ function renderIntroCopy() {
     I have some <a href="index.html#project-grid">projects</a> you can look at, along with other work in my <a href="archive.html">archive</a> that shows what I've been experimenting with.<br>
     Or maybe you will like some of my <a href="photography.html">Photography</a>. Some of my projects appear on my <a href="https://www.instagram.com/byjorne/" target="_blank" rel="noopener">Instagram</a>.<br><br>
     Don't hesitate to <a href="mailto:jorne.scholiers@icloud.com">contact me</a>, I'd love to hear from you.<br>
-    Oh and I am working on a little experimental <a href="https://accidentalgraphics.netlify.app/index.html" target="_blank" rel="noopener">site</a> as well :)
+    Oh and I am working on a little experimental <a href="https://overgrootoma.github.io/Accidental-Graphics/index.html" target="_blank" rel="noopener">site</a> as well :)
   </p>`;
 }
 
@@ -597,70 +614,89 @@ function renderHomeProjectGrid(projects) {
     const loading = index < 3 ? ' loading="eager"' : ' loading="lazy"';
     return `<a class="home-grid-card" href="project-${project.slug}.html" style="--grid-card-color: ${project.accent}; --grid-card-text: ${railTextColor(project.accent)}">
       <span class="home-grid-card-image"><img src="${escapeHtml(image)}" alt="Preview of ${escapeHtml(title)}"${dimensions}${loading} decoding="async"></span>
-      <span class="home-grid-card-info"><strong>${escapeHtml(title)}</strong><span>${escapeHtml(project.year || '')}</span></span>
+      <span class="home-grid-card-info"><strong>${escapeHtml(title)}</strong></span>
     </a>`;
   }).join('\n');
 
-  return `<section class="home-project-grid" id="project-grid" aria-label="All projects in grid view" hidden>
-    <a class="home-grid-close" href="index.html#intro">Full view</a>
-    <div class="home-project-grid-cards">${cards}</div>
+  return `<section class="home-project-grid" id="project-grid" aria-label="All projects" hidden>
+    <div class="home-project-grid-cards" style="--home-project-columns: ${Math.max(Math.ceil(projects.length / 3), 1)}">${cards}</div>
   </section>`;
 }
 
 function renderHome(projects) {
-  const sections = projects
-    .map((project) => {
-      const page = `project-${project.slug}.html`;
-      const images = homepageImages(project).map((file, idx) => {
+  const renderTextList = (items, { interactiveFirst = false } = {}) => items.map((item, index) => {
+    if (interactiveFirst && index === 0) {
+      return `<li><button class="home-personal-name" type="button" data-home-portrait-trigger>${escapeHtml(item)}</button></li>`;
+    }
+    return `<li>${escapeHtml(item)}</li>`;
+  }).join('');
+  const renderLinkList = (items) => items.map((item) => {
+    if (!item.href) return `<li><span>${escapeHtml(item.label)}</span></li>`;
+    const external = /^https?:/i.test(item.href) ? ' target="_blank" rel="noopener"' : '';
+    return `<li><a href="${escapeHtml(item.href)}"${external}>${escapeHtml(item.label)}</a></li>`;
+  }).join('');
+
+  const projectLinks = projects.map((project, projectIndex) => {
+    const page = `project-${project.slug}.html`;
+    const displayTitle = project.pageConfig?.index_title || project.title;
+    const preferredImages = homepageImages(project);
+    const fallbackImages = project.images.filter((file) => !preferredImages.includes(file));
+    const previewImages = [...preferredImages, ...fallbackImages].slice(0, 4);
+    const images = previewImages.map((file, imageIndex) => {
         const fileParts = file.split(/[\\/]/).filter(Boolean);
         const src = toUrlPath('Projects', project.dirName, ...fileParts);
         const dimensions = imageDimensionAttributes(path.join(projectsDir, project.dirName, ...fileParts));
-        const requestedScale = Number(project.pageConfig?.homepage_image_scales?.[file]);
-        const scale = Number.isFinite(requestedScale)
-          ? Math.min(Math.max(requestedScale, 0.45), 1.4)
-          : 1;
-        return `<img src="${src}" alt="${escapeHtml(project.title)}, a visual design project by Jorne Scholiers — image ${idx + 1}" data-project-url="${page}" data-home-scale="${scale}"${dimensions} loading="lazy" decoding="async">`;
-      });
-      return `
-      <article class="project-section" id="project-${project.slug}">
-        <div class="project-sticky" style="--accent: ${project.accent}">
-          <h2 class="title-font">${escapeHtml(project.title)}</h2>
-          <div class="project-meta">${escapeHtml(project.year || '')}</div>
-          <a class="btn" href="${page}">View project</a>
-        </div>
-        <div class="project-gallery">
-          ${images.join('\n') || '<div class="empty-state">No images yet.</div>'}
-        </div>
-      </article>`;
-    })
-    .join('\n');
+        const loading = projectIndex === 0 && imageIndex === 0 ? ' loading="eager" fetchpriority="high"' : ' loading="lazy"';
+        return `<img src="${src}" alt="${escapeHtml(project.title)}, image ${imageIndex + 1}"${dimensions}${loading} decoding="async">`;
+      }).join('\n');
 
-  const emptyState = !projects.length
-    ? '<div class="empty-state">Add folders inside the Projects directory to populate the onepager.</div>'
-    : sections;
+    return `<li>
+      <a class="home-project-link" href="${page}" data-home-project="${escapeHtml(project.slug)}" aria-describedby="home-project-year-${escapeHtml(project.slug)}">
+        <small id="home-project-year-${escapeHtml(project.slug)}">${escapeHtml(project.year || '')}</small>
+        <span>${escapeHtml(displayTitle)}</span>
+      </a>
+      <div class="home-project-preview" data-home-preview="${escapeHtml(project.slug)}" aria-hidden="true">
+        ${images}
+      </div>
+    </li>`;
+  }).join('\n');
 
   return `
-<main class="page-home">
-  <div class="desktop-home-content">
-    ${renderIntro()}
-    ${renderProjectRail(projects, { linkToSections: true })}
-    ${renderHomeProjectGrid(projects)}
-    <section class="projects-onepager" id="projects">
-      ${emptyState}
-    </section>
-    <a class="back-to-top" href="#intro">Back to top</a>
-  </div>
-  <section class="mobile-home-index" aria-labelledby="mobile-projects-title">
-    ${renderMobileIntro()}
-    <h1 class="visually-hidden" id="mobile-projects-title">Graphic design projects</h1>
-    <div class="projects-view-toggle" role="group" aria-label="Project index view">
-      <button class="projects-view-toggle__button is-active" type="button" data-projects-view="list" aria-pressed="true">List</button>
-      <button class="projects-view-toggle__button" type="button" data-projects-view="grid" aria-pressed="false">Grid</button>
+<main class="page-home home-exhibition">
+  <h1 class="visually-hidden">Jorne Scholiers — selected visual design projects</h1>
+  <aside class="home-information" aria-label="Information">
+    <div class="home-about-columns">
+      <section class="home-about-primary">
+        <h2>About</h2>
+        <ul class="home-info-list">${renderTextList(homepageProfile.personal, { interactiveFirst: true })}</ul>
+        <nav class="home-profile-links" aria-label="Important links">
+          <ul>${renderLinkList(homepageProfile.links)}</ul>
+        </nav>
+      </section>
+      <div class="home-about-secondary">
+        <section>
+          <h2>Exhibitions</h2>
+          <ul class="home-info-list">${renderLinkList(homepageProfile.exhibitions)}</ul>
+        </section>
+        <section class="home-experience">
+          <h2>Experience</h2>
+          <ul class="home-info-list">${renderTextList(homepageProfile.experience)}</ul>
+        </section>
+        <section class="home-education">
+          <h2>Education</h2>
+          <ul class="home-info-list">${renderTextList(homepageProfile.education)}</ul>
+        </section>
+      </div>
     </div>
-    <div class="projects-list" data-projects-list data-view="list">
-      ${renderProjectRows(projects, { compact: true }) || '<div class="empty-state">Projects will be added here.</div>'}
-    </div>
+  </aside>
+  <section class="home-project-index" aria-labelledby="home-projects-title">
+    <h2 class="visually-hidden" id="home-projects-title">Projects</h2>
+    <ol>${projectLinks || '<li>No projects yet.</li>'}</ol>
   </section>
+  <div class="home-portrait-preview" data-home-portrait aria-hidden="true">
+    <img src="images/ME.webp" alt="Portrait of Jorne Scholiers"${imageDimensionAttributes(path.join(root, 'images', 'ME.webp'))} loading="eager" decoding="async">
+  </div>
+  <a class="home-archive-link" href="archive.html">Archive</a>
 </main>`;
 }
 
@@ -805,11 +841,10 @@ function renderCollectionIndex(items, {
     <img alt="Preview" />
   </div>
   <section class="archive-intro">
-    <h1 class="title-font"><a class="archive-heading-link" href="#${sectionPrefix}-top">${escapeHtml(heading)}</a></h1>
+    <h1 class="title-font"><a class="archive-heading-link" href="index.html" aria-label="Back to homepage">${escapeHtml(heading)}</a></h1>
     <div class="archive-intro-meta">
-      <p>${escapeHtml(introText)}</p>
       <nav class="projects-view-toggle archive-view-toggle" aria-label="Archive view">
-        <a class="projects-view-toggle__button${activeCollection === 'designs' ? ' is-active' : ''}" href="archive.html"${activeCollection === 'designs' ? ' aria-current="page"' : ''}>Designs</a>
+        <a class="projects-view-toggle__button${activeCollection === 'designs' ? ' is-active' : ''}" href="archive.html"${activeCollection === 'designs' ? ' aria-current="page"' : ''}>Design</a>
         <a class="projects-view-toggle__button${activeCollection === 'photography' ? ' is-active' : ''}" href="photography.html"${activeCollection === 'photography' ? ' aria-current="page"' : ''}>Photography</a>
       </nav>
     </div>
@@ -836,7 +871,7 @@ function renderArchiveIndex(items) {
 
 function renderPhotographyIndex(items) {
   return renderCollectionIndex(items, {
-    heading: 'Photography',
+    heading: 'Archive',
     introText: 'Selected photography work and ongoing series.',
     activeCollection: 'photography',
     railAriaLabel: 'Photography years navigation',
@@ -1015,26 +1050,35 @@ function renderProjectPage(item, type, nav = null) {
     : '';
 
   const backLink = type === 'projects'
-    ? '<a class="back-link" href="index.html#projects">&larr; Back to home</a>'
+    ? '<a class="back-link" href="index.html">&larr; Back to home</a>'
     : '';
 
   return `
 <main class="page-detail">
   ${type === 'projects' && nav?.projects ? renderProjectRail(nav.projects, { currentSlug: item.slug }) : ''}
-  <section class="detail-header">
-    ${backLink}
-    <h1 class="title-font">${title}</h1>
-    <div class="project-meta">${type === 'projects' ? (pageConfig.meta || item.year || '') : (item.year || '')}</div>
-    ${descriptionBlock}
-  </section>
-  <section class="${galleryClass}">
-    ${images || '<div class="empty-state">No images yet.</div>'}
-  </section>
-  ${mediaSection}
-  ${showcaseBlock}
-  ${thumbnailBlock}
-  ${filesBlock}
-  ${type === 'projects' ? renderProjectStepNav(nav) : ''}
+  <div class="project-detail-layout">
+    <div class="project-visual-zone" id="project-visuals">
+      <section class="${galleryClass}">
+        ${images || '<div class="empty-state">No images yet.</div>'}
+      </section>
+      ${mediaSection}
+      ${showcaseBlock}
+      ${thumbnailBlock}
+      ${filesBlock}
+      ${type === 'projects' ? renderProjectStepNav(nav) : ''}
+    </div>
+    <aside class="project-information" data-project-information>
+      <button class="project-information-toggle" type="button" aria-expanded="true" aria-label="Toggle project information">
+        <span class="project-information-toggle__title">${title}</span>
+        <span class="project-information-toggle__mark" aria-hidden="true">−</span>
+      </button>
+      <div class="project-information-content">
+        ${backLink}
+        <h1 class="title-font">${title}</h1>
+        ${descriptionBlock}
+      </div>
+    </aside>
+  </div>
 </main>`;
 }
 
@@ -1052,6 +1096,7 @@ function renderAboutPage() {
   return `
 <main class="page-simple">
   <section class="about-intro" tabindex="0" aria-label="Biography and contact information">
+    <a class="back-link" href="index.html">&larr; Index</a>
     <h1 class="title-font">About</h1>
     <p>I&#39;m Jorne Scholiers, I am studying Visual Design at LUCA School of Arts in Ghent. My creative style is best described as abstract, experimental and bold. I&#39;ve always been drawn to visually dense work, the kind that invites you to look closer and keep discovering new details.</p>
     <p>I&#39;m always open to opportunities or collaborations. Feel free to contact me.</p>
@@ -1096,15 +1141,9 @@ function renderAboutPage() {
 function renderFooter() {
   return `<footer class="site-footer">
     <div class="site-footer-copy">
-      <div>Thank you for viewing my portfolio :)</div>
       <div>&copy; 2026 Jorne Scholiers.</div>
-      <div>All rights reserved.</div>
+      <div class="site-footer-rights">All rights reserved.</div>
     </div>
-    <ul class="site-footer-links">
-      <li><a href="https://accidentalgraphics.netlify.app/index.html" target="_blank" rel="noopener">Accidental Graphics</a></li>
-      <li><a href="https://www.instagram.com/byjorne/" target="_blank" rel="noopener">Instagram</a></li>
-      <li><a href="mailto:jorne.scholiers@icloud.com">Mail</a></li>
-    </ul>
   </footer>`;
 }
 
@@ -1113,7 +1152,6 @@ function renderLayout({ title, description, fileName, canonicalFile, image, imag
   return `${renderHead({ title, description, fileName, canonicalFile, image, imageAlt, pageType, schema, noIndex })}
 <body class="${bodyClass}">
   <a class="skip-link" href="#main-content">Skip to content</a>
-  ${renderNav()}
   ${accessibleMain}
   ${renderFooter()}
   <script src="Scripts/site.js" defer></script>

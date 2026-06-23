@@ -22,10 +22,7 @@
     let currentNavPath = null;
     if (currentPath === 'about.html') {
       currentNavPath = 'about.html';
-    } else if (
-      currentPath.startsWith('project-')
-      || (currentPath === 'index.html' && window.matchMedia('(max-width: 900px)').matches)
-    ) {
+    } else if (currentPath.startsWith('project-') || currentPath === 'index.html') {
       currentNavPath = 'index.html';
     } else if (
       currentPath === 'archive.html' ||
@@ -911,9 +908,9 @@
     lightbox.setAttribute('aria-hidden', 'true');
     lightbox.inert = true;
     lightbox.innerHTML = `
-      <button class="lightbox-close" type="button" aria-label="Close image viewer">Close</button>
+      <button class="lightbox-close" type="button" aria-label="Close image viewer"><span aria-hidden="true">×</span></button>
       <button class="lightbox-control lightbox-control--prev" type="button" aria-label="Previous image">
-        <span aria-hidden="true">&lt;</span>
+        <span aria-hidden="true">←</span>
       </button>
       <div class="lightbox-stage">
         <img alt="Enlarged project image">
@@ -930,7 +927,7 @@
         <input class="lightbox-slider" id="lightbox-magnification" type="range" min="1.6" max="4" step="0.2" value="2.4" aria-label="Magnification">
       </div>
       <button class="lightbox-control lightbox-control--next" type="button" aria-label="Next image">
-        <span aria-hidden="true">&gt;</span>
+        <span aria-hidden="true">→</span>
       </button>
     `;
     document.body.appendChild(lightbox);
@@ -1232,20 +1229,38 @@
   const setupFooterVisibility = () => {
     const footer = document.querySelector('.site-footer');
     if (!footer) return;
+    footer.classList.add('is-visible');
+    footer.inert = false;
+    footer.setAttribute('aria-hidden', 'false');
+  };
 
-    const updateVisibility = () => {
-      const documentHeight = document.documentElement.scrollHeight;
-      const isAtBottom = window.scrollY + window.innerHeight >= documentHeight - 2;
-      footer.classList.toggle('is-visible', isAtBottom);
-      document.body.classList.toggle('footer-visible', isAtBottom);
-      footer.toggleAttribute('inert', !isAtBottom);
-      footer.setAttribute('aria-hidden', String(!isAtBottom));
+  const setupArchiveHeaderVisibility = () => {
+    if (!document.body.classList.contains('page-archive')) return;
+    const header = document.querySelector('.archive-intro');
+    if (!header) return;
+
+    let lastScrollY = Math.max(window.scrollY, 0);
+    let framePending = false;
+
+    const update = () => {
+      const currentScrollY = Math.max(window.scrollY, 0);
+      const delta = currentScrollY - lastScrollY;
+
+      if (currentScrollY <= 12 || delta < -2) {
+        document.body.classList.remove('archive-header-hidden');
+      } else if (currentScrollY > 36 && delta > 2) {
+        document.body.classList.add('archive-header-hidden');
+      }
+
+      lastScrollY = currentScrollY;
+      framePending = false;
     };
 
-    window.addEventListener('scroll', updateVisibility, { passive: true });
-    window.addEventListener('resize', updateVisibility);
-    window.addEventListener('portfolio:layoutchange', updateVisibility);
-    updateVisibility();
+    window.addEventListener('scroll', () => {
+      if (framePending) return;
+      framePending = true;
+      window.requestAnimationFrame(update);
+    }, { passive: true });
   };
 
   const setupProjectsViewToggle = () => {
@@ -1292,37 +1307,137 @@
   };
 
   const setupHomeProjectGrid = () => {
-    const desktopGrid = document.getElementById('project-grid');
-    const mobileIndex = document.querySelector('.mobile-home-index');
-    if (!desktopGrid || !mobileIndex) return;
+    const grid = document.getElementById('project-grid');
+    const toggle = document.querySelector('.home-overview-toggle');
+    if (!grid || !toggle) return;
 
-    const updateGridState = () => {
-      const gridRequested = window.location.hash === '#project-grid';
-      const mobile = window.matchMedia('(max-width: 900px)').matches;
-
-      if (gridRequested && mobile) {
-        document.body.classList.remove('home-grid-active');
-        desktopGrid.hidden = true;
-        document.querySelector('[data-projects-view="grid"]')?.click();
-        document.querySelector('.mobile-intro')?.removeAttribute('open');
-        window.requestAnimationFrame(() => mobileIndex.scrollIntoView({ block: 'start' }));
-      } else {
-        const desktopGridActive = gridRequested && !mobile;
-        document.body.classList.toggle('home-grid-active', desktopGridActive);
-        desktopGrid.hidden = !desktopGridActive;
-        if (desktopGridActive) {
-          window.requestAnimationFrame(() => window.scrollTo(0, 0));
-        } else if (window.location.hash === '#intro') {
-          window.requestAnimationFrame(() => document.getElementById('intro')?.scrollIntoView({ block: 'start' }));
-        }
-      }
+    const setOpen = (open) => {
+      grid.hidden = !open;
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.textContent = open ? 'Close overview' : 'Overview';
 
       window.dispatchEvent(new Event('portfolio:layoutchange'));
     };
 
-    window.addEventListener('hashchange', updateGridState);
-    window.addEventListener('resize', updateGridState);
-    updateGridState();
+    toggle.addEventListener('click', () => {
+      const open = grid.hidden;
+      setOpen(open);
+      if (!open && window.location.hash === '#project-grid') {
+        window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+      }
+    });
+
+    window.addEventListener('hashchange', () => {
+      if (window.location.hash === '#project-grid') setOpen(true);
+    });
+
+    setOpen(window.location.hash === '#project-grid');
+  };
+
+  const setupHomeProjectPreviews = () => {
+    const links = Array.from(document.querySelectorAll('[data-home-project]'));
+    if (!links.length) return;
+
+    let activeLink = null;
+    let activePreview = null;
+    let activeIndex = 0;
+    let rotationTimer = null;
+
+    const stopRotation = () => {
+      if (rotationTimer) window.clearInterval(rotationTimer);
+      rotationTimer = null;
+    };
+
+    const showImage = (index) => {
+      if (!activePreview) return;
+      const images = Array.from(activePreview.querySelectorAll('img'));
+      if (!images.length) return;
+      activeIndex = (index + images.length) % images.length;
+      images.forEach((image, imageIndex) => {
+        image.classList.toggle('is-current', imageIndex === activeIndex);
+      });
+    };
+
+    const deactivate = () => {
+      stopRotation();
+      activeLink?.classList.remove('is-active');
+      activePreview?.classList.remove('is-visible');
+      activePreview?.querySelectorAll('img').forEach((image) => image.classList.remove('is-current'));
+      activeLink = null;
+      activePreview = null;
+      document.body.classList.remove('home-preview-active');
+    };
+
+    const activate = (link) => {
+      const projectId = link.dataset.homeProject;
+      const preview = document.querySelector(`[data-home-preview="${CSS.escape(projectId)}"]`);
+      if (!preview || activeLink === link) return;
+      deactivate();
+      activeLink = link;
+      activePreview = preview;
+      activeIndex = 0;
+      link.classList.add('is-active');
+      preview.classList.add('is-visible');
+      document.body.classList.add('home-preview-active');
+      showImage(0);
+      if (preview.querySelectorAll('img').length > 1) {
+        rotationTimer = window.setInterval(() => showImage(activeIndex + 1), 2000);
+      }
+    };
+
+    links.forEach((link) => {
+      link.addEventListener('pointerenter', () => activate(link));
+      link.addEventListener('pointerleave', deactivate);
+      link.addEventListener('focus', () => activate(link));
+      link.addEventListener('blur', deactivate);
+    });
+
+    window.addEventListener('pagehide', stopRotation);
+  };
+
+  const setupHomePortraitPreview = () => {
+    const trigger = document.querySelector('[data-home-portrait-trigger]');
+    const preview = document.querySelector('[data-home-portrait]');
+    if (!trigger || !preview) return;
+
+    const show = () => preview.classList.add('is-visible');
+    const hide = () => preview.classList.remove('is-visible');
+
+    trigger.addEventListener('pointerenter', show);
+    trigger.addEventListener('pointerleave', hide);
+    trigger.addEventListener('focus', show);
+    trigger.addEventListener('blur', hide);
+  };
+
+  const setupProjectInformation = () => {
+    const panel = document.querySelector('[data-project-information]');
+    const toggle = panel?.querySelector('.project-information-toggle');
+    if (!panel || !toggle) return;
+
+    const mark = toggle.querySelector('.project-information-toggle__mark');
+    let manuallyExpanded = false;
+
+    const setCollapsed = (collapsed) => {
+      panel.classList.toggle('is-collapsed', collapsed);
+      document.body.classList.toggle('has-collapsed-information', collapsed);
+      toggle.setAttribute('aria-expanded', String(!collapsed));
+      if (mark) mark.textContent = collapsed ? '+' : '−';
+    };
+
+    const syncWithScroll = () => {
+      if (window.scrollY <= 2) manuallyExpanded = false;
+      setCollapsed(window.scrollY > 8 && !manuallyExpanded);
+    };
+
+    toggle.addEventListener('click', () => {
+      if (panel.classList.contains('is-collapsed')) {
+        manuallyExpanded = true;
+        setCollapsed(false);
+      }
+    });
+
+    window.addEventListener('scroll', syncWithScroll, { passive: true });
+    syncWithScroll();
   };
 
   setupConfigurableMediaSpans().finally(() => {
@@ -1333,6 +1448,10 @@
   setupAboutPortraitReveal();
   setupWidowPrevention();
   setupFooterVisibility();
+  setupArchiveHeaderVisibility();
   setupProjectsViewToggle();
   setupHomeProjectGrid();
+  setupHomeProjectPreviews();
+  setupHomePortraitPreview();
+  setupProjectInformation();
 })();
