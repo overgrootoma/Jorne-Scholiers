@@ -520,6 +520,7 @@ function renderHead({
   <meta name="twitter:description" content="${escapeHtml(safeDescription)}">
   <meta name="twitter:image" content="${escapeHtml(socialImage)}">
   <meta name="theme-color" content="#ebebeb">
+  <link rel="icon" type="image/jpeg" href="images/favicon.jpg">
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RELMELQ5K1"></script>
   <script>
@@ -664,7 +665,6 @@ function renderHome(projects) {
   return `
 <main class="page-home home-exhibition">
   <h1 class="visually-hidden">Jorne Scholiers — selected visual design projects</h1>
-  <div class="home-logo-slot" aria-hidden="true"></div>
   <aside class="home-information" aria-label="Information">
     <div class="home-about-columns">
       <section class="home-about-primary">
@@ -818,9 +818,6 @@ function renderCollectionIndex(items, {
       const yearLabel = archiveSortValue(item) || item.title;
       return `
     <article class="archive-entry" id="${sectionPrefix}-${item.slug}" style="--archive-accent: ${accent}; --archive-marker-text: ${markerText}">
-      <div class="archive-sticky">
-        <div class="archive-year-marker">${escapeHtml(String(yearLabel))}</div>
-      </div>
       <div class="archive-entry-content">
         <section class="detail-gallery archive-entry-gallery">
           ${gallery || '<div class="empty-state">No images yet.</div>'}
@@ -831,6 +828,9 @@ function renderCollectionIndex(items, {
     </article>`;
     })
     .join('\n');
+  const headingMarkup = heading
+    ? `<h1 class="title-font"><a class="archive-heading-link" href="index.html" aria-label="Back to homepage">${escapeHtml(heading)}</a></h1>`
+    : '';
 
   return `
 <main class="page-archive" id="${sectionPrefix}-top">
@@ -841,8 +841,8 @@ function renderCollectionIndex(items, {
     <div class="rail-preview-title"></div>
     <img alt="Preview" />
   </div>
-  <section class="archive-intro">
-    <h1 class="title-font"><a class="archive-heading-link" href="index.html" aria-label="Back to homepage">${escapeHtml(heading)}</a></h1>
+  <section class="archive-intro${heading ? '' : ' archive-intro--without-heading'}">
+    ${headingMarkup}
     <div class="archive-intro-meta">
       <nav class="projects-view-toggle archive-view-toggle" aria-label="Archive view">
         <a class="projects-view-toggle__button${activeCollection === 'designs' ? ' is-active' : ''}" href="archive.html"${activeCollection === 'designs' ? ' aria-current="page"' : ''}>Design</a>
@@ -858,7 +858,7 @@ function renderCollectionIndex(items, {
 
 function renderArchiveIndex(items) {
   return renderCollectionIndex(items, {
-    heading: 'Archive',
+    heading: '',
     introText: 'Experiments, drafts, and side quests.',
     activeCollection: 'designs',
     railAriaLabel: 'Archive years navigation',
@@ -1148,11 +1148,17 @@ function renderFooter() {
   </footer>`;
 }
 
+function renderLogoSlot() {
+  return `<a class="site-logo-slot" href="index.html" aria-label="Back to homepage">
+    <img src="images/Asset%201.svg" alt="" width="560" height="198">
+  </a>`;
+}
+
 function renderLayout({ title, description, fileName, canonicalFile, image, imageAlt, pageType, schema, noIndex, bodyClass, main }) {
   const accessibleMain = main.replace('<main', '<main id="main-content"');
   return `${renderHead({ title, description, fileName, canonicalFile, image, imageAlt, pageType, schema, noIndex })}
 <body class="${bodyClass}">
-  <a class="skip-link" href="#main-content">Skip to content</a>
+  ${renderLogoSlot()}
   ${accessibleMain}
   ${renderFooter()}
   <script src="Scripts/site.js" defer></script>
@@ -1189,6 +1195,7 @@ function writeLegacyRedirect(fileName, canonicalFile, label) {
   }).replace('</head>', `  <meta http-equiv="refresh" content="0; url=${destination}">\n</head>`);
   writeFile(fileName, `${head}
 <body>
+  ${renderLogoSlot()}
   <main class="page-simple">
     <p>This page has moved to <a href="${destination}">${escapeHtml(label)}</a>.</p>
   </main>

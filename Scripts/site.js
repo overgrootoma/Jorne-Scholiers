@@ -470,6 +470,49 @@
     queueHomeSectionState();
   }
 
+  const archiveSections = Array.from(document.querySelectorAll('.page-archive .archive-entry'));
+  const archiveRailBlocks = Array.from(document.querySelectorAll('.archive-rail .archive-rail-block'));
+
+  if (archiveSections.length && archiveRailBlocks.length) {
+    const railBlockBySection = new Map(archiveRailBlocks.map((block) => [
+      block.getAttribute('href')?.replace(/^#/, ''),
+      block,
+    ]));
+    let archiveScrollUpdateQueued = false;
+
+    const updateArchiveSectionState = () => {
+      archiveScrollUpdateQueued = false;
+      const viewportAnchor = window.innerHeight * 0.45;
+      let activeSection = archiveSections[0];
+
+      archiveSections.forEach((section) => {
+        if (section.getBoundingClientRect().top <= viewportAnchor) {
+          activeSection = section;
+        }
+      });
+
+      archiveRailBlocks.forEach((block) => {
+        const isActive = railBlockBySection.get(activeSection.id) === block;
+        block.classList.toggle('is-active', isActive);
+        if (isActive) {
+          block.setAttribute('aria-current', 'location');
+        } else {
+          block.removeAttribute('aria-current');
+        }
+      });
+    };
+
+    const queueArchiveSectionState = () => {
+      if (archiveScrollUpdateQueued) return;
+      archiveScrollUpdateQueued = true;
+      window.requestAnimationFrame(updateArchiveSectionState);
+    };
+
+    window.addEventListener('scroll', queueArchiveSectionState, { passive: true });
+    window.addEventListener('resize', queueArchiveSectionState);
+    queueArchiveSectionState();
+  }
+
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
   const overlaps = (a, b, padding = 16) => {
     return !(

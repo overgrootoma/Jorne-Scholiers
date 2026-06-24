@@ -4440,6 +4440,108 @@ body,
   }
 }
 
+/* Shared logo on every page. */
+:root {
+  --site-logo-height: clamp(110px, 13vw, 190px);
+}
+
+.site-logo-slot {
+  position: sticky;
+  top: 0;
+  z-index: 16;
+  display: block;
+  width: min(520px, calc(100% - (2 * var(--page-padding-x))));
+  height: var(--site-logo-height);
+  margin: 0 var(--page-padding-x);
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  mix-blend-mode: difference;
+}
+
+.site-logo-slot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: left top;
+  filter: invert(1);
+}
+
+.page-home main.home-exhibition {
+  height: calc(100dvh - var(--site-logo-height));
+  padding-top: 28px;
+}
+
+.home-archive-link {
+  top: 28px;
+}
+
+.page-about main {
+  height: calc(100dvh - var(--site-logo-height));
+}
+
+.page-archive .archive-intro {
+  position: sticky;
+  top: var(--site-logo-height);
+  left: auto;
+  right: auto;
+  width: 100%;
+}
+
+@media (max-width: 650px) {
+  :root {
+    --site-logo-height: 110px;
+  }
+
+  .site-logo-slot {
+    width: calc(100% - 28px);
+    margin: 0 14px;
+  }
+
+  .page-home main.home-exhibition {
+    height: auto;
+    min-height: calc(100dvh - var(--site-logo-height));
+    padding-top: 28px;
+  }
+
+  .home-archive-link {
+    top: 28px;
+  }
+}
+
+/* Logo overlays the site and yields to every immersive image state. */
+.site-logo-slot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  margin: 0;
+  z-index: 16;
+  transition: opacity 160ms ease, visibility 160ms ease;
+}
+
+.page-home main.home-exhibition,
+.page-about main {
+  height: 100vh;
+  height: 100dvh;
+}
+
+.page-archive .archive-intro {
+  top: 0;
+}
+
+@media (max-width: 650px) {
+  .site-logo-slot {
+    left: 0;
+    margin: 0;
+  }
+
+  .page-home main.home-exhibition {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+}
+
 /* Compact single-line footer at the end of the page. */
 .site-footer,
 .site-footer.is-visible,
@@ -4495,7 +4597,7 @@ body.page-detail .site-footer.is-visible {
   white-space: nowrap;
 }
 
-/* Reserved homepage logo area. Add the asset at images/logo.png. */
+/* Reserved homepage logo area. */
 .page-home main.home-exhibition {
   padding-top: clamp(112px, 15vh, 160px);
 }
@@ -4507,11 +4609,16 @@ body.page-detail .site-footer.is-visible {
   z-index: 5;
   width: clamp(150px, 18vw, 260px);
   height: clamp(46px, 7vh, 80px);
-  background-image: url("../images/logo.png");
+  background-image: url("../images/Asset%201.svg");
   background-repeat: no-repeat;
   background-position: left top;
   background-size: contain;
   pointer-events: none;
+}
+
+.home-archive-link {
+  top: clamp(112px, 15vh, 160px);
+  padding: 9px 0;
 }
 
 @media (max-width: 650px) {
@@ -4525,4 +4632,215 @@ body.page-detail .site-footer.is-visible {
     width: min(52vw, 210px);
     height: 58px;
   }
+
+  .home-archive-link {
+    top: 104px;
+  }
+}
+
+/* Final overlay positioning for the shared logo. */
+.site-logo-slot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  margin: 0;
+  z-index: 16;
+}
+
+.page-home main.home-exhibition {
+  height: 100vh;
+  height: 100dvh;
+  padding-top: clamp(16px, 2.2vh, 26px);
+}
+
+.home-archive-link {
+  top: clamp(25px, calc(2.2vh + 9px), 35px);
+}
+
+.page-archive .archive-intro {
+  top: 0;
+}
+
+@media (max-width: 650px) {
+  .site-logo-slot {
+    left: 0;
+    margin: 0;
+  }
+
+  .page-home main.home-exhibition {
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding-top: 18px;
+  }
+
+  .home-archive-link {
+    top: 27px;
+  }
+}
+
+/* Compact overlay logo sized to sit directly above the homepage lists. */
+:root {
+  --site-logo-height: clamp(72px, 8vw, 110px);
+}
+
+.site-logo-slot {
+  width: clamp(220px, 26vw, 380px);
+  height: var(--site-logo-height);
+}
+
+.page-home main.home-exhibition {
+  padding-top: calc(var(--site-logo-height) + 18px);
+}
+
+.home-archive-link {
+  top: calc(var(--site-logo-height) + 18px);
+}
+
+@media (max-width: 650px) {
+  :root {
+    --site-logo-height: 72px;
+  }
+
+  .site-logo-slot {
+    width: min(62vw, 260px);
+  }
+
+  .page-home main.home-exhibition {
+    padding-top: calc(var(--site-logo-height) + 18px);
+  }
+
+  .home-archive-link {
+    top: calc(var(--site-logo-height) + 18px);
+  }
+}
+
+/* Final shared logo spacing and project-rail clearance. */
+:root {
+  --site-logo-offset-x: clamp(14px, 2vw, 28px);
+  --site-logo-offset-y: clamp(14px, 2vw, 24px);
+  --site-logo-rail-gap: 12px;
+}
+
+.site-logo-slot {
+  top: var(--site-logo-offset-y);
+  left: var(--site-logo-offset-x);
+}
+
+.page-home main.home-exhibition {
+  padding-top: calc(var(--site-logo-offset-y) + var(--site-logo-height) + 18px);
+}
+
+.home-archive-link {
+  top: calc(var(--site-logo-offset-y) + var(--site-logo-height) + 18px);
+}
+
+.archive-intro--without-heading {
+  justify-content: flex-end;
+}
+
+body.page-detail .project-rail {
+  top: calc(var(--site-logo-offset-y) + var(--site-logo-height) + var(--site-logo-rail-gap));
+  height: calc(100dvh - var(--site-logo-offset-y) - var(--site-logo-height) - var(--site-logo-rail-gap));
+}
+
+body.page-detail .project-rail + .rail-preview {
+  top: calc(var(--site-logo-offset-y) + var(--site-logo-height) + var(--site-logo-rail-gap));
+}
+
+@media (max-width: 650px) {
+  :root {
+    --site-logo-offset-x: 14px;
+    --site-logo-offset-y: 14px;
+  }
+}
+
+/* Unboxed previous/next project navigation. */
+.project-step-nav {
+  width: auto;
+  margin: 24px clamp(14px, 2vw, 28px) 18px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.project-step,
+.project-step:hover,
+.project-step:focus-visible {
+  min-height: auto;
+  padding: 8px 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+.project-step:hover,
+.project-step:focus-visible,
+.project-step:hover *,
+.project-step:focus-visible * {
+  color: var(--accent-blue) !important;
+}
+
+/* Archive controls and scroll-linked year rail. */
+.page-archive .archive-intro--without-heading {
+  justify-content: flex-end;
+}
+
+.page-archive .archive-intro--without-heading .archive-intro-meta {
+  margin-left: auto;
+  text-align: right;
+}
+
+.page-archive .archive-intro--without-heading .archive-view-toggle {
+  justify-content: flex-end;
+}
+
+.archive-entry {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+
+.archive-entry-content {
+  grid-area: 1 / 1;
+}
+
+.archive-rail-block {
+  justify-content: center;
+  overflow: hidden;
+  transform: none;
+  transition: width 280ms cubic-bezier(0.2, 0.7, 0.2, 1), background-color 180ms ease;
+}
+
+.archive-rail-block:hover,
+.archive-rail-block:focus-visible,
+.archive-rail-block.is-active {
+  width: var(--sidebar-expanded-width);
+  transform: none;
+  background: var(--accent-blue) !important;
+}
+
+.archive-rail-block:hover span,
+.archive-rail-block:focus-visible span,
+.archive-rail-block.is-active span {
+  color: var(--white) !important;
+  opacity: 1;
+  transform: rotate(180deg);
+}
+
+/* Hide homepage chrome while a project preview is active. */
+.home-archive-link {
+  transition: opacity 160ms ease, visibility 160ms ease;
+}
+
+body.home-preview-active .site-logo-slot,
+body.home-preview-active .home-archive-link {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Close the one-pixel seam between the project strip and its extension. */
+.project-rail .rail-block::before {
+  left: calc(var(--sidebar-width) - 1px);
 }
