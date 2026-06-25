@@ -638,10 +638,9 @@ def render_project_page(item, item_type, nav=None):
             <source src=\"{href}\" type=\"video/{ext[1:]}\">
           </video>
         </div>
-        <figcaption class=\"media-caption\">{escape_html(page_config.get('captions', {}).get(file, file))}</figcaption>
       </figure>""")
                 continue
-            download_links.append(f"<li><a class=\"media-link\" href=\"{href}\" target=\"_blank\" rel=\"noopener\">Open {escape_html(file)}</a></li>")
+            download_links.append(f"<li><a class=\"media-link\" href=\"{href}\" target=\"_blank\" rel=\"noopener\">{escape_html(file)}</a></li>")
             continue
         if ext == '.pdf':
             media_blocks.append(f"""
@@ -660,7 +659,6 @@ def render_project_page(item, item_type, nav=None):
             <source src=\"{href}\" type=\"video/{ext[1:]}\">
           </video>
         </div>
-        <figcaption class=\"media-caption\">{escape_html(file)}</figcaption>
       </figure>""")
             continue
         download_links.append(f"<li><a href=\"{href}\" target=\"_blank\" rel=\"noopener\">{escape_html(file)}</a></li>")
@@ -701,6 +699,8 @@ def render_project_page(item, item_type, nav=None):
         f"<section class=\"detail-files\"><h2 class=\"title-font\">Files</h2><ul>{''.join(download_links)}</ul></section>"
         if download_links else ''
     )
+    visual_files_block = '' if item_type == 'projects' or not files_block else f"\n  {files_block}"
+    information_files_block = f"\n    {files_block}" if item_type == 'projects' and files_block else ''
     meta_block = page_config.get('meta', item['year'] or '') if item_type == 'projects' else item['year'] or ''
 
     return f"""
@@ -710,15 +710,14 @@ def render_project_page(item, item_type, nav=None):
     {back_link}
     <h1 class=\"title-font\">{title}</h1>
     <div class=\"project-meta\">{meta_block}</div>
-    {description_block}
+    {description_block}{information_files_block}
   </section>
   <section class=\"{gallery_class}\">
     {(''.join(images) if images else '<div class="empty-state">No images yet.</div>')}
   </section>
   {media_section}
   {showcase_block}
-  {thumbnail_block}
-  {files_block}
+  {thumbnail_block}{visual_files_block}
 </main>"""
 
 

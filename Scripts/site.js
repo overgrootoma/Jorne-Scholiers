@@ -321,21 +321,6 @@
     ypn2: 0,
   };
 
-  const randomWeight = () => Math.floor(Math.random() * 801) + 100;
-  const randomFloat = (min, max) => Number((Math.random() * (max - min) + min).toFixed(2));
-  const randomAxes = () => ({
-    slnt: randomFloat(-10, 0),
-    crsv: randomFloat(0, 1),
-    elsh: randomFloat(0, 1),
-    elxp: randomFloat(0, 1),
-    szp1: randomFloat(0, 1),
-    szp2: randomFloat(0, 1),
-    xpn1: randomFloat(0, 1),
-    xpn2: randomFloat(0, 1),
-    ypn1: randomFloat(0, 1),
-    ypn2: randomFloat(0, 1),
-  });
-
   const applyAxes = (el, weight, axes) => {
     el.style.setProperty('--title-weight', weight);
     el.style.setProperty('--axis-slnt', axes.slnt);
@@ -353,26 +338,12 @@
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   titleEls.forEach((el) => {
     applyAxes(el, baseWeight, baseAxes);
-    if (prefersReducedMotion) return;
-    const interval = 2800 + Math.random() * 2200;
-    setInterval(() => {
-      applyAxes(el, randomWeight(), randomAxes());
-    }, interval);
   });
 
   const railTitleEls = Array.from(document.querySelectorAll('.project-rail .rail-block span'));
   const siteTitle = document.querySelector('.site-title');
-  const updateNavigationWeights = () => {
-    siteTitle?.style.setProperty('--title-weight', randomWeight());
-    railTitleEls.forEach((el) => el.style.setProperty('--rail-title-weight', randomWeight()));
-  };
-  if (prefersReducedMotion) {
-    siteTitle?.style.setProperty('--title-weight', 650);
-    railTitleEls.forEach((el) => el.style.setProperty('--rail-title-weight', 650));
-  } else {
-    updateNavigationWeights();
-    window.setInterval(updateNavigationWeights, 2000);
-  }
+  siteTitle?.style.setProperty('--title-weight', 650);
+  railTitleEls.forEach((el) => el.style.setProperty('--rail-title-weight', 650));
 
   const rail = document.querySelector('.project-rail, .archive-rail');
   const preview = document.getElementById('rail-preview');
@@ -437,12 +408,6 @@
 
       homeSections.forEach((section) => {
         const rect = section.getBoundingClientRect();
-        const progress = clamp((viewportAnchor - rect.top) / Math.max(rect.height, 1), 0, 1);
-        const title = section.querySelector('.project-sticky h2');
-        if (title) {
-          const weight = Math.round(900 - progress * 800);
-          applyAxes(title, weight, baseAxes);
-        }
         if (rect.top <= viewportAnchor && rect.bottom > viewportAnchor) {
           activeSection = section;
         }

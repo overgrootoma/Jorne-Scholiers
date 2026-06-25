@@ -801,7 +801,6 @@ function renderCollectionIndex(items, {
             <source src="${href}" type="video/${ext.replace('.', '')}">
           </video>
         </div>
-        <figcaption class="media-caption">${escapeHtml(file)}</figcaption>
       </figure>`);
           return;
         }
@@ -972,8 +971,7 @@ function renderProjectPage(item, type, nav = null) {
       </figure>`);
         return;
       }
-      const fileLabel = ext === '.pdf' ? 'Open PDF' : 'Open file';
-      downloadLinks.push(`<li><a class="media-link" href="${href}" target="_blank" rel="noopener">${fileLabel}</a></li>`);
+      downloadLinks.push(`<li><a class="media-link" href="${href}" target="_blank" rel="noopener">${escapeHtml(file)}</a></li>`);
       return;
     }
     if (ext === '.pdf') {
@@ -994,7 +992,6 @@ function renderProjectPage(item, type, nav = null) {
             <source src="${href}" type="video/${ext.replace('.', '')}">
           </video>
         </div>
-        <figcaption class="media-caption">${escapeHtml(file)}</figcaption>
       </figure>`);
       return;
     }
@@ -1049,6 +1046,9 @@ function renderProjectPage(item, type, nav = null) {
       ? `<section class="detail-files"><ul>${downloadLinks.join('')}</ul></section>`
       : `<section class="detail-files"><h2 class="title-font">Files</h2><ul>${downloadLinks.join('')}</ul></section>`)
     : '';
+  const visualFilesBlock = type === 'projects' || !filesBlock ? '' : `\n      ${filesBlock}`;
+  const informationFilesBlock = type === 'projects' && filesBlock ? `\n        ${filesBlock}` : '';
+  const projectInformationClass = type === 'projects' && filesBlock ? ' project-information--has-files' : '';
 
   const backLink = type === 'projects'
     ? '<a class="back-link" href="index.html">&larr; Back to home</a>'
@@ -1064,11 +1064,10 @@ function renderProjectPage(item, type, nav = null) {
       </section>
       ${mediaSection}
       ${showcaseBlock}
-      ${thumbnailBlock}
-      ${filesBlock}
+      ${thumbnailBlock}${visualFilesBlock}
       ${type === 'projects' ? renderProjectStepNav(nav) : ''}
     </div>
-    <aside class="project-information" data-project-information>
+    <aside class="project-information${projectInformationClass}" data-project-information>
       <button class="project-information-toggle" type="button" aria-expanded="true" aria-label="Toggle project information">
         <span class="project-information-toggle__title">${title}</span>
         <span class="project-information-toggle__mark" aria-hidden="true">−</span>
@@ -1076,7 +1075,7 @@ function renderProjectPage(item, type, nav = null) {
       <div class="project-information-content">
         ${backLink}
         <h1 class="title-font">${title}</h1>
-        ${descriptionBlock}
+        ${descriptionBlock}${informationFilesBlock}
       </div>
     </aside>
   </div>

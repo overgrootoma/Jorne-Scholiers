@@ -209,7 +209,7 @@ img {
     "XPN2" var(--axis-xpn2),
     "YPN1" var(--axis-ypn1),
     "YPN2" var(--axis-ypn2);
-  transition: font-variation-settings 0.5s ease, letter-spacing 0.5s ease, transform 0.5s ease, filter 0.5s ease;
+  transition: letter-spacing 0.5s ease, transform 0.5s ease, filter 0.5s ease;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -572,8 +572,7 @@ h6 {
   text-transform: uppercase;
   white-space: nowrap;
   opacity: 0;
-  transition: opacity 0.2s ease 0.08s,
-    font-variation-settings 1.5s ease-in-out;
+  transition: opacity 0.2s ease 0.08s;
 }
 
 .project-rail .rail-block:hover span,
@@ -2882,7 +2881,7 @@ body.page-home {
   font-weight: 480;
   line-height: 1.08;
   letter-spacing: 0.01em;
-  transition: color 120ms ease, background-color 120ms ease, font-variation-settings 180ms ease;
+  transition: color 120ms ease, background-color 120ms ease;
 }
 
 .home-project-link small {
@@ -3035,7 +3034,8 @@ body.page-home {
 }
 
 .project-info-group,
-.project-information .detail-description {
+.project-information .detail-description,
+.project-information .detail-files {
   margin: 0 0 22px;
   padding-top: 8px;
   border-top: 1px solid rgba(0, 0, 0, 0.2);
@@ -3046,6 +3046,22 @@ body.page-home {
   margin: 0;
   font-size: 0.74rem;
   line-height: 1.48;
+}
+
+.project-information .detail-files ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.project-information .detail-files li {
+  margin: 0 0 8px;
+}
+
+.project-information .detail-files .media-link {
+  display: inline;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
 }
 
 .project-information.is-collapsed {
@@ -3065,6 +3081,20 @@ body.page-home {
 
 .project-information.is-collapsed .project-information-content {
   display: none;
+}
+
+.project-information.is-collapsed.project-information--has-files .project-information-content {
+  display: block;
+  padding: 0 0 10px;
+}
+
+.project-information.is-collapsed.project-information--has-files .project-information-content > :not(.detail-files) {
+  display: none;
+}
+
+.project-information.is-collapsed.project-information--has-files .detail-files {
+  margin: 0;
+  padding-top: 8px;
 }
 
 .immersive-return {
@@ -3762,8 +3792,8 @@ body.page-simple .site-footer {
 }
 
 .home-project-link {
-  padding-block: 9px;
-  margin-block: -5px;
+  padding-block: 6px;
+  margin-block: -3px;
 }
 
 :where(
@@ -4845,6 +4875,25 @@ body.home-preview-active .home-archive-link {
   left: calc(var(--sidebar-width) - 1px);
 }
 
+/* Keep the active project visible in the rail without requiring hover. */
+.project-rail .rail-block.is-current {
+  background: var(--accent-blue) !important;
+}
+
+.project-rail .rail-block.is-current::before {
+  background: var(--accent-blue);
+}
+
+.project-rail .rail-block.is-current span {
+  color: var(--white) !important;
+}
+
+@media (min-width: 901px) {
+  .home-project-link {
+    width: 74%;
+  }
+}
+
 @media (max-width: 900px) {
   body.page-home {
     height: auto;
@@ -4868,6 +4917,7 @@ body.home-preview-active .home-archive-link {
     display: block;
     width: 100%;
     max-width: none;
+    order: 2;
   }
 
   .home-about-columns {
@@ -4882,6 +4932,7 @@ body.home-preview-active .home-archive-link {
   .home-project-index {
     width: 100%;
     max-width: none;
+    order: 1;
   }
 
   .home-project-index ol {
@@ -5005,5 +5056,17 @@ body.home-preview-active .home-archive-link {
   .project-row {
     grid-template-columns: minmax(0, 1fr) minmax(86px, 32vw);
     min-height: 82px;
+  }
+}
+
+@media (max-width: 900px) {
+  body.page-detail .project-rail,
+  body.page-detail .project-rail + .rail-preview {
+    display: none !important;
+  }
+
+  body.page-detail main,
+  body.page-detail .page-detail main {
+    padding-left: 0;
   }
 }
