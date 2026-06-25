@@ -1380,6 +1380,8 @@
   const setupHomeProjectPreviews = () => {
     const links = Array.from(document.querySelectorAll('[data-home-project]'));
     if (!links.length) return;
+    const desktopPreview = window.matchMedia('(min-width: 901px) and (hover: hover) and (pointer: fine)');
+    if (!desktopPreview.matches) return;
 
     let activeLink = null;
     let activePreview = null;
