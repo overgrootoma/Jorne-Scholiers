@@ -2,9 +2,9 @@
   "meta": "2025<br>Exhibition",
   "preview_image": "Projects/2025%20Big%20summer%20energy/BSE_1.jpg",
   "homepage_images": [
-    "BSE_1.jpg",
-    "BSE_2.jpg",
-    "BSE_4.jpg"
+    "Homepage BSE/BSE_1.jpg",
+    "Homepage BSE/BSE_2.jpg",
+    "Homepage BSE/BSE_3.jpg"
   ],
   "gallery_class": "detail-gallery detail-gallery--four-stagger",
   "image_spans": {},
@@ -17,7 +17,6 @@
     "BSE_5.jpg",
     "BSE_6.jpg",
     "BSE_7.jpg",
-    "AAW1.webp",
     "AAW2.webp",
     "AAW3.webp",
     "AAW4.webp",

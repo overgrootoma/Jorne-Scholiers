@@ -27,10 +27,10 @@ const homepageProfile = {
     },
   ],
   experience: [
-    'Intern at Broos Stoffels',
+    'Intern at Broos Stoffels 2026',
   ],
   education: [
-    'Graphic Studio, Visual Design — 2023–2026',
+    'LUCA, Visual Design, Graphic Studio 2023-2026',
   ],
   links: [
     { label: 'Accidental Graphics', href: 'https://overgrootoma.github.io/Accidental-Graphics/index.html' },
@@ -344,10 +344,16 @@ function readPageConfig(dir) {
 
 function previewImagePath(project) {
   const preferred = project.pageConfig?.preview_image;
-  if (preferred) return preferred;
+  if (preferred && rootImageDimensionAttributes(preferred)) return preferred;
   return project.images[0]
     ? toUrlPath('Projects', project.dirName, project.images[0])
     : '';
+}
+
+function projectIndexImagePath(project) {
+  const preferred = project.pageConfig?.index_image;
+  if (preferred && rootImageDimensionAttributes(preferred)) return preferred;
+  return previewImagePath(project);
 }
 
 function rootImageDimensionAttributes(urlPath) {
@@ -359,6 +365,18 @@ function rootImageDimensionAttributes(urlPath) {
 }
 
 function homepageImages(project) {
+  const homepageDir = readDirSafe(path.join(projectsDir, project.dirName))
+    .filter((entry) => entry.isDirectory() && /^homepage/i.test(entry.name))
+    .map((entry) => entry.name)
+    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))[0];
+  if (homepageDir) {
+    const homepageFiles = listFiles(path.join(projectsDir, project.dirName, homepageDir))
+      .filter(isImage)
+      .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+      .map((file) => `${homepageDir}/${file}`);
+    if (homepageFiles.length) return homepageFiles;
+  }
+
   const preferred = project.pageConfig?.homepage_images;
   if (!Array.isArray(preferred) || !preferred.length) {
     return project.images.slice(0, 5);
@@ -520,7 +538,7 @@ function renderHead({
   <meta name="twitter:description" content="${escapeHtml(safeDescription)}">
   <meta name="twitter:image" content="${escapeHtml(socialImage)}">
   <meta name="theme-color" content="#ebebeb">
-  <link rel="icon" type="image/jpeg" href="images/favicon.jpg">
+  <link rel="icon" type="image/jpeg" href="images/blue%20favicon.jpg">
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RELMELQ5K1"></script>
   <script>
@@ -540,7 +558,7 @@ function renderHead({
 function renderIntroCopy() {
   return `<p>
     Hello,<br>
-    My name is <a href="about.html" class="intro-link">Jorne Scholiers</a>, a Visual Design student at LUCA School of Arts Ghent.<br><br>
+    My name is Jorne Scholiers, a Visual Design student at LUCA School of Arts Ghent.<br><br>
     I have some <a href="index.html#project-grid">projects</a> you can look at, along with other work in my <a href="archive.html">archive</a> that shows what I've been experimenting with.<br>
     Or maybe you will like some of my <a href="photography.html">Photography</a>. Some of my projects appear on my <a href="https://www.instagram.com/byjorne/" target="_blank" rel="noopener">Instagram</a>.<br><br>
     Don't hesitate to <a href="mailto:jorne.scholiers@icloud.com">contact me</a>, I'd love to hear from you.<br>
@@ -566,7 +584,7 @@ function renderMobileIntro() {
 function renderProjectRows(projects, { compact = false } = {}) {
   return projects.map((project, index) => {
     const displayTitle = project.pageConfig?.index_title || project.title;
-    const image = project.pageConfig?.index_image || previewImagePath(project);
+    const image = projectIndexImagePath(project);
     const dimensions = rootImageDimensionAttributes(image);
     const loading = index === 0 ? ' loading="eager" fetchpriority="high"' : ' loading="lazy"';
     const summary = compact
@@ -589,7 +607,7 @@ function renderProjectRows(projects, { compact = false } = {}) {
 function renderProjectRail(projects, { linkToSections = false, currentSlug = null } = {}) {
   const railBlocks = projects
     .map((project) => {
-      const previewImage = project.pageConfig?.index_image || previewImagePath(project);
+      const previewImage = projectIndexImagePath(project);
       const title = escapeHtml(project.title);
       const href = linkToSections ? `#project-${project.slug}` : `project-${project.slug}.html`;
       const current = project.slug === currentSlug ? ' is-current' : '';
@@ -610,7 +628,7 @@ function renderProjectRail(projects, { linkToSections = false, currentSlug = nul
 function renderHomeProjectGrid(projects) {
   const cards = projects.map((project, index) => {
     const title = project.pageConfig?.index_title || project.title;
-    const image = project.pageConfig?.index_image || previewImagePath(project);
+    const image = projectIndexImagePath(project);
     const dimensions = rootImageDimensionAttributes(image);
     const loading = index < 3 ? ' loading="eager"' : ' loading="lazy"';
     return `<a class="home-grid-card" href="project-${project.slug}.html" style="--grid-card-color: ${project.accent}; --grid-card-text: ${railTextColor(project.accent)}">
@@ -627,7 +645,7 @@ function renderHomeProjectGrid(projects) {
 function renderHome(projects) {
   const renderTextList = (items, { interactiveFirst = false } = {}) => items.map((item, index) => {
     if (interactiveFirst && index === 0) {
-      return `<li><button class="home-personal-name" type="button" data-home-portrait-trigger>${escapeHtml(item)}</button></li>`;
+      return `<li>${escapeHtml(item)}</li>`;
     }
     return `<li>${escapeHtml(item)}</li>`;
   }).join('');
@@ -641,8 +659,7 @@ function renderHome(projects) {
     const page = `project-${project.slug}.html`;
     const displayTitle = project.pageConfig?.index_title || project.title;
     const preferredImages = homepageImages(project);
-    const fallbackImages = project.images.filter((file) => !preferredImages.includes(file));
-    const previewImages = [...preferredImages, ...fallbackImages].slice(0, 4);
+    const previewImages = preferredImages.slice(0, 4);
     const images = previewImages.map((file, imageIndex) => {
         const fileParts = file.split(/[\\/]/).filter(Boolean);
         const src = toUrlPath('Projects', project.dirName, ...fileParts);
@@ -871,7 +888,7 @@ function renderArchiveIndex(items) {
 
 function renderPhotographyIndex(items) {
   return renderCollectionIndex(items, {
-    heading: 'Archive',
+    heading: '',
     introText: 'Selected photography work and ongoing series.',
     activeCollection: 'photography',
     railAriaLabel: 'Photography years navigation',

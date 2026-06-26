@@ -194,7 +194,7 @@ img {
 }
 
 .title-font {
-  font-family: var(--title-font);
+  font-family: var(--body-font);
   font-optical-sizing: auto;
   font-weight: var(--title-weight);
   font-style: normal;
@@ -1783,7 +1783,7 @@ body.magnifier-cursor-hidden .home-cursor-ball {
 
 .back-link:hover,
 .back-link:focus-visible {
-  color: var(--black);
+  color: var(--white);
   background: var(--accent-green);
   box-shadow: 0 0 0 0.12em var(--accent-green);
 }
@@ -4577,9 +4577,18 @@ body,
 .site-footer.is-visible,
 body.page-detail .site-footer,
 body.page-detail .site-footer.is-visible {
-  margin: 64px 0 16px !important;
-  padding: 0 var(--page-padding-x);
-  font-size: 0.62rem;
+  margin: 64px 0 0 !important;
+  padding: 10px var(--page-padding-x) 12px;
+  font-family: var(--body-font);
+  font-size: 0.68rem;
+  font-weight: 520;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+}
+
+.site-footer *,
+.site-footer.is-visible * {
+  font-family: var(--body-font);
 }
 
 .site-footer-copy {
@@ -4587,13 +4596,21 @@ body.page-detail .site-footer.is-visible {
   flex-direction: row;
   align-items: baseline;
   justify-content: center;
-  gap: 12px;
+  gap: clamp(14px, 2vw, 28px);
   width: auto;
   white-space: nowrap;
 }
 
 .site-footer-rights {
   margin-top: 0;
+}
+
+@media (max-width: 680px) {
+  .site-footer-copy {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    white-space: normal;
+  }
 }
 
 /* Homepage hierarchy uses only two Bitcount weights. */
@@ -4826,6 +4843,22 @@ body.page-detail .project-rail + .rail-preview {
   justify-content: flex-end;
 }
 
+.page-archive .archive-view-toggle {
+  width: auto;
+  min-height: 0;
+  margin: 0;
+  gap: 6px;
+  align-items: center;
+}
+
+.page-archive .archive-view-toggle .projects-view-toggle__button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 5px 8px;
+  line-height: 1;
+}
+
 .archive-entry {
   grid-template-columns: minmax(0, 1fr);
   gap: 0;
@@ -4933,6 +4966,14 @@ body.home-preview-active .home-archive-link {
     width: 100%;
     max-width: none;
     order: 1;
+  }
+
+  .home-archive-link {
+    position: static;
+    order: 1;
+    justify-self: start;
+    margin-top: -22px;
+    padding: 0;
   }
 
   .home-project-index ol {
@@ -5069,4 +5110,28 @@ body.home-preview-active .home-archive-link {
   body.page-detail .page-detail main {
     padding-left: 0;
   }
+}
+
+/* Final homepage type weights: titles and everything else. */
+.page-home .home-exhibition {
+  --home-weight-regular: 400;
+  --home-weight-strong: 650;
+}
+
+.page-home .home-exhibition :where(
+  .home-information,
+  .home-information *,
+  .home-project-link,
+  .home-project-link *,
+  .home-archive-link
+) {
+  font-weight: var(--home-weight-regular) !important;
+}
+
+.page-home .home-exhibition :where(
+  .home-about-columns h2,
+  .home-project-link > span,
+  .home-archive-link
+) {
+  font-weight: var(--home-weight-strong) !important;
 }

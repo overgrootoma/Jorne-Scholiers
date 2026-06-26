@@ -3,19 +3,11 @@
   "index_image": "images/cover photo's/Isolation.png",
   "preview_image": "Projects/2026%20Isolation/01.png",
   "homepage_images": [
-    "01.png",
-    "All images/CMYK-Isolation007.jpg",
-    "All images/CMYK-Isolation034.jpg",
-    "All images/CMYK-Isolation068.jpg",
-    "All images/CMYK-Isolation092.jpg"
+    "Homepage isolation/slide.jpg",
+    "Homepage isolation/slide2.jpg",
+    "Homepage isolation/slide10.jpg",
+    "Homepage isolation/thumbnail.png"
   ],
-  "homepage_image_scales": {
-    "01.png": 1.25,
-    "All images/CMYK-Isolation007.jpg": 0.58,
-    "All images/CMYK-Isolation034.jpg": 0.58,
-    "All images/CMYK-Isolation068.jpg": 0.58,
-    "All images/CMYK-Isolation092.jpg": 0.58
-  },
   "default_image_span": 6,
   "image_spans": {
     "01.png": 3

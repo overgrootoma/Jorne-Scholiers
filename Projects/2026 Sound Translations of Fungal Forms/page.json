@@ -1,41 +1,22 @@
 {
   "meta": "2026<br>school assignment",
   "index_title": "STFF",
-  "index_image": "Projects/2026%20Sound%20Translations%20of%20Fungal%20Forms/STFF_Portfolio_3.webp",
-  "preview_image": "Projects/2026%20Sound%20Translations%20of%20Fungal%20Forms/STFF_Portfolio_1.webp",
+  "index_image": "Projects/2026%20Sound%20Translations%20of%20Fungal%20Forms/STFF_Portfolio_3.jpg",
+  "preview_image": "Projects/2026%20Sound%20Translations%20of%20Fungal%20Forms/STFF_Portfolio_1.jpg",
   "homepage_images": [
-    "STFF_Portfolio_1.webp",
-    "STFF_Portfolio_2.webp",
-    "STFF_Portfolio_3.webp",
-    "STFF_Portfolio_4.webp",
-    "STFF_Portfolio_5.webp"
+    "Homepage STFF/STFF_Portfolio_1.webp",
+    "Homepage STFF/STFF_Portfolio_2.webp",
+    "Homepage STFF/STFF_Portfolio_3.webp",
+    "Homepage STFF/STFF_Portfolio_9.webp"
   ],
   "default_image_span": 3,
   "captions": {
-    "STFF_Portfolio_1.webp": "Sound Translations of Fungal Forms — Image 01",
-    "STFF_Portfolio_2.webp": "Sound Translations of Fungal Forms — Image 02",
-    "STFF_Portfolio_3.webp": "Sound Translations of Fungal Forms — Image 03",
-    "STFF_Portfolio_4.webp": "Sound Translations of Fungal Forms — Image 04",
     "STFF_Portfolio_5.webp": "Sound Translations of Fungal Forms — Image 05",
-    "STFF_Portfolio_6.webp": "Sound Translations of Fungal Forms — Image 06",
-    "STFF_Portfolio_7.webp": "Sound Translations of Fungal Forms — Image 07",
-    "STFF_Portfolio_8.webp": "Sound Translations of Fungal Forms — Image 08",
-    "STFF_Portfolio_9.webp": "Sound Translations of Fungal Forms — Image 09",
-    "STFF_Portfolio_10.webp": "Sound Translations of Fungal Forms — Image 10",
-    "STFF_Portfolio_11.webp": "Sound Translations of Fungal Forms — Image 11"
+    "STFF_Portfolio_10.webp": "Sound Translations of Fungal Forms — Image 10"
   },
   "image_order": [
-    "STFF_Portfolio_1.webp",
-    "STFF_Portfolio_2.webp",
-    "STFF_Portfolio_3.webp",
-    "STFF_Portfolio_4.webp",
     "STFF_Portfolio_5.webp",
-    "STFF_Portfolio_6.webp",
-    "STFF_Portfolio_7.webp",
-    "STFF_Portfolio_8.webp",
-    "STFF_Portfolio_9.webp",
-    "STFF_Portfolio_10.webp",
-    "STFF_Portfolio_11.webp"
+    "STFF_Portfolio_10.webp"
   ],
   "youtube_showcase": {
     "title": "Project video",

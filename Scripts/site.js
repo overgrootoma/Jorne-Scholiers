@@ -1406,7 +1406,7 @@
   };
 
   const setupHomePortraitPreview = () => {
-    const trigger = document.querySelector('[data-home-portrait-trigger]');
+    const trigger = document.querySelector('.home-about-primary') || document.querySelector('[data-home-portrait-trigger]');
     const preview = document.querySelector('[data-home-portrait]');
     if (!trigger || !preview) return;
 
