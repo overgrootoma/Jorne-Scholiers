@@ -5108,7 +5108,40 @@ body.home-preview-active .home-archive-link {
 
   body.page-detail main,
   body.page-detail .page-detail main {
-    padding-left: 0;
+    box-sizing: border-box;
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  body.page-detail .back-link,
+  body.page-simple .back-link {
+    display: none !important;
+  }
+
+  body.page-detail .project-information.is-collapsed .project-information-toggle {
+    display: none !important;
+  }
+
+  body.page-detail .project-information.is-collapsed:not(.project-information--has-files) {
+    display: none !important;
+  }
+
+  body.page-home .home-about-columns {
+    display: flex;
+    flex-direction: column;
+  }
+
+  body.page-home .home-about-primary {
+    display: contents;
+  }
+
+  body.page-home .home-about-secondary {
+    order: 2;
+  }
+
+  body.page-home .home-profile-links {
+    order: 3;
+    margin-top: 34px;
   }
 }
 
