@@ -952,8 +952,47 @@
     let pointerOverLightboxImage = false;
     let lastLensPoint = null;
     let lastFocusedElement = null;
+    let swipeStart = null;
+    let suppressImageClick = false;
+    let mobileImageScale = 1;
+    let mobileImageTranslate = { x: 0, y: 0 };
+    let panStart = null;
+    let pinchStart = null;
+    const activeMobilePointers = new Map();
+    const mobileLightboxQuery = window.matchMedia('(max-width: 700px), (hover: none) and (pointer: coarse)');
 
     const isOpen = () => lightbox.classList.contains('is-visible');
+    const canUseMagnifier = () => !mobileLightboxQuery.matches;
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+    const pointerDistance = (first, second) => Math.hypot(first.x - second.x, first.y - second.y);
+    const clampMobileImageTranslate = () => {
+      if (mobileImageScale <= 1.01) {
+        mobileImageTranslate = { x: 0, y: 0 };
+        return;
+      }
+      const maxX = Math.max(0, (lightboxImg.offsetWidth * (mobileImageScale - 1)) / 2);
+      const maxY = Math.max(0, (lightboxImg.offsetHeight * (mobileImageScale - 1)) / 2);
+      mobileImageTranslate = {
+        x: clamp(mobileImageTranslate.x, -maxX, maxX),
+        y: clamp(mobileImageTranslate.y, -maxY, maxY),
+      };
+    };
+    const applyMobileImageScale = () => {
+      const isZoomed = mobileImageScale > 1.01;
+      clampMobileImageTranslate();
+      lightboxImg.style.transform = isZoomed
+        ? `translate3d(${mobileImageTranslate.x}px, ${mobileImageTranslate.y}px, 0) scale(${mobileImageScale})`
+        : '';
+      lightbox.classList.toggle('is-image-zoomed', isZoomed);
+    };
+    const resetMobileImageScale = () => {
+      mobileImageScale = 1;
+      mobileImageTranslate = { x: 0, y: 0 };
+      panStart = null;
+      pinchStart = null;
+      activeMobilePointers.clear();
+      applyMobileImageScale();
+    };
     const syncMagnifierCursor = () => {
       document.body.classList.toggle(
         'magnifier-cursor-hidden',
@@ -961,12 +1000,19 @@
       );
     };
     const setMagnifierActive = (active) => {
-      magnifierActive = active;
-      lightbox.classList.toggle('magnifier-active', active);
+      const nextActive = Boolean(active && canUseMagnifier());
+      magnifierActive = nextActive;
+      lightbox.classList.toggle('magnifier-active', nextActive);
       syncMagnifierCursor();
-      magnifierButton.setAttribute('aria-pressed', String(active));
-      if (!active) {
+      magnifierButton.setAttribute('aria-pressed', String(nextActive));
+      if (!nextActive) {
         lens.classList.remove('is-visible');
+      }
+    };
+    const syncLightboxViewport = () => {
+      lightbox.classList.toggle('is-mobile-viewer', !canUseMagnifier());
+      if (!canUseMagnifier()) {
+        setMagnifierActive(false);
       }
     };
 
@@ -1000,6 +1046,7 @@
       pointerOverLightboxImage = false;
       setMagnifierActive(false);
       lastLensPoint = null;
+      resetMobileImageScale();
       lightboxImg.removeAttribute('src');
       document.body.classList.remove('overlay-open');
       if (lastFocusedElement instanceof HTMLElement) {
@@ -1016,6 +1063,7 @@
       }
       currentIndex = (index + images.length) % images.length;
       const img = images[currentIndex];
+      resetMobileImageScale();
       lightboxImg.src = img.src;
       lightboxImg.alt = img.alt || (isArchivePage ? 'Archive image' : 'Project image');
       lens.style.backgroundImage = `url("${img.src}")`;
@@ -1025,7 +1073,7 @@
       lightbox.inert = false;
       document.body.classList.add('overlay-open');
       if (!wasOpen) {
-        setMagnifierActive(true);
+        setMagnifierActive(canUseMagnifier());
         window.requestAnimationFrame(() => closeButton.focus());
       }
     };
@@ -1062,6 +1110,7 @@
 
     magnifierButton.addEventListener('click', (event) => {
       event.stopPropagation();
+      if (!canUseMagnifier()) return;
       setMagnifierActive(!magnifierActive);
     });
 
@@ -1078,8 +1127,145 @@
       lens.classList.remove('is-visible');
     });
 
+    stage.addEventListener('pointerdown', (event) => {
+      if (!mobileLightboxQuery.matches) return;
+      if (event.target.closest('button, input, label, a')) return;
+      activeMobilePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      suppressImageClick = false;
+      if (
+        typeof stage.hasPointerCapture === 'function'
+        && typeof stage.setPointerCapture === 'function'
+        && !stage.hasPointerCapture(event.pointerId)
+      ) {
+        stage.setPointerCapture(event.pointerId);
+      }
+      if (activeMobilePointers.size === 1 && mobileImageScale <= 1.01) {
+        swipeStart = {
+          pointerId: event.pointerId,
+          x: event.clientX,
+          y: event.clientY,
+        };
+      } else if (activeMobilePointers.size === 1) {
+        panStart = {
+          pointerId: event.pointerId,
+          x: event.clientX,
+          y: event.clientY,
+          translateX: mobileImageTranslate.x,
+          translateY: mobileImageTranslate.y,
+        };
+      }
+      if (activeMobilePointers.size === 2) {
+        const points = Array.from(activeMobilePointers.values());
+        pinchStart = {
+          distance: pointerDistance(points[0], points[1]),
+          scale: mobileImageScale,
+        };
+        panStart = null;
+        swipeStart = null;
+        suppressImageClick = true;
+      }
+    });
+
+    stage.addEventListener('pointermove', (event) => {
+      if (!activeMobilePointers.has(event.pointerId)) return;
+      activeMobilePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      if (pinchStart && activeMobilePointers.size >= 2) {
+        const points = Array.from(activeMobilePointers.values());
+        const distance = pointerDistance(points[0], points[1]);
+        if (pinchStart.distance > 0) {
+          mobileImageScale = clamp(pinchStart.scale * (distance / pinchStart.distance), 1, 4);
+          applyMobileImageScale();
+          suppressImageClick = true;
+          event.preventDefault();
+        }
+        return;
+      }
+      if (panStart && event.pointerId === panStart.pointerId && mobileImageScale > 1.01) {
+        mobileImageTranslate = {
+          x: panStart.translateX + event.clientX - panStart.x,
+          y: panStart.translateY + event.clientY - panStart.y,
+        };
+        applyMobileImageScale();
+        suppressImageClick = true;
+        event.preventDefault();
+        return;
+      }
+      if (!swipeStart || event.pointerId !== swipeStart.pointerId || mobileImageScale > 1.01) return;
+      const deltaX = event.clientX - swipeStart.x;
+      const deltaY = event.clientY - swipeStart.y;
+      if (Math.abs(deltaX) > 12 && Math.abs(deltaX) > Math.abs(deltaY)) {
+        event.preventDefault();
+      }
+    });
+
+    const finishSwipe = (event) => {
+      const wasPinching = Boolean(pinchStart);
+      const wasPanning = Boolean(panStart && event.pointerId === panStart.pointerId);
+      activeMobilePointers.delete(event.pointerId);
+      if (wasPinching) {
+        pinchStart = null;
+        panStart = null;
+        swipeStart = null;
+        suppressImageClick = true;
+        if (mobileImageScale < 1.04) {
+          mobileImageScale = 1;
+          applyMobileImageScale();
+        }
+        if (typeof stage.hasPointerCapture === 'function' && stage.hasPointerCapture(event.pointerId)) {
+          stage.releasePointerCapture(event.pointerId);
+        }
+        window.setTimeout(() => {
+          suppressImageClick = false;
+        }, 350);
+        return;
+      }
+      if (wasPanning) {
+        panStart = null;
+        suppressImageClick = true;
+        if (typeof stage.hasPointerCapture === 'function' && stage.hasPointerCapture(event.pointerId)) {
+          stage.releasePointerCapture(event.pointerId);
+        }
+        window.setTimeout(() => {
+          suppressImageClick = false;
+        }, 350);
+        return;
+      }
+      if (!swipeStart || event.pointerId !== swipeStart.pointerId) {
+        panStart = null;
+        if (typeof stage.hasPointerCapture === 'function' && stage.hasPointerCapture(event.pointerId)) {
+          stage.releasePointerCapture(event.pointerId);
+        }
+        return;
+      }
+      const deltaX = event.clientX - swipeStart.x;
+      const deltaY = event.clientY - swipeStart.y;
+      swipeStart = null;
+      if (typeof stage.hasPointerCapture === 'function' && stage.hasPointerCapture(event.pointerId)) {
+        stage.releasePointerCapture(event.pointerId);
+      }
+      if (mobileImageScale > 1.01) return;
+      if (Math.abs(deltaX) < 48 || Math.abs(deltaX) < Math.abs(deltaY) * 1.15) return;
+      suppressImageClick = true;
+      showAt(currentIndex + (deltaX < 0 ? 1 : -1));
+      window.setTimeout(() => {
+        suppressImageClick = false;
+      }, 350);
+    };
+
+    stage.addEventListener('pointerup', finishSwipe);
+    stage.addEventListener('pointercancel', (event) => {
+      activeMobilePointers.delete(event.pointerId);
+      panStart = null;
+      swipeStart = null;
+      pinchStart = null;
+    });
+
     lightboxImg.addEventListener('click', (event) => {
       event.stopPropagation();
+      if (suppressImageClick) {
+        suppressImageClick = false;
+        return;
+      }
       if (!magnifierActive) {
         close();
       }
@@ -1124,6 +1310,12 @@
         }
       }
     });
+    syncLightboxViewport();
+    if (typeof mobileLightboxQuery.addEventListener === 'function') {
+      mobileLightboxQuery.addEventListener('change', syncLightboxViewport);
+    } else if (typeof mobileLightboxQuery.addListener === 'function') {
+      mobileLightboxQuery.addListener(syncLightboxViewport);
+    }
   };
 
   const setupPdfOverlay = () => {
