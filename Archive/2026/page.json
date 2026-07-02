@@ -2,17 +2,17 @@
   "image_order": [
     "2.1.png",
     "2.3.png",
+    "MotionStills-paint.png",
+    "MotionStills-3.png",
+    "MotionStills-4.png",
     "4.jpg",
     "10.jpg",
     "13.jpg",
     "14.jpg",
     "15.jpg",
-    "63.webp",
-    "MotionStills-paint.png",
-    "MotionStills-3.png",
-    "MotionStills-4.png"
+    "63.webp"
   ],
-  "other_file_order": [
+  "ignored_files": [
     "Sequence 01.mp4"
   ],
   "image_spans": {},

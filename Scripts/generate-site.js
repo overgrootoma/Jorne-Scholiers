@@ -8,6 +8,8 @@ const photographyDir = path.join(root, 'photography');
 
 const siteUrl = (process.env.SITE_URL || 'https://overgrootoma.github.io/Jorne-Scholiers/').replace(/\/?$/, '/');
 const siteName = 'Jorne Scholiers';
+const profileImage = 'images/Jorne%20Scholiers%20about%20picture.jpg';
+const profileImageFile = path.join(root, 'images', 'Jorne Scholiers about picture.jpg');
 const defaultSocialImage = 'images/ME.webp';
 const defaultDescription = 'Portfolio of Jorne Scholiers, a visual and graphic designer in Ghent working across identities, editorial design, typography, photography, and creative coding.';
 
@@ -148,7 +150,7 @@ function personSchema() {
     '@id': `${siteUrl}#jorne-scholiers`,
     name: siteName,
     url: siteUrl,
-    image: absoluteUrl('images/ME.webp'),
+    image: absoluteUrl(profileImage),
     jobTitle: 'Visual and Graphic Designer',
     description: defaultDescription,
     email: 'mailto:jorne.scholiers@icloud.com',
@@ -712,7 +714,7 @@ function renderHome(projects) {
     <ol>${projectLinks || '<li>No projects yet.</li>'}</ol>
   </section>
   <div class="home-portrait-preview" data-home-portrait aria-hidden="true">
-    <img src="images/ME.webp" alt="Portrait of Jorne Scholiers"${imageDimensionAttributes(path.join(root, 'images', 'ME.webp'))} loading="eager" decoding="async">
+    <img src="${profileImage}" alt="Portrait of Jorne Scholiers"${imageDimensionAttributes(profileImageFile)} loading="eager" decoding="async">
   </div>
   <a class="home-archive-link" href="archive.html">Archive</a>
 </main>`;
@@ -1149,8 +1151,8 @@ function renderAboutPage() {
     </section>
   </section>
   <div class="about-portrait" tabindex="0" aria-label="Portrait of Jorne Scholiers">
-    <img class="about-portrait-base" src="images/ME%20Blurred.jpg" alt="Blurred portrait of Jorne Scholiers"${imageDimensionAttributes(path.join(root, 'images', 'ME Blurred.jpg'))} loading="eager" fetchpriority="high" decoding="async">
-    <img class="about-portrait-hover" src="images/ME.webp" alt="Portrait of Jorne Scholiers"${imageDimensionAttributes(path.join(root, 'images', 'ME.webp'))} loading="lazy" decoding="async">
+    <img class="about-portrait-base" src="${profileImage}" alt="Blurred portrait of Jorne Scholiers"${imageDimensionAttributes(profileImageFile)} loading="eager" fetchpriority="high" decoding="async">
+    <img class="about-portrait-hover" src="${profileImage}" alt="Portrait of Jorne Scholiers"${imageDimensionAttributes(profileImageFile)} loading="lazy" decoding="async">
   </div>
 </main>`;
 }
@@ -1299,7 +1301,7 @@ function buildSite() {
     title: 'About Jorne Scholiers | Visual Designer in Ghent',
     description: 'Meet Jorne Scholiers, a visual and graphic designer studying at LUCA School of Arts in Ghent, Belgium, with a bold and experimental practice.',
     fileName: 'about.html',
-    image: 'images/ME.webp',
+    image: profileImage,
     imageAlt: 'Portrait of visual designer Jorne Scholiers',
     schema: personSchema(),
     bodyClass: 'page-simple page-about',

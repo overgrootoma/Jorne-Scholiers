@@ -2462,6 +2462,7 @@ body.magnifier-cursor-hidden .home-cursor-ball {
 
 .page-about .about-portrait-base {
   z-index: 2;
+  filter: blur(12px);
 }
 
 .page-about .about-portrait-hover {
@@ -5193,4 +5194,13 @@ body.home-preview-active .home-archive-link {
   .home-archive-link
 ) {
   font-weight: var(--home-weight-strong) !important;
+}
+
+.page-home .home-exhibition :where(
+  .home-about-columns h2,
+  .home-project-link > span,
+  .home-archive-link
+) {
+  font-size: clamp(0.84rem, 0.79rem + 0.22vw, 1rem);
+  line-height: 1.08;
 }
