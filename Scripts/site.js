@@ -922,17 +922,6 @@
       </button>
       <div class="lightbox-stage">
         <img alt="Enlarged project image">
-        <div class="lightbox-lens" aria-hidden="true"></div>
-      </div>
-      <div class="lightbox-toolbar" aria-label="Image tools">
-        <button class="lightbox-tool lightbox-tool--magnifier" type="button" aria-label="Toggle magnifier" aria-pressed="false">
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <circle cx="11" cy="11" r="6"></circle>
-            <path d="m16 16 5 5"></path>
-          </svg>
-        </button>
-        <label class="visually-hidden" for="lightbox-magnification">Magnification</label>
-        <input class="lightbox-slider" id="lightbox-magnification" type="range" min="1.6" max="4" step="0.2" value="2.4" aria-label="Magnification">
       </div>
       <button class="lightbox-control lightbox-control--next" type="button" aria-label="Next image">
         <span aria-hidden="true">→</span>
@@ -941,112 +930,74 @@
     document.body.appendChild(lightbox);
     const lightboxImg = lightbox.querySelector('img');
     const stage = lightbox.querySelector('.lightbox-stage');
-    const lens = lightbox.querySelector('.lightbox-lens');
-    const magnifierButton = lightbox.querySelector('.lightbox-tool--magnifier');
-    const magnificationSlider = lightbox.querySelector('.lightbox-slider');
     const closeButton = lightbox.querySelector('.lightbox-close');
     const prevButton = lightbox.querySelector('.lightbox-control--prev');
     const nextButton = lightbox.querySelector('.lightbox-control--next');
     let currentIndex = 0;
-    let magnifierActive = false;
-    let pointerOverLightboxImage = false;
-    let lastLensPoint = null;
     let lastFocusedElement = null;
     let swipeStart = null;
     let suppressImageClick = false;
-    let mobileImageScale = 1;
-    let mobileImageTranslate = { x: 0, y: 0 };
+    let imageScale = 1;
+    let imageTranslate = { x: 0, y: 0 };
     let panStart = null;
     let pinchStart = null;
-    const activeMobilePointers = new Map();
-    const mobileLightboxQuery = window.matchMedia('(max-width: 700px), (hover: none) and (pointer: coarse)');
+    const activeLightboxPointers = new Map();
+    const touchLightboxQuery = window.matchMedia('(hover: none), (pointer: coarse)');
 
     const isOpen = () => lightbox.classList.contains('is-visible');
-    const canUseMagnifier = () => !mobileLightboxQuery.matches;
     const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
     const pointerDistance = (first, second) => Math.hypot(first.x - second.x, first.y - second.y);
-    const clampMobileImageTranslate = () => {
-      if (mobileImageScale <= 1.01) {
-        mobileImageTranslate = { x: 0, y: 0 };
+    const clampImageTranslate = () => {
+      if (imageScale <= 1.01) {
+        imageTranslate = { x: 0, y: 0 };
         return;
       }
-      const maxX = Math.max(0, (lightboxImg.offsetWidth * (mobileImageScale - 1)) / 2);
-      const maxY = Math.max(0, (lightboxImg.offsetHeight * (mobileImageScale - 1)) / 2);
-      mobileImageTranslate = {
-        x: clamp(mobileImageTranslate.x, -maxX, maxX),
-        y: clamp(mobileImageTranslate.y, -maxY, maxY),
+      const maxX = Math.max(0, (lightboxImg.offsetWidth * (imageScale - 1)) / 2);
+      const maxY = Math.max(0, (lightboxImg.offsetHeight * (imageScale - 1)) / 2);
+      imageTranslate = {
+        x: clamp(imageTranslate.x, -maxX, maxX),
+        y: clamp(imageTranslate.y, -maxY, maxY),
       };
     };
-    const applyMobileImageScale = () => {
-      const isZoomed = mobileImageScale > 1.01;
-      clampMobileImageTranslate();
+    const applyImageTransform = () => {
+      const isZoomed = imageScale > 1.01;
+      clampImageTranslate();
       lightboxImg.style.transform = isZoomed
-        ? `translate3d(${mobileImageTranslate.x}px, ${mobileImageTranslate.y}px, 0) scale(${mobileImageScale})`
+        ? `translate3d(${imageTranslate.x}px, ${imageTranslate.y}px, 0) scale(${imageScale})`
         : '';
       lightbox.classList.toggle('is-image-zoomed', isZoomed);
     };
-    const resetMobileImageScale = () => {
-      mobileImageScale = 1;
-      mobileImageTranslate = { x: 0, y: 0 };
+    const resetImageTransform = () => {
+      imageScale = 1;
+      imageTranslate = { x: 0, y: 0 };
       panStart = null;
       pinchStart = null;
-      activeMobilePointers.clear();
-      applyMobileImageScale();
-    };
-    const syncMagnifierCursor = () => {
-      document.body.classList.toggle(
-        'magnifier-cursor-hidden',
-        magnifierActive && pointerOverLightboxImage,
-      );
-    };
-    const setMagnifierActive = (active) => {
-      const nextActive = Boolean(active && canUseMagnifier());
-      magnifierActive = nextActive;
-      lightbox.classList.toggle('magnifier-active', nextActive);
-      syncMagnifierCursor();
-      magnifierButton.setAttribute('aria-pressed', String(nextActive));
-      if (!nextActive) {
-        lens.classList.remove('is-visible');
-      }
+      activeLightboxPointers.clear();
+      applyImageTransform();
     };
     const syncLightboxViewport = () => {
-      lightbox.classList.toggle('is-mobile-viewer', !canUseMagnifier());
-      if (!canUseMagnifier()) {
-        setMagnifierActive(false);
-      }
+      lightbox.classList.toggle('is-touch-viewer', touchLightboxQuery.matches);
     };
-
-    const updateLens = (event) => {
-      if (!magnifierActive || !lightboxImg.src) return;
+    const zoomAt = (clientX, clientY, nextScale) => {
+      const clampedScale = clamp(nextScale, 1, 4);
+      if (Math.abs(clampedScale - imageScale) < 0.01) return;
       const rect = lightboxImg.getBoundingClientRect();
-      const stageRect = stage.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
-      lastLensPoint = { clientX: event.clientX, clientY: event.clientY };
-
-      if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
-        lens.classList.remove('is-visible');
-        return;
-      }
-
-      const zoom = Number(magnificationSlider.value) || 2.4;
-      const lensSize = lens.offsetWidth || 180;
-      lens.style.left = `${Math.round(rect.left - stageRect.left + x - lensSize / 2)}px`;
-      lens.style.top = `${Math.round(rect.top - stageRect.top + y - lensSize / 2)}px`;
-      lens.style.backgroundImage = `url("${lightboxImg.src}")`;
-      lens.style.backgroundSize = `${rect.width * zoom}px ${rect.height * zoom}px`;
-      lens.style.backgroundPosition = `${Math.round(lensSize / 2 - x * zoom)}px ${Math.round(lensSize / 2 - y * zoom)}px`;
-      lens.classList.add('is-visible');
+      const originX = clientX - (rect.left + rect.width / 2);
+      const originY = clientY - (rect.top + rect.height / 2);
+      const scaleRatio = clampedScale / imageScale;
+      imageTranslate = {
+        x: imageTranslate.x * scaleRatio - originX * (scaleRatio - 1),
+        y: imageTranslate.y * scaleRatio - originY * (scaleRatio - 1),
+      };
+      imageScale = clampedScale;
+      applyImageTransform();
     };
 
     const close = () => {
       lightbox.classList.remove('is-visible');
       lightbox.setAttribute('aria-hidden', 'true');
       lightbox.inert = true;
-      pointerOverLightboxImage = false;
-      setMagnifierActive(false);
-      lastLensPoint = null;
-      resetMobileImageScale();
+      resetImageTransform();
       lightboxImg.removeAttribute('src');
       document.body.classList.remove('overlay-open');
       if (lastFocusedElement instanceof HTMLElement) {
@@ -1063,17 +1014,14 @@
       }
       currentIndex = (index + images.length) % images.length;
       const img = images[currentIndex];
-      resetMobileImageScale();
+      resetImageTransform();
       lightboxImg.src = img.src;
       lightboxImg.alt = img.alt || (isArchivePage ? 'Archive image' : 'Project image');
-      lens.style.backgroundImage = `url("${img.src}")`;
-      lens.classList.remove('is-visible');
       lightbox.classList.add('is-visible');
       lightbox.setAttribute('aria-hidden', 'false');
       lightbox.inert = false;
       document.body.classList.add('overlay-open');
       if (!wasOpen) {
-        setMagnifierActive(canUseMagnifier());
         window.requestAnimationFrame(() => closeButton.focus());
       }
     };
@@ -1108,29 +1056,9 @@
       showAt(currentIndex + 1);
     });
 
-    magnifierButton.addEventListener('click', (event) => {
-      event.stopPropagation();
-      if (!canUseMagnifier()) return;
-      setMagnifierActive(!magnifierActive);
-    });
-
-    magnificationSlider.addEventListener('input', (event) => {
-      event.stopPropagation();
-      if (magnifierActive && lastLensPoint) {
-        updateLens(lastLensPoint);
-      }
-    });
-
-    stage.addEventListener('pointermove', updateLens);
-    stage.addEventListener('pointerleave', () => {
-      lastLensPoint = null;
-      lens.classList.remove('is-visible');
-    });
-
     stage.addEventListener('pointerdown', (event) => {
-      if (!mobileLightboxQuery.matches) return;
       if (event.target.closest('button, input, label, a')) return;
-      activeMobilePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      activeLightboxPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
       suppressImageClick = false;
       if (
         typeof stage.hasPointerCapture === 'function'
@@ -1139,26 +1067,26 @@
       ) {
         stage.setPointerCapture(event.pointerId);
       }
-      if (activeMobilePointers.size === 1 && mobileImageScale <= 1.01) {
+      if (activeLightboxPointers.size === 1 && imageScale <= 1.01) {
         swipeStart = {
           pointerId: event.pointerId,
           x: event.clientX,
           y: event.clientY,
         };
-      } else if (activeMobilePointers.size === 1) {
+      } else if (activeLightboxPointers.size === 1) {
         panStart = {
           pointerId: event.pointerId,
           x: event.clientX,
           y: event.clientY,
-          translateX: mobileImageTranslate.x,
-          translateY: mobileImageTranslate.y,
+          translateX: imageTranslate.x,
+          translateY: imageTranslate.y,
         };
       }
-      if (activeMobilePointers.size === 2) {
-        const points = Array.from(activeMobilePointers.values());
+      if (activeLightboxPointers.size === 2) {
+        const points = Array.from(activeLightboxPointers.values());
         pinchStart = {
           distance: pointerDistance(points[0], points[1]),
-          scale: mobileImageScale,
+          scale: imageScale,
         };
         panStart = null;
         swipeStart = null;
@@ -1167,30 +1095,30 @@
     });
 
     stage.addEventListener('pointermove', (event) => {
-      if (!activeMobilePointers.has(event.pointerId)) return;
-      activeMobilePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
-      if (pinchStart && activeMobilePointers.size >= 2) {
-        const points = Array.from(activeMobilePointers.values());
+      if (!activeLightboxPointers.has(event.pointerId)) return;
+      activeLightboxPointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      if (pinchStart && activeLightboxPointers.size >= 2) {
+        const points = Array.from(activeLightboxPointers.values());
         const distance = pointerDistance(points[0], points[1]);
         if (pinchStart.distance > 0) {
-          mobileImageScale = clamp(pinchStart.scale * (distance / pinchStart.distance), 1, 4);
-          applyMobileImageScale();
+          imageScale = clamp(pinchStart.scale * (distance / pinchStart.distance), 1, 4);
+          applyImageTransform();
           suppressImageClick = true;
           event.preventDefault();
         }
         return;
       }
-      if (panStart && event.pointerId === panStart.pointerId && mobileImageScale > 1.01) {
-        mobileImageTranslate = {
+      if (panStart && event.pointerId === panStart.pointerId && imageScale > 1.01) {
+        imageTranslate = {
           x: panStart.translateX + event.clientX - panStart.x,
           y: panStart.translateY + event.clientY - panStart.y,
         };
-        applyMobileImageScale();
+        applyImageTransform();
         suppressImageClick = true;
         event.preventDefault();
         return;
       }
-      if (!swipeStart || event.pointerId !== swipeStart.pointerId || mobileImageScale > 1.01) return;
+      if (!swipeStart || event.pointerId !== swipeStart.pointerId || imageScale > 1.01) return;
       const deltaX = event.clientX - swipeStart.x;
       const deltaY = event.clientY - swipeStart.y;
       if (Math.abs(deltaX) > 12 && Math.abs(deltaX) > Math.abs(deltaY)) {
@@ -1201,15 +1129,15 @@
     const finishSwipe = (event) => {
       const wasPinching = Boolean(pinchStart);
       const wasPanning = Boolean(panStart && event.pointerId === panStart.pointerId);
-      activeMobilePointers.delete(event.pointerId);
+      activeLightboxPointers.delete(event.pointerId);
       if (wasPinching) {
         pinchStart = null;
         panStart = null;
         swipeStart = null;
         suppressImageClick = true;
-        if (mobileImageScale < 1.04) {
-          mobileImageScale = 1;
-          applyMobileImageScale();
+        if (imageScale < 1.04) {
+          imageScale = 1;
+          applyImageTransform();
         }
         if (typeof stage.hasPointerCapture === 'function' && stage.hasPointerCapture(event.pointerId)) {
           stage.releasePointerCapture(event.pointerId);
@@ -1243,7 +1171,7 @@
       if (typeof stage.hasPointerCapture === 'function' && stage.hasPointerCapture(event.pointerId)) {
         stage.releasePointerCapture(event.pointerId);
       }
-      if (mobileImageScale > 1.01) return;
+      if (imageScale > 1.01) return;
       if (Math.abs(deltaX) < 48 || Math.abs(deltaX) < Math.abs(deltaY) * 1.15) return;
       suppressImageClick = true;
       showAt(currentIndex + (deltaX < 0 ? 1 : -1));
@@ -1254,11 +1182,18 @@
 
     stage.addEventListener('pointerup', finishSwipe);
     stage.addEventListener('pointercancel', (event) => {
-      activeMobilePointers.delete(event.pointerId);
+      activeLightboxPointers.delete(event.pointerId);
       panStart = null;
       swipeStart = null;
       pinchStart = null;
     });
+
+    stage.addEventListener('wheel', (event) => {
+      if (!isOpen()) return;
+      event.preventDefault();
+      const direction = event.deltaY > 0 ? -1 : 1;
+      zoomAt(event.clientX, event.clientY, imageScale + direction * 0.28);
+    }, { passive: false });
 
     lightboxImg.addEventListener('click', (event) => {
       event.stopPropagation();
@@ -1266,19 +1201,11 @@
         suppressImageClick = false;
         return;
       }
-      if (!magnifierActive) {
-        close();
+      if (imageScale > 1.01) {
+        resetImageTransform();
+      } else {
+        zoomAt(event.clientX, event.clientY, touchLightboxQuery.matches ? 2.4 : 2.8);
       }
-    });
-
-    lightboxImg.addEventListener('pointerenter', () => {
-      pointerOverLightboxImage = true;
-      syncMagnifierCursor();
-    });
-
-    lightboxImg.addEventListener('pointerleave', () => {
-      pointerOverLightboxImage = false;
-      syncMagnifierCursor();
     });
 
     lightbox.addEventListener('click', (event) => {
@@ -1311,10 +1238,10 @@
       }
     });
     syncLightboxViewport();
-    if (typeof mobileLightboxQuery.addEventListener === 'function') {
-      mobileLightboxQuery.addEventListener('change', syncLightboxViewport);
-    } else if (typeof mobileLightboxQuery.addListener === 'function') {
-      mobileLightboxQuery.addListener(syncLightboxViewport);
+    if (typeof touchLightboxQuery.addEventListener === 'function') {
+      touchLightboxQuery.addEventListener('change', syncLightboxViewport);
+    } else if (typeof touchLightboxQuery.addListener === 'function') {
+      touchLightboxQuery.addListener(syncLightboxViewport);
     }
   };
 
@@ -1396,6 +1323,12 @@
   const setupAboutPortraitReveal = () => {
     const portrait = document.querySelector('.page-about .about-portrait');
     if (!portrait) return;
+    const touchPortrait = window.matchMedia('(hover: none), (pointer: coarse)');
+    if (touchPortrait.matches) {
+      portrait.classList.remove('is-revealing');
+      document.body.classList.remove('about-cursor-hidden');
+      return;
+    }
 
     const updatePosition = (event) => {
       const rect = portrait.getBoundingClientRect();
@@ -1537,8 +1470,9 @@
   const setupHomeProjectPreviews = () => {
     const links = Array.from(document.querySelectorAll('[data-home-project]'));
     if (!links.length) return;
-    const desktopPreview = window.matchMedia('(min-width: 901px) and (hover: hover) and (pointer: fine)');
-    if (!desktopPreview.matches) return;
+    const hoverPreview = window.matchMedia('(hover: hover) and (pointer: fine)');
+    const touchPreview = window.matchMedia('(hover: none), (pointer: coarse)');
+    if (!hoverPreview.matches || touchPreview.matches) return;
 
     let activeLink = null;
     let activePreview = null;
@@ -1601,6 +1535,11 @@
     const trigger = document.querySelector('.home-about-primary') || document.querySelector('[data-home-portrait-trigger]');
     const preview = document.querySelector('[data-home-portrait]');
     if (!trigger || !preview) return;
+    const touchPreview = window.matchMedia('(hover: none), (pointer: coarse)');
+    if (touchPreview.matches) {
+      preview.classList.add('is-visible');
+      return;
+    }
 
     const show = () => preview.classList.add('is-visible');
     const hide = () => preview.classList.remove('is-visible');
@@ -1614,32 +1553,10 @@
   const setupProjectInformation = () => {
     const panel = document.querySelector('[data-project-information]');
     const toggle = panel?.querySelector('.project-information-toggle');
-    if (!panel || !toggle) return;
-
-    const mark = toggle.querySelector('.project-information-toggle__mark');
-    let manuallyExpanded = false;
-
-    const setCollapsed = (collapsed) => {
-      panel.classList.toggle('is-collapsed', collapsed);
-      document.body.classList.toggle('has-collapsed-information', collapsed);
-      toggle.setAttribute('aria-expanded', String(!collapsed));
-      if (mark) mark.textContent = collapsed ? '+' : '−';
-    };
-
-    const syncWithScroll = () => {
-      if (window.scrollY <= 2) manuallyExpanded = false;
-      setCollapsed(window.scrollY > 8 && !manuallyExpanded);
-    };
-
-    toggle.addEventListener('click', () => {
-      if (panel.classList.contains('is-collapsed')) {
-        manuallyExpanded = true;
-        setCollapsed(false);
-      }
-    });
-
-    window.addEventListener('scroll', syncWithScroll, { passive: true });
-    syncWithScroll();
+    if (!panel) return;
+    panel.classList.remove('is-collapsed');
+    document.body.classList.remove('has-collapsed-information');
+    toggle?.setAttribute('aria-expanded', 'true');
   };
 
   setupConfigurableMediaSpans().finally(() => {

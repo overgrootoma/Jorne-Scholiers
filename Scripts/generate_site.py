@@ -341,6 +341,7 @@ def render_intro():
     I have some <a href=\"projects.html\">projects</a> you can look at, along with other work in my <a href=\"archive.html\">archive</a> that shows what I've been experimenting with.<br>
     Or maybe you will like some of my <a href=\"photography.html\">Photography</a>. Some of my projects appear on my <a href=\"https://www.instagram.com/byjorne/\" target=\"_blank\" rel=\"noopener\">Instagram</a>.<br><br>
     Don't hesitate to <a href=\"mailto:jorne.scholiers@icloud.com\">contact me</a>, I'd love to hear from you.<br>
+    <a href=\"tel:+32472452164\">+32472 45 21 64</a><br>
     Oh and I am working on a little experimental <a href=\"https://overgrootoma.github.io/Accidental-Graphics/index.html\" target=\"_blank\" rel=\"noopener\">site</a> as well :)
   </p>
 </section>"""

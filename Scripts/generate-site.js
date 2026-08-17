@@ -39,6 +39,7 @@ const homepageProfile = {
     { label: 'Instagram', href: 'https://www.instagram.com/byjorne/' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/jorne-scholiers-28555923b/' },
     { label: 'Email', href: 'mailto:jorne.scholiers@icloud.com' },
+    { label: '+32472 45 21 64', href: 'tel:+32472452164' },
   ],
 };
 const projectOrder = [

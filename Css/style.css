@@ -2033,12 +2033,18 @@ body.magnifier-cursor-hidden .home-cursor-ball {
   max-width: min(90vw, 1200px);
   max-height: 90vh;
   object-fit: contain;
-  cursor: zoom-out;
+  cursor: zoom-in;
   display: block;
+  transform-origin: center center;
+  will-change: transform;
 }
 
-.image-lightbox.magnifier-active img {
-  cursor: none;
+.image-lightbox.is-image-zoomed img {
+  cursor: grab;
+}
+
+.image-lightbox.is-image-zoomed img:active {
+  cursor: grabbing;
 }
 
 .lightbox-lens {
@@ -2206,14 +2212,14 @@ body.magnifier-cursor-hidden .home-cursor-ball {
     max-width: 100%;
     max-height: calc(100vh - 128px);
     max-height: calc(100dvh - 128px);
-    cursor: default;
+    cursor: zoom-in;
     touch-action: none;
     transform-origin: center center;
     will-change: transform;
   }
 
-  .image-lightbox.magnifier-active img {
-    cursor: default;
+  .image-lightbox.is-image-zoomed img {
+    cursor: grab;
   }
 
   .lightbox-lens {
@@ -2588,7 +2594,12 @@ body.magnifier-cursor-hidden .home-cursor-ball {
     cursor: default;
   }
 
+  .page-about .about-portrait-base {
+    display: none;
+  }
+
   .page-about .about-portrait-hover {
+    z-index: 2;
     clip-path: none;
   }
 
@@ -3911,6 +3922,15 @@ body.page-detail .site-footer.is-visible {
   max-width: calc(100vw - 108px);
   max-height: calc(100vh - 24px);
   max-height: calc(100dvh - 24px);
+  cursor: zoom-in;
+}
+
+.image-lightbox.is-image-zoomed img {
+  cursor: grab;
+}
+
+.image-lightbox.is-image-zoomed img:active {
+  cursor: grabbing;
 }
 
 .lightbox-close {
@@ -4004,12 +4024,12 @@ body.page-detail .site-footer.is-visible {
   .image-lightbox img {
     max-width: calc(100vw - 68px);
     max-height: calc(100dvh - 96px);
-    cursor: default;
+    cursor: zoom-in;
     touch-action: none;
   }
 
-  .image-lightbox.magnifier-active img {
-    cursor: default;
+  .image-lightbox.is-image-zoomed img {
+    cursor: grab;
   }
 }
 
@@ -4487,6 +4507,119 @@ body,
   .home-portrait-preview {
     width: min(62vw, 360px);
     padding: 14px;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .page-home main.home-exhibition {
+    grid-template-columns: 1fr;
+    align-content: start;
+    height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: calc(var(--site-logo-offset-y) + var(--site-logo-height) + 18px) 14px 44px;
+    row-gap: 42px;
+    overflow: visible;
+  }
+
+  .home-information {
+    display: block;
+    width: 100%;
+    max-width: none;
+    order: 2;
+  }
+
+  .home-project-index {
+    width: 100%;
+    max-width: none;
+    order: 1;
+  }
+
+  .home-project-index ol {
+    gap: 16px;
+  }
+
+  .home-project-index li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(94px, 34vw);
+    gap: 12px;
+    align-items: center;
+    min-height: 86px;
+  }
+
+  .home-project-link {
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    width: auto;
+    padding: 0;
+    color: var(--black);
+    background: transparent;
+  }
+
+  .home-project-link:hover,
+  .home-project-link:focus-visible,
+  .home-project-link.is-active {
+    color: var(--black);
+    background: transparent;
+  }
+
+  .home-project-preview {
+    position: static;
+    display: flex;
+    justify-self: end;
+    align-items: center;
+    justify-content: center;
+    width: min(34vw, 132px);
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: transparent;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: none;
+    transform: none;
+    transition: none;
+  }
+
+  .home-project-preview img {
+    display: none;
+    position: static;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .home-project-preview img:first-child {
+    display: block;
+  }
+
+  .home-portrait-preview {
+    position: static;
+    width: min(100%, 420px);
+    height: auto;
+    padding: 0;
+    justify-content: flex-start;
+    order: 3;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: none;
+  }
+
+  .home-portrait-preview img {
+    max-height: none;
+    object-position: left center;
+  }
+
+  body.home-preview-active .home-archive-link,
+  .home-preview-active .home-information,
+  .home-preview-active .home-secondary-nav {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
   }
 }
 
