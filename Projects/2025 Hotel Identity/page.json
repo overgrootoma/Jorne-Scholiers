@@ -52,9 +52,15 @@
   "other_file_order": [
     "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Website_Desktop.m4v",
     "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_WebsiteMobile.mp4",
-    "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Houserules.pdf",
-    "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Menukaart.pdf",
+    "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_HouseRules.pdf",
+    "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Menu.pdf",
     "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Presentation.pdf",
-    "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Stijlgids.pdf"
-  ]
+    "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_StyleGuide.pdf"
+  ],
+  "file_labels": {
+    "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_HouseRules.pdf": "House Rules",
+    "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Menu.pdf": "Menu",
+    "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Presentation.pdf": "Presentation",
+    "Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_StyleGuide.pdf": "Style Guide"
+  }
 }

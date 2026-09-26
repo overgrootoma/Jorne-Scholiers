@@ -1249,6 +1249,10 @@
     if (!document.body.classList.contains('page-detail')) return;
     const pdfLinks = Array.from(document.querySelectorAll('.detail-files a[href$=".pdf"], .detail-files a[href$=".PDF"]'));
     if (!pdfLinks.length) return;
+    // Phones and tablets only show the first page of a PDF inside an iframe,
+    // so there the link opens the PDF in the browser's own viewer instead.
+    const touchDevice = window.matchMedia('(max-width: 900px), (hover: none), (pointer: coarse)');
+    if (touchDevice.matches) return;
 
     const overlay = document.createElement('div');
     overlay.className = 'pdf-lightbox';

@@ -43,6 +43,9 @@
     "directory": "All images"
   },
   "other_file_order": [
-    "Isolatie_Boek-compressed.pdf"
-  ]
+    "Isolation_Book.pdf"
+  ],
+  "file_labels": {
+    "Isolation_Book.pdf": "Isolation Book"
+  }
 }

@@ -5607,3 +5607,30 @@ body.page-home .site-footer * {
 .page-home .home-exhibition .home-education .home-info-list li {
   white-space: normal;
 }
+
+/* Every button uses Silkscreen. */
+button,
+.pdf-lightbox__close,
+.lightbox-close,
+.lightbox-tool,
+.lightbox-control,
+.projects-view-toggle__button,
+.project-information-toggle,
+.home-overview-toggle {
+  font-family: var(--title-font) !important;
+}
+
+/* Text on blue buttons is always white. */
+.pdf-lightbox__close,
+.pdf-lightbox__close:is(:hover, :focus-visible),
+.skip-link,
+.home-overview-toggle,
+.lightbox-close:is(:hover, :focus-visible),
+.lightbox-tool:is(:hover, :focus-visible, [aria-pressed="true"]),
+.image-lightbox .lightbox-control:is(:hover, :focus-visible),
+.projects-view-toggle__button:is(:hover, :focus-visible, .is-active),
+.project-step:is(:hover, :focus-visible),
+.back-link:focus-visible,
+.site-footer a:focus-visible {
+  color: var(--white) !important;
+}

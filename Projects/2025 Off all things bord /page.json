@@ -35,5 +35,8 @@
   ],
   "other_file_order": [
     "Magazine.pdf"
-  ]
+  ],
+  "file_labels": {
+    "Magazine.pdf": "Magazine"
+  }
 }

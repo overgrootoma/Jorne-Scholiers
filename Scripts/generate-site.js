@@ -441,6 +441,12 @@ function orderFilesByPreference(files, preferredOrder) {
   return ordered;
 }
 
+// Display name for a file link; set "file_labels" in page.json to override the file name.
+function fileLabel(pageConfig, file) {
+  const label = pageConfig?.file_labels?.[file];
+  return typeof label === 'string' && label.trim() ? label.trim() : file;
+}
+
 function youtubeVideoId(value) {
   if (typeof value !== 'string') return '';
   const trimmed = value.trim();
@@ -808,9 +814,9 @@ function renderCollectionIndex(items, {
           mediaBlocks.push(`
       <figure data-span="${span}" class="media-card">
         <div class="media-frame">
-          <iframe class="media-embed media-embed--pdf" src="${href}" title="${escapeHtml(file)}" loading="lazy"></iframe>
+          <iframe class="media-embed media-embed--pdf" src="${href}" title="${escapeHtml(fileLabel(item.pageConfig, file))}" loading="lazy"></iframe>
         </div>
-        <figcaption class="media-caption">${escapeHtml(file)}</figcaption>
+        <figcaption class="media-caption">${escapeHtml(fileLabel(item.pageConfig, file))}</figcaption>
       </figure>`);
           return;
         }
@@ -825,7 +831,7 @@ function renderCollectionIndex(items, {
       </figure>`);
           return;
         }
-        downloadLinks.push(`<li><a href="${href}" target="_blank" rel="noopener">${escapeHtml(file)}</a></li>`);
+        downloadLinks.push(`<li><a href="${href}" target="_blank" rel="noopener">${escapeHtml(fileLabel(item.pageConfig, file))}</a></li>`);
       });
 
       const mediaSection = mediaBlocks.length
@@ -1018,16 +1024,16 @@ function renderProjectPage(item, type, nav = null) {
       </figure>`);
         return;
       }
-      downloadLinks.push(`<li><a class="media-link" href="${href}" target="_blank" rel="noopener">${escapeHtml(file)}</a></li>`);
+      downloadLinks.push(`<li><a class="media-link" href="${href}" target="_blank" rel="noopener">${escapeHtml(fileLabel(pageConfig, file))}</a></li>`);
       return;
     }
     if (ext === '.pdf') {
       mediaBlocks.push(`
       <figure data-span="${span}" class="media-card">
         <div class="media-frame">
-          <iframe class="media-embed media-embed--pdf" src="${href}" title="${escapeHtml(file)}" loading="lazy"></iframe>
+          <iframe class="media-embed media-embed--pdf" src="${href}" title="${escapeHtml(fileLabel(pageConfig, file))}" loading="lazy"></iframe>
         </div>
-        <figcaption class="media-caption">${escapeHtml(file)}</figcaption>
+        <figcaption class="media-caption">${escapeHtml(fileLabel(pageConfig, file))}</figcaption>
       </figure>`);
       return;
     }
@@ -1042,7 +1048,7 @@ function renderProjectPage(item, type, nav = null) {
       </figure>`);
       return;
     }
-    downloadLinks.push(`<li><a href="${href}" target="_blank" rel="noopener">${escapeHtml(file)}</a></li>`);
+    downloadLinks.push(`<li><a href="${href}" target="_blank" rel="noopener">${escapeHtml(fileLabel(pageConfig, file))}</a></li>`);
   });
 
   const descriptionHtml = type === 'projects'
