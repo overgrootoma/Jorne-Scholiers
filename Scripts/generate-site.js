@@ -926,14 +926,14 @@ function renderProjectOverview(projects) {
     const title = project.pageConfig?.index_title || project.title;
     const image = projectIndexImagePath(project);
     const dimensions = rootImageDimensionAttributes(image);
-    const loading = index < 2 ? ' loading="eager"' : ' loading="lazy"';
+    const loading = index < 5 ? ' loading="eager"' : ' loading="lazy"';
     return `<li>
       <a class="project-overview-item" href="project-${project.slug}.html">
+        <span class="project-overview-image"><img src="${escapeHtml(image)}" alt="Preview of ${escapeHtml(title)} by Jorne Scholiers"${dimensions}${loading} decoding="async"></span>
         <span class="project-overview-label">
           <small>${escapeHtml(project.year || '')}</small>
           <span>${escapeHtml(title)}</span>
         </span>
-        <span class="project-overview-image"><img src="${escapeHtml(image)}" alt="Preview of ${escapeHtml(title)} by Jorne Scholiers"${dimensions}${loading} decoding="async"></span>
       </a>
     </li>`;
   }).join('\n');

@@ -5341,7 +5341,7 @@ body.home-preview-active .home-archive-link {
 /* Homepage "Projects" heading, matching the About column headings. Desktop only. */
 .page-home .home-exhibition .home-projects-heading {
   margin: 0 0 22px;
-  padding: 9px 7px;
+  padding: 0;
   font-family: var(--title-font);
   font-size: clamp(0.84rem, 0.79rem + 0.22vw, 1rem);
   font-weight: var(--home-weight-strong) !important;
@@ -5351,9 +5351,20 @@ body.home-preview-active .home-archive-link {
   transition: opacity 160ms ease, visibility 160ms ease;
 }
 
+/* The years below are right-aligned in a 54px column (7px link padding); line the word up with where they start. */
 .home-projects-heading a {
-  color: inherit;
+  display: inline-block;
+  margin-left: 28px;
+  padding: 9px 7px;
+  color: var(--black);
   text-decoration: none;
+  transition: color 120ms ease, background-color 120ms ease;
+}
+
+.home-projects-heading a:hover,
+.home-projects-heading a:focus-visible {
+  color: var(--white);
+  background: var(--accent-blue);
 }
 
 body.home-preview-active .home-projects-heading {
@@ -5375,7 +5386,7 @@ body.home-preview-active .home-projects-heading {
   }
 }
 
-/* Projects overview page: every project with its main image, in the homepage type style. */
+/* Projects overview page: every project at a glance, in the homepage type style. */
 main.page-project-overview {
   --overview-weight-strong: 650;
   box-sizing: border-box;
@@ -5385,8 +5396,7 @@ main.page-project-overview {
 }
 
 .project-overview-title {
-  margin: 0 0 clamp(28px, 5vh, 56px);
-  padding: 9px 0;
+  margin: 0 0 22px;
   font-family: var(--title-font);
   font-size: clamp(0.84rem, 0.79rem + 0.22vw, 1rem);
   font-weight: var(--overview-weight-strong);
@@ -5396,37 +5406,51 @@ main.page-project-overview {
 }
 
 .project-overview-title a {
+  display: inline-block;
+  padding: 9px 0;
   color: var(--black);
   text-decoration: none;
 }
 
 .project-overview-list {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(48px, 9vh, 110px);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: clamp(28px, 4vh, 48px) clamp(16px, 1.8vw, 28px);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .project-overview-item {
-  display: grid;
-  grid-template-columns: minmax(180px, 1fr) minmax(0, 2fr);
-  gap: clamp(20px, 3vw, 56px);
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   color: var(--black);
   text-decoration: none;
 }
 
+.project-overview-image {
+  display: block;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.project-overview-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .project-overview-label {
-  display: grid;
-  grid-template-columns: 54px minmax(0, 1fr);
-  gap: clamp(20px, 2.6vw, 44px);
+  display: flex;
+  gap: 14px;
   align-items: baseline;
-  justify-self: start;
+  align-self: start;
+  margin-left: -7px;
   padding: 6px 7px;
   font-family: var(--title-font);
-  font-size: clamp(0.84rem, 0.79rem + 0.22vw, 1rem);
+  font-size: clamp(0.78rem, 0.74rem + 0.18vw, 0.92rem);
   line-height: 1.08;
   transition: color 120ms ease, background-color 120ms ease;
 }
@@ -5437,22 +5461,8 @@ main.page-project-overview {
 
 .project-overview-label small {
   font-family: var(--title-font);
-  font-size: 0.7rem;
+  font-size: 0.63rem;
   font-weight: 400;
-}
-
-.project-overview-image {
-  display: block;
-}
-
-.project-overview-image img {
-  display: block;
-  width: auto;
-  max-width: 100%;
-  height: auto;
-  max-height: clamp(260px, 62vh, 640px);
-  object-fit: contain;
-  object-position: left top;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -5469,20 +5479,20 @@ main.page-project-overview {
     padding-left: 14px;
   }
 
+  .project-overview-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px 12px;
+  }
+
   .project-overview-item {
-    grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 6px;
   }
 
   .project-overview-label {
-    grid-template-columns: 42px minmax(0, 1fr);
-    gap: 12px;
+    flex-direction: column;
+    gap: 2px;
+    margin-left: 0;
     padding: 0;
-  }
-
-  .project-overview-image img {
-    width: 100%;
-    max-height: none;
   }
 }
 
