@@ -5337,3 +5337,215 @@ body.home-preview-active .home-archive-link {
   font-size: clamp(0.84rem, 0.79rem + 0.22vw, 1rem);
   line-height: 1.08;
 }
+
+/* Homepage "Projects" heading, matching the About column headings. Desktop only. */
+.page-home .home-exhibition .home-projects-heading {
+  margin: 0 0 22px;
+  padding: 9px 7px;
+  font-family: var(--title-font);
+  font-size: clamp(0.84rem, 0.79rem + 0.22vw, 1rem);
+  font-weight: var(--home-weight-strong) !important;
+  line-height: 1.08;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: opacity 160ms ease, visibility 160ms ease;
+}
+
+.home-projects-heading a {
+  color: inherit;
+  text-decoration: none;
+}
+
+body.home-preview-active .home-projects-heading {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+@media (max-width: 900px), (hover: none), (pointer: coarse) {
+  .page-home .home-exhibition .home-projects-heading {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
+
+/* Projects overview page: every project with its main image, in the homepage type style. */
+main.page-project-overview {
+  --overview-weight-strong: 650;
+  box-sizing: border-box;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: calc(var(--site-logo-offset-y) + var(--site-logo-height) + 18px) clamp(20px, 3vw, 48px) clamp(60px, 10vh, 120px);
+}
+
+.project-overview-title {
+  margin: 0 0 clamp(28px, 5vh, 56px);
+  padding: 9px 0;
+  font-family: var(--title-font);
+  font-size: clamp(0.84rem, 0.79rem + 0.22vw, 1rem);
+  font-weight: var(--overview-weight-strong);
+  line-height: 1.08;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.project-overview-title a {
+  color: var(--black);
+  text-decoration: none;
+}
+
+.project-overview-list {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(48px, 9vh, 110px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.project-overview-item {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(0, 2fr);
+  gap: clamp(20px, 3vw, 56px);
+  align-items: start;
+  color: var(--black);
+  text-decoration: none;
+}
+
+.project-overview-label {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  gap: clamp(20px, 2.6vw, 44px);
+  align-items: baseline;
+  justify-self: start;
+  padding: 6px 7px;
+  font-family: var(--title-font);
+  font-size: clamp(0.84rem, 0.79rem + 0.22vw, 1rem);
+  line-height: 1.08;
+  transition: color 120ms ease, background-color 120ms ease;
+}
+
+.project-overview-label > span {
+  font-weight: var(--overview-weight-strong);
+}
+
+.project-overview-label small {
+  font-family: var(--title-font);
+  font-size: 0.7rem;
+  font-weight: 400;
+}
+
+.project-overview-image {
+  display: block;
+}
+
+.project-overview-image img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: clamp(260px, 62vh, 640px);
+  object-fit: contain;
+  object-position: left top;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .project-overview-item:hover .project-overview-label,
+  .project-overview-item:focus-visible .project-overview-label {
+    color: var(--white);
+    background: var(--accent-blue);
+  }
+}
+
+@media (max-width: 900px) {
+  main.page-project-overview {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .project-overview-item {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .project-overview-label {
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 12px;
+    padding: 0;
+  }
+
+  .project-overview-image img {
+    width: 100%;
+    max-height: none;
+  }
+}
+
+/* Small portrait beside About; only shown on mobile and touch screens. */
+.home-about-portrait {
+  display: none;
+}
+
+/* Mobile and touch: tighter homepage rhythm, small portrait, no hover states. */
+@media (max-width: 900px), (hover: none), (pointer: coarse) {
+  .site-logo-slot {
+    position: absolute;
+  }
+
+  body.page-home .page-home.home-exhibition {
+    row-gap: 32px;
+  }
+
+  body.page-home .home-project-index ol {
+    gap: 10px;
+  }
+
+  body.page-home .home-project-index li {
+    grid-template-columns: minmax(0, 1fr) 96px;
+    min-height: 0;
+  }
+
+  body.page-home .home-project-preview {
+    width: 96px;
+  }
+
+  body.page-home .home-about-columns {
+    gap: 28px;
+  }
+
+  body.page-home .home-about-columns h2 {
+    margin-bottom: 12px;
+  }
+
+  body.page-home .home-experience,
+  body.page-home .home-education {
+    margin-top: 28px !important;
+  }
+
+  body.page-home .home-profile-links {
+    margin-top: 0;
+  }
+
+  body.page-home .home-about-portrait {
+    display: block;
+    width: 72px;
+    height: auto;
+    /* Cancel the column gap so the portrait sits close to its heading and list. */
+    margin: -16px 0 -14px;
+  }
+
+  body.page-home .home-portrait-preview {
+    display: none !important;
+  }
+
+  body.page-home .home-project-link:is(:hover, :focus-visible, .is-active),
+  body.page-home .home-project-link:is(:hover, :focus-visible, .is-active) * {
+    color: var(--black) !important;
+    background: transparent !important;
+  }
+}

@@ -689,6 +689,7 @@ function renderHome(projects) {
     <div class="home-about-columns">
       <section class="home-about-primary">
         <h2>About</h2>
+        <img class="home-about-portrait" src="${profileImage}" alt="Portrait of Jorne Scholiers"${imageDimensionAttributes(profileImageFile)} loading="lazy" decoding="async">
         <ul class="home-info-list">${renderTextList(homepageProfile.personal, { interactiveFirst: true })}</ul>
         <nav class="home-profile-links" aria-label="Important links">
           <ul>${renderLinkList(homepageProfile.links)}</ul>
@@ -711,7 +712,7 @@ function renderHome(projects) {
     </div>
   </aside>
   <section class="home-project-index" aria-labelledby="home-projects-title">
-    <h2 class="visually-hidden" id="home-projects-title">Projects</h2>
+    <h2 class="home-projects-heading" id="home-projects-title"><a href="projects.html">Projects</a></h2>
     <ol>${projectLinks || '<li>No projects yet.</li>'}</ol>
   </section>
   <div class="home-portrait-preview" data-home-portrait aria-hidden="true">
@@ -917,6 +918,32 @@ function renderProjectsIndex(projects) {
       ${renderProjectRows(projects) || '<div class="empty-state">Projects will be added here.</div>'}
     </div>
   </section>
+</main>`;
+}
+
+function renderProjectOverview(projects) {
+  const items = projects.map((project, index) => {
+    const title = project.pageConfig?.index_title || project.title;
+    const image = projectIndexImagePath(project);
+    const dimensions = rootImageDimensionAttributes(image);
+    const loading = index < 2 ? ' loading="eager"' : ' loading="lazy"';
+    return `<li>
+      <a class="project-overview-item" href="project-${project.slug}.html">
+        <span class="project-overview-label">
+          <small>${escapeHtml(project.year || '')}</small>
+          <span>${escapeHtml(title)}</span>
+        </span>
+        <span class="project-overview-image"><img src="${escapeHtml(image)}" alt="Preview of ${escapeHtml(title)} by Jorne Scholiers"${dimensions}${loading} decoding="async"></span>
+      </a>
+    </li>`;
+  }).join('\n');
+
+  return `
+<main class="page-project-overview">
+  <h1 class="project-overview-title"><a href="index.html" aria-label="Back to homepage">Projects</a></h1>
+  <ol class="project-overview-list">
+    ${items || '<li>No projects yet.</li>'}
+  </ol>
 </main>`;
 }
 
@@ -1319,8 +1346,18 @@ function buildSite() {
     main: renderPhotographyIndex(photography),
   });
 
+  const projectsHtml = renderLayout({
+    title: 'Projects | Jorne Scholiers',
+    description: 'An overview of all visual and graphic design projects by Jorne Scholiers, a designer in Ghent.',
+    fileName: 'projects.html',
+    image: projects[0] ? previewImagePath(projects[0]) : defaultSocialImage,
+    schema: { '@type': 'CollectionPage', name: 'Projects by Jorne Scholiers', url: absoluteUrl('projects.html') },
+    bodyClass: 'page-project-overview',
+    main: renderProjectOverview(projects),
+  });
+
   writeFile('index.html', homeHtml);
-  fs.rmSync(path.join(root, 'projects.html'), { force: true });
+  writeFile('projects.html', projectsHtml);
   writeFile('archive.html', archiveHtml);
   writeFile('about.html', aboutHtml);
   writeFile('photography.html', photographyHtml);
@@ -1368,6 +1405,7 @@ function buildSite() {
 
   writeSearchFiles([
     '',
+    'projects.html',
     'about.html',
     'archive.html',
     'photography.html',
