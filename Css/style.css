@@ -8,7 +8,7 @@
   --black: #000000;
   --body-font: "Open Sans", "Helvetica Neue", Arial, sans-serif;
   --body-weight: 700;
-  --title-font: "Bitcount Grid Double Ink", "Open Sans", sans-serif;
+  --title-font: "Silkscreen", "Open Sans", sans-serif;
   --site-max-width: 1560px;
   --page-padding-x: clamp(18px, 2.6vw, 32px);
   --page-grid-gap: clamp(16px, 1.8vw, 28px);
@@ -4191,7 +4191,7 @@ body.page-detail {
   border-right: 1px solid var(--black);
 }
 
-/* Reading text uses Open Sans; interface typography remains Bitcount. */
+/* Reading text uses Open Sans; interface typography uses Silkscreen. */
 p,
 .detail-description,
 .detail-description p,
@@ -4766,7 +4766,7 @@ body.page-detail .site-footer.is-visible {
   }
 }
 
-/* Homepage hierarchy uses only two Bitcount weights. */
+/* Homepage hierarchy uses only two title-font weights. */
 .home-exhibition {
   --home-weight-regular: 400;
   --home-weight-strong: 650;
@@ -5354,7 +5354,7 @@ body.home-preview-active .home-archive-link {
 /* The years below are right-aligned in a 54px column (7px link padding); line the word up with where they start. */
 .home-projects-heading a {
   display: inline-block;
-  margin-left: 28px;
+  margin-left: 22px;
   padding: 9px 7px;
   color: var(--black);
   text-decoration: none;
@@ -5557,5 +5557,50 @@ main.page-project-overview {
   body.page-home .home-project-link:is(:hover, :focus-visible, .is-active) * {
     color: var(--black) !important;
     background: transparent !important;
+  }
+}
+
+/* Silkscreen (Google Fonts) replaces Bitcount, which rendered broken in some browsers. */
+.silkscreen-regular {
+  font-family: "Silkscreen", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.silkscreen-bold {
+  font-family: "Silkscreen", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* All reading text in Open Sans; Silkscreen stays for headings, titles, years and navigation. */
+p,
+.detail-description,
+.detail-description p,
+.project-summary,
+.mobile-intro-copy,
+.simple-block p,
+.about-intro p,
+.about-list,
+.site-footer-copy,
+.page-home .home-exhibition .home-information .home-info-list li,
+.page-home .home-exhibition .home-information .home-profile-links li,
+.page-home .home-exhibition .home-information .home-info-list li *,
+.page-home .home-exhibition .home-information .home-profile-links li * {
+  font-family: var(--body-font) !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.01em;
+}
+
+/* Mobile homepage: readable Open Sans size and less empty space before the footer. */
+@media (max-width: 900px), (hover: none), (pointer: coarse) {
+  body.page-home .page-home.home-exhibition {
+    padding-bottom: 24px;
+  }
+
+  .page-home .home-exhibition .home-information .home-info-list li,
+  .page-home .home-exhibition .home-information .home-profile-links li {
+    font-size: 0.82rem;
+    line-height: 1.35;
   }
 }
