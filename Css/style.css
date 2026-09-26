@@ -5573,26 +5573,24 @@ main.page-project-overview {
   font-style: normal;
 }
 
-/* All reading text in Open Sans; Silkscreen stays for headings, titles, years and navigation. */
-p,
-.detail-description,
-.detail-description p,
-.project-summary,
-.mobile-intro-copy,
-.simple-block p,
-.about-intro p,
-.about-list,
-.site-footer-copy,
-.page-home .home-exhibition .home-information .home-info-list li,
-.page-home .home-exhibition .home-information .home-profile-links li,
-.page-home .home-exhibition .home-information .home-info-list li *,
-.page-home .home-exhibition .home-information .home-profile-links li * {
+/* Project pages: reading text in Open Sans Medium. The homepage stays fully in Silkscreen. */
+body.page-detail .detail-description,
+body.page-detail .detail-description p,
+body.page-detail .project-information p {
   font-family: var(--body-font) !important;
-  font-weight: 400 !important;
+  font-weight: 500 !important;
   letter-spacing: 0.01em;
 }
 
-/* Mobile homepage: readable Open Sans size and less empty space before the footer. */
+body.page-home,
+body.page-home .home-exhibition,
+body.page-home .home-exhibition *,
+body.page-home .site-footer,
+body.page-home .site-footer * {
+  font-family: var(--title-font) !important;
+}
+
+/* Mobile homepage: readable info text and less empty space before the footer. */
 @media (max-width: 900px), (hover: none), (pointer: coarse) {
   body.page-home .page-home.home-exhibition {
     padding-bottom: 24px;
@@ -5600,7 +5598,12 @@ p,
 
   .page-home .home-exhibition .home-information .home-info-list li,
   .page-home .home-exhibition .home-information .home-profile-links li {
-    font-size: 0.82rem;
+    font-size: 0.72rem;
     line-height: 1.35;
   }
+}
+
+/* Silkscreen is wide: let the Education line wrap instead of running into the project list. */
+.page-home .home-exhibition .home-education .home-info-list li {
+  white-space: normal;
 }
