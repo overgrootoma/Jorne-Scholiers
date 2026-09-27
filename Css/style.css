@@ -5503,9 +5503,6 @@ main.page-project-overview {
 
 /* Mobile and touch: tighter homepage rhythm, small portrait, no hover states. */
 @media (max-width: 900px), (hover: none), (pointer: coarse) {
-  .site-logo-slot {
-    position: absolute;
-  }
 
   body.page-home .page-home.home-exhibition {
     row-gap: 32px;
@@ -5681,26 +5678,18 @@ button,
 
 /* Mobile homepage: centred logo that stays visible, a little more room between sections. */
 @media (max-width: 900px), (hover: none), (pointer: coarse) {
+  /* Every page: centred logo that stays in view, no background, inverting over images and text. */
+  .site-logo-slot,
   body.page-home .site-logo-slot {
     position: fixed;
     left: 50%;
+    background: transparent;
+    mix-blend-mode: difference;
     transform: translateX(-50%);
   }
 
-  body.page-home .site-logo-slot img {
+  .site-logo-slot img {
     object-position: center top;
-  }
-
-  body.page-home::after {
-    content: "";
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: 0;
-    z-index: 15;
-    height: calc(var(--site-logo-offset-y) + var(--site-logo-height) + 8px);
-    background: var(--bg);
-    pointer-events: none;
   }
 
   body.page-home .home-about-columns {
