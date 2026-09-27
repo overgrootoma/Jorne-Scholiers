@@ -5934,7 +5934,7 @@ html.swoosh-in.swoosh-out::after {
   }
 }
 
-/* Homepage hover previews: a slow ease-in with a gentle settle, and a crossfade between projects. */
+/* Homepage hover previews: a slow ease-in and a crossfade between projects. */
 @media (hover: hover) and (pointer: fine) {
   .page-home .home-project-preview {
     z-index: 1;
@@ -5953,13 +5953,11 @@ html.swoosh-in.swoosh-out::after {
     transition: none;
   }
 
-  .page-home .home-project-preview img {
-    transform: scale(1.035);
-    transition: opacity 800ms var(--ease-soft), transform 1600ms var(--ease-soft);
-  }
-
+  /* Only the first image eases in (with the preview itself); the cycle then switches directly. */
+  .page-home .home-project-preview img,
   .page-home .home-project-preview img.is-current {
-    transform: scale(1);
+    transform: none;
+    transition: none;
   }
 }
 
