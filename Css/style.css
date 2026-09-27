@@ -5720,7 +5720,7 @@ button,
   .site-footer a
 ):is(:hover, :focus-visible) {
   color: var(--white) !important;
-  background-size: 100% 100% !important;
+  --hover-r: var(--hover-max, 600px);
   text-decoration: none !important;
 }
 
@@ -5817,6 +5817,13 @@ body.page-home .site-footer * {
   --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* Radius of the blue hover fill; it grows from the pointer position (set in site.js). */
+@property --hover-r {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
 /* Blue bar that grows under text links (left to right) and buttons (from the middle out). */
 :is(
   .home-archive-link,
@@ -5833,13 +5840,12 @@ body.page-home .site-footer * {
   margin: -2px -4px;
   padding: 2px 4px;
   background-color: transparent !important;
-  background-image: linear-gradient(var(--accent-blue), var(--accent-blue)) !important;
+  background-image: radial-gradient(circle at var(--hover-x, 50%) var(--hover-y, 50%), var(--accent-blue) var(--hover-r), transparent calc(var(--hover-r) + 0.5px)) !important;
   background-repeat: no-repeat !important;
-  background-position: left center !important;
-  background-size: 0% 100% !important;
+  background-size: 100% 100% !important;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
-  transition: background-size 320ms var(--ease-soft), color 220ms var(--ease-soft) !important;
+  transition: --hover-r 380ms var(--ease-soft), color 220ms var(--ease-soft) !important;
 }
 
 .page-home .home-exhibition .home-project-link,
@@ -5848,20 +5854,14 @@ body.page-home .site-footer * {
 .project-step,
 .projects-view-toggle__button {
   background-color: transparent !important;
-  background-image: linear-gradient(var(--accent-blue), var(--accent-blue)) !important;
+  background-image: radial-gradient(circle at var(--hover-x, 50%) var(--hover-y, 50%), var(--accent-blue) var(--hover-r), transparent calc(var(--hover-r) + 0.5px)) !important;
   background-repeat: no-repeat !important;
-  background-position: left center !important;
-  background-size: 0% 100% !important;
-  transition: background-size 320ms var(--ease-soft), color 220ms var(--ease-soft) !important;
-}
-
-.project-step,
-.projects-view-toggle__button {
-  background-position: center !important;
+  background-size: 100% 100% !important;
+  transition: --hover-r 380ms var(--ease-soft), color 220ms var(--ease-soft) !important;
 }
 
 .projects-view-toggle__button.is-active {
-  background-size: 100% 100% !important;
+  --hover-r: var(--hover-max, 600px);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -5870,7 +5870,7 @@ body.page-home .site-footer * {
   .project-overview-item:is(:hover, :focus-visible) .project-overview-label,
   .project-step:is(:hover, :focus-visible),
   .projects-view-toggle__button:is(:hover, :focus-visible) {
-    background-size: 100% 100% !important;
+    --hover-r: var(--hover-max, 600px);
   }
 }
 

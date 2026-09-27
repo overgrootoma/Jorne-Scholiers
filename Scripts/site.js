@@ -1636,6 +1636,30 @@
       });
     }
 
+    // Hover fill grows from where the pointer enters and shrinks back to where it leaves.
+    const hoverTargets = [
+      '.home-archive-link', '.home-information a', '.back-link', '.about-link', '.about-intro a',
+      '.detail-files a', '.project-overview-title a', '.archive-heading-link', '.simple-block a',
+      '.site-footer a', '.page-home .home-project-link', '.home-projects-heading a',
+      '.project-overview-item', '.project-step', '.projects-view-toggle__button',
+    ].join(', ');
+    const placeHoverOrigin = (event) => {
+      const target = event.target.closest?.(hoverTargets);
+      if (!target || target.contains(event.relatedTarget)) return;
+      const fill = target.classList.contains('project-overview-item')
+        ? target.querySelector('.project-overview-label') || target
+        : target;
+      const rect = fill.getBoundingClientRect();
+      const x = Math.min(Math.max(event.clientX - rect.left, 0), rect.width);
+      const y = Math.min(Math.max(event.clientY - rect.top, 0), rect.height);
+      const reach = Math.hypot(Math.max(x, rect.width - x), Math.max(y, rect.height - y));
+      fill.style.setProperty('--hover-x', `${x}px`);
+      fill.style.setProperty('--hover-y', `${y}px`);
+      fill.style.setProperty('--hover-max', `${Math.ceil(reach) + 2}px`);
+    };
+    document.addEventListener('pointerover', placeHoverOrigin);
+    document.addEventListener('pointerout', placeHoverOrigin);
+
     const revealTargets = Array.from(document.querySelectorAll([
       '.page-detail .detail-gallery > figure',
       '.page-detail .detail-media > figure',
