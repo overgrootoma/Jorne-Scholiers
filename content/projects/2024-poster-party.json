@@ -15,39 +15,57 @@
   "images": [
     {
       "image": "/Projects/2024 Poster Party/JorneScholiers_GRAPHICMATTERS_STICKER 2_Pagina_09_Afbeelding_0001.jpg",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2024 Poster Party/JorneScholiers_INSCRIPT.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2024 Poster Party/JorneScholiers_GRAPHICMATTERS_STICKER 2_Pagina_02_Afbeelding_0001.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2024 Poster Party/JorneScholiers_GRAPHICMATTERS_STICKER 2_Pagina_01_Afbeelding_0001.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2024 Poster Party/JorneScholiers_GRAPHICMATTERS_STICKER 2_Pagina_07_Afbeelding_0001.jpg",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2024 Poster Party/JorneScholiers_GRAPHICMATTERS_STICKER 2_Pagina_08_Afbeelding_0001.jpg",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2024 Poster Party/JorneScholiers_INSCRIPT_INSTA1.jpg",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2024 Poster Party/JorneScholiers_INSCRIPT_INSTA2.jpg",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2024 Poster Party/JorneScholiers_INSCRIPT_INSTA3.jpg",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     }
   ],
   "homepage_images": [

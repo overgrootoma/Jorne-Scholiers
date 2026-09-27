@@ -936,19 +936,27 @@ function renderProjectStepNav(nav) {
   </nav>`;
 }
 
-// Desktop layout picked per image in the CMS: "half" and "third" put images side by side.
-const imageLayouts = new Set(['half', 'third']);
-
+// Desktop grid position picked per image in the CMS: 1-6 columns wide, an optional start
+// column (leaves the columns before it empty) and "start a new row".
 function layoutAttribute(item, file) {
   const layout = item.imageLayouts?.[file];
-  return imageLayouts.has(layout) ? ` data-layout="${layout}"` : '';
+  if (!layout) return '';
+  let attributes = '';
+  if (layout.columns !== 6) attributes += ` data-cols="${layout.columns}"`;
+  if (layout.start) attributes += ` data-start="${layout.start}"`;
+  if (layout.newRow) attributes += ' data-new-row';
+  return attributes;
+}
+
+function hasCustomGrid(item) {
+  return Object.values(item.imageLayouts || {}).some((layout) => layout.columns !== 6 || layout.start || layout.newRow);
 }
 
 function renderProjectPage(item, type, nav = null) {
   const title = escapeHtml(item.title);
   const base = type === 'projects' ? 'Projects' : 'Archive';
   const pageConfig = item.pageConfig || {};
-  const galleryClass = pageConfig.gallery_class || 'detail-gallery';
+  const galleryClass = `${pageConfig.gallery_class || 'detail-gallery'}${hasCustomGrid(item) ? ' detail-gallery--grid' : ''}`;
   const orderedImages = orderFilesByPreference(item.images, pageConfig.image_order);
   const orderedOtherFiles = orderFilesByPreference(item.otherFiles, pageConfig.other_file_order);
   const images = orderedImages
@@ -1287,6 +1295,16 @@ function readCmsProjects() {
     .map((file) => ({ file: `content/projects/${file}`, data: readJsonFile(path.join(cmsProjectsDir, file), {}) }));
 }
 
+function gridLayout(entry) {
+  const legacyColumns = { full: 6, half: 3, third: 2 };
+  let columns = Number.parseInt(entry.columns, 10);
+  if (!(columns >= 1 && columns <= 6)) columns = legacyColumns[String(entry.layout || '').toLowerCase()] || 6;
+  let start = Number.parseInt(entry.start, 10);
+  if (!(start >= 1 && start <= 6)) start = 0;
+  if (start && start + columns - 1 > 6) start = 7 - columns;
+  return { columns, start, newRow: entry.new_row === true };
+}
+
 function applyCmsProject(item, data, file) {
   if (typeof data.title === 'string' && data.title.trim()) item.title = data.title.trim();
   const year = Number(data.year);
@@ -1306,14 +1324,14 @@ function applyCmsProject(item, data, file) {
     if (!pageConfig.preview_image) pageConfig.preview_image = pageConfig.index_image;
   }
 
-  // Each entry is { image, layout } (or a plain path); layout is "full", "half" or "third".
+  // Each entry is { image, columns, start, new_row } (or a plain path).
   const imageLayoutsByPath = {};
   const images = (Array.isArray(data.images) ? data.images : [])
     .map((entry) => {
       const source = typeof entry === 'string' ? entry : entry?.image;
       const imagePath = cmsFilePath(source, `${file} images`);
       if (!imagePath || !isImage(imagePath)) return '';
-      if (typeof entry?.layout === 'string') imageLayoutsByPath[imagePath] = entry.layout.trim().toLowerCase();
+      if (entry && typeof entry === 'object') imageLayoutsByPath[imagePath] = gridLayout(entry);
       return imagePath;
     })
     .filter(Boolean);

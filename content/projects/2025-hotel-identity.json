@@ -15,87 +15,129 @@
   "images": [
     {
       "image": "/Projects/2025 Hotel Identity/syncope merch-2.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Hotel Identity/syncope merch-3.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Hotel Identity/syncope merch-4.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Hotel Identity/syncope merch-6.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Hotel Identity/syncope merch-7.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Hotel Identity/syncope merch-8.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Hotel Identity/Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Instagram_01.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Hotel Identity/Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Instagram_02.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Hotel Identity/Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Instagram_03.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Hotel Identity/Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Instagram_04.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Hotel Identity/3DHotel_1.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Hotel Identity/3DHotel_2.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Hotel Identity/come-in-mockup.jpg",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Hotel Identity/do-not-disturb-mockup.jpg",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Hotel Identity/drinks-mockup-copy.jpg",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Hotel Identity/food-mockup-copy.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Hotel Identity/3DHotel_3.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Hotel Identity/food.jpg",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Hotel Identity/syncope merch-5.jpg",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Hotel Identity/syncope merch-9.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Hotel Identity/syncope merch.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     }
   ],
   "homepage_images": [

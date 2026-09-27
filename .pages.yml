@@ -74,12 +74,12 @@ content:
         type: text
       - name: images
         label: Project images
-        description: Shown on the project page in this order (drag to reorder). Upload new images into a folder for this project, e.g. "2027 Project name".
+        description: Shown on the project page in this order (drag to reorder). On desktop the page is a grid of 6 columns; on phones every image is full width, one under the other. Upload new images into a folder for this project, e.g. "2027 Project name".
         type: object
         list:
           collapsible:
             collapsed: true
-            summary: "{layout}: {image}"
+            summary: "{columns} col · {image}"
         fields:
           - name: image
             label: Image
@@ -87,12 +87,22 @@ content:
             required: true
             options:
               media: projects
-          - name: layout
-            label: Width on desktop
-            description: "full = full width. half = two side by side. third = three side by side. Give neighbouring images the same width to put them next to each other. On phones every image is always full width."
+          - name: columns
+            label: Width (columns of 6)
+            description: 6 = full width, 3 = half, 2 = a third, 1 = a sixth.
             type: select
             options:
-              values: [full, half, third]
+              values: ["6", "5", "4", "3", "2", "1"]
+          - name: start
+            label: Start at column
+            description: auto = right after the previous image. Pick a later column to leave empty space before this image.
+            type: select
+            options:
+              values: ["auto", "1", "2", "3", "4", "5", "6"]
+          - name: new_row
+            label: Start a new row
+            description: Leaves the rest of the previous row empty.
+            type: boolean
       - name: homepage_images
         label: Homepage hover images
         description: Up to 4 images shown when hovering the project on the homepage. Empty = the first project images.

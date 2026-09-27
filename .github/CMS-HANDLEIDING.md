@@ -42,17 +42,33 @@ en klik **Save**.
 Een extra foto toevoegen? Upload ze eerst in **Media → Project images → de map van het
 project**, en voeg ze dan toe bij **Project images**.
 
-## 4. Foto's naast elkaar zetten (desktop)
+## 4. Foto's schikken op het grid (desktop)
 
-Elke foto heeft een **Width on desktop**:
+Op een computer staan de foto's van een projectpagina op een grid van **6 kolommen**.
+Per foto stel je drie dingen in:
 
-- **full**: volle breedte (zo staat alles nu)
-- **half**: twee foto's naast elkaar
-- **third**: drie foto's naast elkaar
+- **Width (columns of 6)**: hoe breed de foto is. 6 = volle breedte, 3 = de helft,
+  2 = een derde, 1 = een zesde. Zo staat alles nu op 6.
+- **Start at column**: `auto` = meteen na de vorige foto. Kies je een latere kolom, dan
+  blijven de kolommen ervoor leeg (witruimte links van de foto).
+- **Start a new row**: begint een nieuwe rij, zodat de rest van de vorige rij leeg blijft.
 
-Geef foto's die na elkaar komen dezelfde breedte om ze naast elkaar te zetten, bv. twee
-staande foto's allebei op **half**. Zo passen ze samen op één scherm. Op een telefoon
-staan alle foto's altijd onder elkaar op volle breedte.
+Een foto die niet meer past in de rij, schuift vanzelf door naar de volgende rij.
+Op een telefoon staan alle foto's altijd onder elkaar op volle breedte.
+
+**Voorbeeld:** drie foto's naast elkaar, daaronder één foto op de linkerhelft met witruimte
+ernaast.
+
+| Foto | Width | Start at column | Start a new row |
+|------|-------|-----------------|-----------------|
+| A    | 2     | auto            | uit             |
+| B    | 2     | auto            | uit             |
+| C    | 2     | auto            | uit             |
+| D    | 3     | auto            | uit             |
+| E    | 6     | auto            | **aan**         |
+
+Foto D vult kolom 1 tot 3; kolom 4 tot 6 blijft leeg omdat E een nieuwe rij begint.
+Wil je D rechts, met de witruimte links? Zet dan bij D **Start at column** op **4**.
 
 ## 5. Foto's in Archive of Photography
 

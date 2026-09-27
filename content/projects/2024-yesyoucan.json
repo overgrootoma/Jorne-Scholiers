@@ -14,31 +14,45 @@
   "images": [
     {
       "image": "/Projects/2024 YesYouCan/JorneScholiers_OPDR06_Packshot01_DynamoEnergy.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2024 YesYouCan/JorneScholiers_OPDR06_Packshot02_DynamoEnergy.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2024 YesYouCan/JorneScholiers_OPDR06_Packshot03_DynamoEnergy.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2024 YesYouCan/JorneScholiers_OPDR06_Packshot04_DynamoEnergy.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2024 YesYouCan/JorneScholiers_OPDR06_Label blikje 01_DynamoEnergy.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2024 YesYouCan/JorneScholiers_OPDR06_Label blikje 03_DynamoEnergy.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2024 YesYouCan/JorneScholiers_OPDR06_Label-blikje-02_DynamoEnergy.jpg",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     }
   ],
   "homepage_images": [

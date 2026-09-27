@@ -15,43 +15,63 @@
   "images": [
     {
       "image": "/Projects/2025 Off all things bord /RubenDejonge_JorneScholiers_magazine_Packshot_1.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Off all things bord /RubenDejonge_JorneScholiers_magazine_Packshot_2.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Off all things bord /RubenDejonge_JorneScholiers_magazine_Packshot_3.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Off all things bord /RubenDejonge_JorneScholiers_magazine_Packshot_4.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Off all things bord /RubenDejonge_JorneScholiers_magazine_Packshot_5.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Off all things bord /Packshots ZINE-10.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Off all things bord /zine-2.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Off all things bord /zine-3.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Off all things bord /zine-4.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 Off all things bord /zine-bewerkt.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     }
   ],
   "homepage_images": [

@@ -5781,29 +5781,36 @@ body.page-home .site-footer * {
   }
 }
 
-/* Desktop: images marked "half" or "third" in the CMS sit side by side; everything else stays
-   full width. Phones and tablets always show one image under the other. */
+/* Desktop: 6-column grid for project images, set per image in the CMS (columns, start column,
+   new row). Only used when a project has a custom layout; otherwise every image stays full width.
+   Phones and tablets always show one image under the other. */
 @media (min-width: 901px) {
-  body.page-detail .detail-gallery:has(figure[data-layout]) {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
+  body.page-detail .detail-gallery.detail-gallery--grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-auto-flow: row;
+    align-items: start;
     column-gap: 28px;
+    row-gap: 28px;
   }
 
-  body.page-detail .detail-gallery:has(figure[data-layout]) > figure {
-    flex: 0 0 100%;
-    width: 100%;
-    max-width: 100%;
+  body.page-detail .detail-gallery.detail-gallery--grid > figure {
+    grid-column: auto / span 6;
+    width: auto;
+    max-width: none;
   }
 
-  body.page-detail .detail-gallery:has(figure[data-layout]) > figure[data-layout="half"] {
-    flex-basis: calc((100% - 28px) / 2);
-    width: calc((100% - 28px) / 2);
-  }
+  body.page-detail .detail-gallery.detail-gallery--grid > figure[data-cols="1"] { grid-column: auto / span 1; }
+  body.page-detail .detail-gallery.detail-gallery--grid > figure[data-cols="2"] { grid-column: auto / span 2; }
+  body.page-detail .detail-gallery.detail-gallery--grid > figure[data-cols="3"] { grid-column: auto / span 3; }
+  body.page-detail .detail-gallery.detail-gallery--grid > figure[data-cols="4"] { grid-column: auto / span 4; }
+  body.page-detail .detail-gallery.detail-gallery--grid > figure[data-cols="5"] { grid-column: auto / span 5; }
 
-  body.page-detail .detail-gallery:has(figure[data-layout]) > figure[data-layout="third"] {
-    flex-basis: calc((100% - 56px) / 3);
-    width: calc((100% - 56px) / 3);
-  }
+  body.page-detail .detail-gallery.detail-gallery--grid > figure[data-new-row] { grid-column-start: 1; }
+  body.page-detail .detail-gallery.detail-gallery--grid > figure[data-start="1"] { grid-column-start: 1; }
+  body.page-detail .detail-gallery.detail-gallery--grid > figure[data-start="2"] { grid-column-start: 2; }
+  body.page-detail .detail-gallery.detail-gallery--grid > figure[data-start="3"] { grid-column-start: 3; }
+  body.page-detail .detail-gallery.detail-gallery--grid > figure[data-start="4"] { grid-column-start: 4; }
+  body.page-detail .detail-gallery.detail-gallery--grid > figure[data-start="5"] { grid-column-start: 5; }
+  body.page-detail .detail-gallery.detail-gallery--grid > figure[data-start="6"] { grid-column-start: 6; }
 }

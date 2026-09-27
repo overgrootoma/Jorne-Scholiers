@@ -15,91 +15,135 @@
   "images": [
     {
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_1.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_2.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_3.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_4.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_5.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_6.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_7.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_8.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_9.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_10.jpg",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_11.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_12.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_13.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_14.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_15.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_16.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_17.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_18.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_19.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_20.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_21.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     },
     {
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_22.webp",
-      "layout": "full"
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
     }
   ],
   "homepage_images": [
