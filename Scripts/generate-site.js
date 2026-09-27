@@ -6,12 +6,13 @@ const projectsDir = path.join(root, 'Projects');
 const archiveDir = path.join(root, 'Archive');
 const photographyDir = path.join(root, 'photography');
 
-const siteUrl = (process.env.SITE_URL || 'https://overgrootoma.github.io/Jorne-Scholiers/').replace(/\/?$/, '/');
+// The live domain (see CNAME). Canonical links, the sitemap and social previews all use it.
+const siteUrl = (process.env.SITE_URL || 'https://jornescholiers.be/').replace(/\/?$/, '/');
 const siteName = 'Jorne Scholiers';
 const profileImage = 'images/Jorne%20Scholiers%20about%20picture.jpg';
 const profileImageFile = path.join(root, 'images', 'Jorne Scholiers about picture.jpg');
 const defaultSocialImage = 'images/ME.webp';
-const defaultDescription = 'Portfolio of Jorne Scholiers, a visual and graphic designer in Ghent working across identities, editorial design, typography, photography, and creative coding.';
+const defaultDescription = 'Jorne Scholiers is a graphic and visual designer in Ghent (Gent), Belgium, making experimental work across visual identity, editorial design, typography, creative coding and photography.';
 
 const palette = ['#0000FF'];
 // Editable content (also through Pages CMS, see .pages.yml):
@@ -97,7 +98,7 @@ function personSchema() {
     name: siteName,
     url: siteUrl,
     image: absoluteUrl(profileImage),
-    jobTitle: 'Visual and Graphic Designer',
+    jobTitle: 'Graphic and Visual Designer',
     description: defaultDescription,
     email: 'mailto:jorne.scholiers@icloud.com',
     sameAs: [
@@ -107,12 +108,26 @@ function personSchema() {
     affiliation: {
       '@type': 'EducationalOrganization',
       name: 'LUCA School of Arts',
+      url: 'https://www.luca-arts.be/',
+    },
+    alumniOf: {
+      '@type': 'EducationalOrganization',
+      name: 'LUCA School of Arts',
+    },
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Ghent',
+      addressRegion: 'East Flanders',
+      addressCountry: 'BE',
     },
     homeLocation: {
       '@type': 'Place',
       name: 'Ghent, Belgium',
     },
-    knowsAbout: ['Graphic design', 'Visual identity', 'Editorial design', 'Typography', 'Photography', 'Creative coding'],
+    knowsAbout: [
+      'Graphic design', 'Visual design', 'Experimental graphic design', 'Visual identity', 'Editorial design',
+      'Book design', 'Typography', 'Poster design', 'Creative coding', 'Generative design', 'Experimental photography',
+    ],
   };
 }
 
@@ -670,7 +685,7 @@ function renderHome(projects, homepageProfile) {
 
   return `
 <main class="page-home home-exhibition">
-  <h1 class="visually-hidden">Jorne Scholiers — selected visual design projects</h1>
+  <h1 class="visually-hidden">Jorne Scholiers — graphic and visual designer in Ghent, Belgium</h1>
   <aside class="home-information" aria-label="Information">
     <div class="home-about-columns">
       <section class="home-about-primary">
@@ -964,6 +979,14 @@ function hasCustomGrid(item) {
   return Object.values(item.imageLayouts || {}).some((layout) => layout.columns !== 6 || layout.start || layout.newRow);
 }
 
+// Alt text set per image in the CMS, or "Isolation, creative coding by Jorne Scholiers — image 3".
+function imageAlt(item, file, index) {
+  const custom = item.imageAlts?.[file];
+  if (custom) return escapeHtml(custom);
+  const keyword = item.keywords?.[0] ? `, ${item.keywords[0]}` : '';
+  return escapeHtml(`${item.title}${keyword} by Jorne Scholiers — image ${index + 1}`);
+}
+
 function renderProjectPage(item, type, nav = null) {
   const title = escapeHtml(item.title);
   const base = type === 'projects' ? 'Projects' : 'Archive';
@@ -987,7 +1010,7 @@ function renderProjectPage(item, type, nav = null) {
       return `
       <figure data-span="${span}"${layoutAttribute(item, file)}>
         <div class="media-frame">
-          <img src="${src}" alt="${title} by Jorne Scholiers — image ${idx + 1}"${dimensions}${loading} decoding="async">
+          <img src="${src}" alt="${imageAlt(item, file, idx)}"${dimensions}${loading} decoding="async">
         </div>
         ${type === 'projects' ? '' : `<figcaption>${escapeHtml(file)}</figcaption>`}
       </figure>`;
@@ -1326,6 +1349,8 @@ function applyCmsProject(item, data, file) {
   if (typeof data.description === 'string' && data.description.trim()) item.description = data.description.trim();
   const keywords = stringList(data.keywords);
   if (keywords.length) item.keywords = keywords;
+  if (typeof data.seo_title === 'string' && data.seo_title.trim()) item.seoTitle = data.seo_title.trim();
+  if (typeof data.seo_description === 'string' && data.seo_description.trim()) item.seoDescription = data.seo_description.trim();
 
   const pageConfig = { ...item.pageConfig };
   if (typeof data.short_title === 'string' && data.short_title.trim()) pageConfig.index_title = data.short_title.trim();
@@ -1338,18 +1363,23 @@ function applyCmsProject(item, data, file) {
 
   // Each entry is { image, columns, start, new_row } (or a plain path).
   const imageLayoutsByPath = {};
+  const imageAltsByPath = {};
   const images = (Array.isArray(data.images) ? data.images : [])
     .map((entry) => {
       const source = typeof entry === 'string' ? entry : entry?.image;
       const imagePath = cmsFilePath(source, `${file} images`);
       if (!imagePath || !isImage(imagePath)) return '';
-      if (entry && typeof entry === 'object') imageLayoutsByPath[imagePath] = gridLayout(entry);
+      if (entry && typeof entry === 'object') {
+        imageLayoutsByPath[imagePath] = gridLayout(entry);
+        if (typeof entry.alt === 'string' && entry.alt.trim()) imageAltsByPath[imagePath] = entry.alt.trim();
+      }
       return imagePath;
     })
     .filter(Boolean);
   if (images.length) {
     item.images = images;
     item.imageLayouts = imageLayoutsByPath;
+    item.imageAlts = imageAltsByPath;
   }
 
   item.cmsHomepageImages = (Array.isArray(data.homepage_images) ? data.homepage_images : [])
@@ -1419,6 +1449,14 @@ function mergeCmsProjects(folderItems) {
   return [...merged, ...remaining];
 }
 
+// "Isolation – Creative Coding | Jorne Scholiers", or the SEO title set in the CMS.
+function projectPageTitle(project) {
+  if (project.seoTitle) return `${project.seoTitle} | ${siteName}`;
+  const keyword = project.keywords?.[0];
+  const topic = keyword ? keyword.replace(/\b\w/g, (letter) => letter.toUpperCase()) : 'Graphic Design';
+  return `${project.title} – ${topic} | ${siteName}`;
+}
+
 function buildSite() {
   const homepageProfile = readSiteContent();
   const projects = mergeCmsProjects(buildItems(projectsDir, 'projects'));
@@ -1438,7 +1476,7 @@ function buildSite() {
   });
 
   const homeHtml = renderLayout({
-    title: 'Jorne Scholiers — Visual & Graphic Designer, Ghent',
+    title: 'Jorne Scholiers — Graphic & Visual Designer in Ghent, Belgium',
     description: defaultDescription,
     fileName: '',
     image: projects[0] ? previewImagePath(projects[0]) : defaultSocialImage,
@@ -1449,7 +1487,8 @@ function buildSite() {
         {
           '@type': 'WebSite',
           '@id': `${siteUrl}#website`,
-          name: `${siteName} — Visual Design Portfolio`,
+          name: siteName,
+          alternateName: `${siteName} — Graphic Design Portfolio`,
           url: siteUrl,
           description: defaultDescription,
           author: { '@id': `${siteUrl}#jorne-scholiers` },
@@ -1462,8 +1501,8 @@ function buildSite() {
   });
 
   const archiveHtml = renderLayout({
-    title: 'Design Archive | Jorne Scholiers',
-    description: 'An archive of experiments, drafts, visual studies, and side projects by Ghent-based visual designer Jorne Scholiers.',
+    title: 'Experimental Design Archive | Jorne Scholiers',
+    description: 'Experiments, drafts, visual studies and side projects by Jorne Scholiers, an experimental graphic designer in Ghent, Belgium.',
     fileName: 'archive.html',
     schema: { '@type': 'CollectionPage', name: 'Design Archive by Jorne Scholiers', url: absoluteUrl('archive.html') },
     bodyClass: 'page-archive',
@@ -1471,7 +1510,7 @@ function buildSite() {
   });
 
   const aboutHtml = renderLayout({
-    title: 'About Jorne Scholiers | Visual Designer in Ghent',
+    title: 'About Jorne Scholiers | Graphic Designer in Ghent',
     description: 'Meet Jorne Scholiers, a visual and graphic designer studying at LUCA School of Arts in Ghent, Belgium, with a bold and experimental practice.',
     fileName: 'about.html',
     image: profileImage,
@@ -1483,7 +1522,7 @@ function buildSite() {
 
   const photographyHtml = renderLayout({
     title: 'Experimental Photography | Jorne Scholiers',
-    description: 'Selected experimental photography and ongoing photographic series by visual designer Jorne Scholiers in Ghent.',
+    description: 'Experimental photography and ongoing photographic series by Jorne Scholiers, a graphic and visual designer in Ghent, Belgium.',
     fileName: 'photography.html',
     image: photography[0]?.images[0] ? toUrlPath('photography', photography[0].dirName, photography[0].images[0]) : defaultSocialImage,
     schema: { '@type': 'CollectionPage', name: 'Photography by Jorne Scholiers', url: absoluteUrl('photography.html') },
@@ -1492,11 +1531,24 @@ function buildSite() {
   });
 
   const projectsHtml = renderLayout({
-    title: 'Projects | Jorne Scholiers',
-    description: 'An overview of all visual and graphic design projects by Jorne Scholiers, a designer in Ghent.',
+    title: 'Projects — Graphic Design & Experimental Work | Jorne Scholiers',
+    description: 'All graphic design projects by Jorne Scholiers in Ghent, Belgium: visual identities, books, posters, packaging, creative coding and experimental work.',
     fileName: 'projects.html',
     image: projects[0] ? previewImagePath(projects[0]) : defaultSocialImage,
-    schema: { '@type': 'CollectionPage', name: 'Projects by Jorne Scholiers', url: absoluteUrl('projects.html') },
+    schema: {
+      '@type': 'CollectionPage',
+      name: 'Projects by Jorne Scholiers',
+      url: absoluteUrl('projects.html'),
+      mainEntity: {
+        '@type': 'ItemList',
+        itemListElement: projects.map((project, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          url: absoluteUrl(`project-${project.slug}.html`),
+          name: project.title,
+        })),
+      },
+    },
     bodyClass: 'page-project-overview',
     main: renderProjectOverview(projects),
   });
@@ -1511,8 +1563,8 @@ function buildSite() {
     const prevProject = projects[(index - 1 + projects.length) % projects.length];
     const nextProject = projects[(index + 1) % projects.length];
     const projectHtml = renderLayout({
-      title: `${project.title} | Jorne Scholiers`,
-      description: project.description || `${project.title}, a visual design project by Jorne Scholiers.`,
+      title: projectPageTitle(project),
+      description: project.seoDescription || project.description || `${project.title}, a graphic design project by Jorne Scholiers in Ghent, Belgium.`,
       fileName: `project-${project.slug}.html`,
       image: previewImagePath(project) || defaultSocialImage,
       imageAlt: `${project.title}, a project by Jorne Scholiers`,
@@ -1521,11 +1573,14 @@ function buildSite() {
         '@type': 'CreativeWork',
         name: project.title,
         url: absoluteUrl(`project-${project.slug}.html`),
-        description: truncateDescription(project.description || `${project.title}, a visual design project by Jorne Scholiers.`, 300),
+        description: truncateDescription(project.seoDescription || project.description || `${project.title}, a graphic design project by Jorne Scholiers.`, 300),
         image: absoluteUrl(previewImagePath(project) || defaultSocialImage),
         dateCreated: String(project.year || ''),
         creator: { '@id': `${siteUrl}#jorne-scholiers` },
-        keywords: (project.keywords?.length ? project.keywords : ['visual design', 'graphic design']).join(', '),
+        author: { '@type': 'Person', name: siteName, url: siteUrl },
+        locationCreated: { '@type': 'Place', name: 'Ghent, Belgium' },
+        inLanguage: 'en',
+        keywords: (project.keywords?.length ? project.keywords : ['graphic design', 'visual design']).join(', '),
       },
       bodyClass: 'page-detail',
       main: renderProjectPage(project, 'projects', {
@@ -1545,8 +1600,19 @@ function buildSite() {
     writeFile(`project-${project.slug}.html`, projectHtml);
   });
 
-  writeLegacyRedirect('project-poster-party.html', 'project-2024-0-poster-party.html', 'Poster Party');
-  writeLegacyRedirect('project-yesyoucan.html', 'project-2024-0-yesyoucan.html', 'YesYouCan');
+  // Old addresses keep working while their project is on the site.
+  const projectPages = new Set(projects.map((project) => `project-${project.slug}.html`));
+  const legacyRedirects = [
+    ['project-poster-party.html', 'project-2024-0-poster-party.html', 'Poster Party'],
+    ['project-yesyoucan.html', 'project-2024-0-yesyoucan.html', 'YesYouCan'],
+  ].filter(([, target]) => projectPages.has(target));
+  legacyRedirects.forEach(([fileName, target, label]) => writeLegacyRedirect(fileName, target, label));
+
+  // Remove pages of projects that were hidden, renamed or deleted, so they disappear from Google too.
+  const keepPages = new Set([...projectPages, ...legacyRedirects.map(([fileName]) => fileName)]);
+  fs.readdirSync(root)
+    .filter((file) => /^project-.+\.html$/.test(file) && !keepPages.has(file))
+    .forEach((file) => fs.rmSync(path.join(root, file), { force: true }));
 
   writeSearchFiles([
     '',

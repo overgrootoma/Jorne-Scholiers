@@ -87,6 +87,10 @@ content:
             required: true
             options:
               media: projects
+          - name: alt
+            label: Description for Google and screen readers (alt text)
+            description: What is on the image, e.g. "Isolation book open on a spread with a line grid". Empty = automatic.
+            type: string
           - name: columns
             label: Width (columns of 6)
             description: 6 = full width, 3 = half, 2 = a third, 1 = a sixth.
@@ -130,8 +134,17 @@ content:
         type: string
       - name: keywords
         label: Keywords (for Google)
+        description: The first keyword also goes into the page title, e.g. "Isolation – Creative Coding".
         type: string
         list: true
+      - name: seo_title
+        label: Google title (optional)
+        description: Replaces "Title – First keyword" in Google results. "| Jorne Scholiers" is added automatically.
+        type: string
+      - name: seo_description
+        label: Google description (optional)
+        description: One or two sentences shown under the title in Google (max. ~155 characters). Empty = the start of the text.
+        type: text
 
   - name: site
     label: Homepage information
