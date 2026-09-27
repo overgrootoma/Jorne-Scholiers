@@ -1,17 +1,11 @@
 {
   "title": "Hotel Identity",
-  "short_title": "",
   "year": 2025,
   "order": 7,
-  "hidden": false,
+  "hidden": true,
   "folder": "2025 Hotel Identity",
   "cover": "/images/cover photo's/HotelIdentity.webp",
   "description": "Working as a duo, we created a brand identity for a fictional hotel. Our concept centered around a hotel designed specifically for jazz musicians, a place where they can meet, unwind, and get creative energy. We were drawn to the idea because there is no real place like this.\n\nThe visual identity blends fluid, expressive lines with bold, vibrant colors. This represents the rhythm and spontaneity of jazz music. We aimed for a balance between the classic elegance of jazz culture and a contemporary design, creating a brand that feels both timeless and fresh.",
-  "keywords": [
-    "brand identity",
-    "visual identity",
-    "graphic design"
-  ],
   "images": [
     {
       "image": "/Projects/2025 Hotel Identity/syncope merch-2.webp",
@@ -148,12 +142,10 @@
   ],
   "files": [
     {
-      "file": "/Projects/2025 Hotel Identity/Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Website_Desktop.m4v",
-      "label": ""
+      "file": "/Projects/2025 Hotel Identity/Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Website_Desktop.m4v"
     },
     {
-      "file": "/Projects/2025 Hotel Identity/Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_WebsiteMobile.mp4",
-      "label": ""
+      "file": "/Projects/2025 Hotel Identity/Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_WebsiteMobile.mp4"
     },
     {
       "file": "/Projects/2025 Hotel Identity/Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_HouseRules.pdf",
@@ -172,13 +164,15 @@
       "label": "Style Guide"
     },
     {
-      "file": "/Projects/2025 Hotel Identity/drinksmenu.mp4",
-      "label": ""
+      "file": "/Projects/2025 Hotel Identity/drinksmenu.mp4"
     },
     {
-      "file": "/Projects/2025 Hotel Identity/house.mp4",
-      "label": ""
+      "file": "/Projects/2025 Hotel Identity/house.mp4"
     }
   ],
-  "youtube": ""
+  "keywords": [
+    "brand identity",
+    "visual identity",
+    "graphic design"
+  ]
 }
