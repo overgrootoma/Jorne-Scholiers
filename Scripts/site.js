@@ -1542,21 +1542,56 @@
 
     const releasePreview = (preview, { keepUnderneath = false } = {}) => {
       if (!preview) return;
-      preview.classList.remove('is-visible');
       if (keepUnderneath) {
+        // Freeze the preview at its current opacity (it may still be fading in) and keep it
+        // under the next one until that has faded in, so nothing flashes in between.
+        preview.style.opacity = window.getComputedStyle(preview).opacity;
+        preview.classList.remove('is-visible');
         preview.classList.add('is-leaving');
         window.setTimeout(() => {
           if (preview === activePreview) return;
           preview.classList.remove('is-leaving');
+          preview.style.removeProperty('opacity');
           preview.querySelectorAll('img').forEach((image) => image.classList.remove('is-current'));
         }, crossfadeTime);
       } else {
+        preview.classList.remove('is-visible');
         window.setTimeout(() => {
           if (preview === activePreview) return;
           preview.querySelectorAll('img').forEach((image) => image.classList.remove('is-current'));
         }, crossfadeTime);
       }
     };
+
+    // Show a preview only once its first image is loaded, so it never fades in empty.
+    const whenFirstImageReady = (preview, callback) => {
+      const first = preview.querySelector('img');
+      if (!first || (first.complete && first.naturalWidth)) {
+        callback();
+        return;
+      }
+      first.loading = 'eager';
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
+        callback();
+      };
+      first.addEventListener('load', finish, { once: true });
+      first.addEventListener('error', finish, { once: true });
+      window.setTimeout(finish, 1200);
+    };
+
+    // Warm up the first image of every project once the page has loaded.
+    window.addEventListener('load', () => {
+      const warmUp = () => links.forEach((link) => {
+        const preview = document.querySelector(`[data-home-preview="${CSS.escape(link.dataset.homeProject)}"]`);
+        const first = preview?.querySelector('img');
+        if (first) first.loading = 'eager';
+      });
+      if ('requestIdleCallback' in window) window.requestIdleCallback(warmUp);
+      else window.setTimeout(warmUp, 800);
+    });
 
     const deactivate = () => {
       stopRotation();
@@ -1579,10 +1614,13 @@
       activePreview = preview;
       activeIndex = 0;
       preview.classList.remove('is-leaving');
+      preview.style.removeProperty('opacity');
       link.classList.add('is-active');
-      preview.classList.add('is-visible');
       document.body.classList.add('home-preview-active');
       showImage(0);
+      whenFirstImageReady(preview, () => {
+        if (activePreview === preview) preview.classList.add('is-visible');
+      });
       if (preview.querySelectorAll('img').length > 1) {
         rotationTimer = window.setInterval(() => showImage(activeIndex + 1), 2400);
       }

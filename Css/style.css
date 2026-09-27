@@ -5939,9 +5939,10 @@ html.swoosh-in.swoosh-out::after {
 
 /* Homepage hover previews: a slow ease-in and a crossfade between projects. */
 @media (hover: hover) and (pointer: fine) {
+  /* Fading out: a little longer and eased on both ends, so leaving a title feels as soft as arriving. */
   .page-home .home-project-preview {
     z-index: 1;
-    transition: opacity 560ms var(--ease-soft), visibility 0s linear 560ms;
+    transition: opacity 700ms cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 700ms;
   }
 
   .page-home .home-project-preview.is-visible {
@@ -6005,5 +6006,20 @@ html.swoosh-in.swoosh-out::after {
     background-image: none !important;
     font-family: var(--title-font);
     line-height: 1;
+  }
+}
+
+/* The rest of the homepage fades back softly when a preview closes (no jump in colour or opacity). */
+@media (hover: hover) and (pointer: fine) {
+  .page-home .home-information,
+  .page-home .home-secondary-nav,
+  body.page-home .site-logo-slot,
+  body.page-home .home-archive-link,
+  body.page-home .home-projects-heading {
+    transition: opacity 500ms var(--ease-soft), visibility 500ms var(--ease-soft);
+  }
+
+  .page-home .home-exhibition .home-project-link {
+    transition: --hover-r 380ms var(--ease-soft), color 450ms var(--ease-soft) !important;
   }
 }
