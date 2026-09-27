@@ -5634,3 +5634,85 @@ button,
 .site-footer a:focus-visible {
   color: var(--white) !important;
 }
+
+/* Image viewer: controls always sit above the (zoomed) image and use the pixel font. */
+.image-lightbox .lightbox-stage {
+  z-index: 1;
+}
+
+.image-lightbox .lightbox-close,
+.image-lightbox .lightbox-control,
+.image-lightbox .lightbox-toolbar {
+  z-index: 10;
+}
+
+.image-lightbox .lightbox-control,
+.image-lightbox .lightbox-close,
+.image-lightbox .lightbox-tool {
+  font-family: var(--title-font) !important;
+  font-weight: 700;
+}
+
+.image-lightbox .lightbox-zoom {
+  position: absolute;
+  display: flex;
+  align-items: center;
+}
+
+.image-lightbox .lightbox-tool {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--black);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.image-lightbox .lightbox-zoom-level {
+  width: auto;
+  min-width: 52px;
+  padding: 0 6px;
+  font-size: 0.7rem;
+}
+
+/* Mobile homepage: centred logo that stays visible, a little more room between sections. */
+@media (max-width: 900px), (hover: none), (pointer: coarse) {
+  body.page-home .site-logo-slot {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  body.page-home .site-logo-slot img {
+    object-position: center top;
+  }
+
+  body.page-home::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 15;
+    height: calc(var(--site-logo-offset-y) + var(--site-logo-height) + 8px);
+    background: var(--bg);
+    pointer-events: none;
+  }
+
+  body.page-home .home-about-columns {
+    gap: 44px;
+  }
+
+  body.page-home .home-experience,
+  body.page-home .home-education {
+    margin-top: 44px !important;
+  }
+
+  body.page-home .home-archive-link {
+    margin-top: -12px;
+  }
+}

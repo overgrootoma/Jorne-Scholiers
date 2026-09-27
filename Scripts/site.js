@@ -917,14 +917,19 @@
     lightbox.inert = true;
     lightbox.innerHTML = `
       <button class="lightbox-close" type="button" aria-label="Close image viewer"><span aria-hidden="true">×</span></button>
+      <div class="lightbox-toolbar lightbox-zoom" role="group" aria-label="Zoom">
+        <button class="lightbox-tool" type="button" data-zoom="out" aria-label="Zoom out">-</button>
+        <button class="lightbox-tool lightbox-zoom-level" type="button" data-zoom="reset" aria-label="Reset zoom">100%</button>
+        <button class="lightbox-tool" type="button" data-zoom="in" aria-label="Zoom in">+</button>
+      </div>
       <button class="lightbox-control lightbox-control--prev" type="button" aria-label="Previous image">
-        <span aria-hidden="true">←</span>
+        <span aria-hidden="true">&lt;</span>
       </button>
       <div class="lightbox-stage">
         <img alt="Enlarged project image">
       </div>
       <button class="lightbox-control lightbox-control--next" type="button" aria-label="Next image">
-        <span aria-hidden="true">→</span>
+        <span aria-hidden="true">&gt;</span>
       </button>
     `;
     document.body.appendChild(lightbox);
@@ -933,6 +938,8 @@
     const closeButton = lightbox.querySelector('.lightbox-close');
     const prevButton = lightbox.querySelector('.lightbox-control--prev');
     const nextButton = lightbox.querySelector('.lightbox-control--next');
+    const zoomLevel = lightbox.querySelector('.lightbox-zoom-level');
+    const maxImageScale = 6;
     let currentIndex = 0;
     let lastFocusedElement = null;
     let swipeStart = null;
@@ -966,6 +973,7 @@
         ? `translate3d(${imageTranslate.x}px, ${imageTranslate.y}px, 0) scale(${imageScale})`
         : '';
       lightbox.classList.toggle('is-image-zoomed', isZoomed);
+      if (zoomLevel) zoomLevel.textContent = `${Math.round(imageScale * 100)}%`;
     };
     const resetImageTransform = () => {
       imageScale = 1;
@@ -979,7 +987,7 @@
       lightbox.classList.toggle('is-touch-viewer', touchLightboxQuery.matches);
     };
     const zoomAt = (clientX, clientY, nextScale) => {
-      const clampedScale = clamp(nextScale, 1, 4);
+      const clampedScale = clamp(nextScale, 1, maxImageScale);
       if (Math.abs(clampedScale - imageScale) < 0.01) return;
       const rect = lightboxImg.getBoundingClientRect();
       const originX = clientX - (rect.left + rect.width / 2);
@@ -1208,6 +1216,21 @@
       }
     });
 
+    // Zoom buttons scale around the centre of the image.
+    const zoomFromCentre = (factor) => {
+      const rect = lightboxImg.getBoundingClientRect();
+      zoomAt(rect.left + rect.width / 2, rect.top + rect.height / 2, imageScale * factor);
+    };
+    lightbox.querySelectorAll('[data-zoom]').forEach((button) => {
+      button.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const action = button.dataset.zoom;
+        if (action === 'in') zoomFromCentre(1.5);
+        if (action === 'out') zoomFromCentre(1 / 1.5);
+        if (action === 'reset') resetImageTransform();
+      });
+    });
+
     lightbox.addEventListener('click', (event) => {
       if (event.target === lightbox) close();
     });
@@ -1224,6 +1247,9 @@
         event.preventDefault();
         showAt(currentIndex + 1);
       }
+      if (event.key === '+' || event.key === '=') zoomFromCentre(1.5);
+      if (event.key === '-') zoomFromCentre(1 / 1.5);
+      if (event.key === '0') resetImageTransform();
       if (event.key === 'Tab') {
         const focusable = Array.from(lightbox.querySelectorAll('button, input')).filter((element) => !element.disabled);
         const first = focusable[0];
