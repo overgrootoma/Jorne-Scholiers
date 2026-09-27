@@ -1580,6 +1580,84 @@
     trigger.addEventListener('blur', hide);
   };
 
+  // Soft motion in the blue theme: a blue page transition from the click point, images that
+  // ease in while scrolling. Skipped entirely when the visitor prefers reduced motion.
+  const setupMotion = () => {
+    const root = document.documentElement;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const openPage = () => {
+      if (!root.classList.contains('swoosh-in')) return;
+      window.requestAnimationFrame(() => window.requestAnimationFrame(() => root.classList.add('swoosh-out')));
+      window.setTimeout(() => root.classList.remove('swoosh-in', 'swoosh-out'), 700);
+    };
+    openPage();
+
+    const overlay = document.createElement('div');
+    overlay.className = 'page-swoosh';
+    overlay.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(overlay);
+
+    window.addEventListener('pageshow', (event) => {
+      if (!event.persisted) return;
+      overlay.classList.remove('is-active');
+      root.classList.remove('swoosh-in', 'swoosh-out');
+    });
+
+    if (!reduceMotion) {
+      document.addEventListener('click', (event) => {
+        if (event.defaultPrevented || event.button !== 0) return;
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        const link = event.target.closest('a[href]');
+        if (!link || link.hasAttribute('download')) return;
+        if (link.target && link.target !== '_self') return;
+        const url = new URL(link.href, window.location.href);
+        if (url.origin !== window.location.origin) return;
+        if (!/(\.html|\/)$/.test(url.pathname)) return;
+        if (url.pathname === window.location.pathname && url.hash) return;
+
+        event.preventDefault();
+        const rect = link.getBoundingClientRect();
+        const clientX = event.clientX || rect.left + rect.width / 2;
+        const clientY = event.clientY || rect.top + rect.height / 2;
+        const x = Math.round((clientX / window.innerWidth) * 100);
+        const y = Math.round((clientY / window.innerHeight) * 100);
+        overlay.style.setProperty('--swoosh-x', `${x}%`);
+        overlay.style.setProperty('--swoosh-y', `${y}%`);
+        try {
+          sessionStorage.setItem('swoosh', JSON.stringify({ x, y, t: Date.now() }));
+        } catch (err) {
+          // Private mode: the next page simply appears without the transition.
+        }
+        overlay.classList.add('is-active');
+        window.setTimeout(() => {
+          window.location.href = url.href;
+        }, 460);
+      });
+    }
+
+    const revealTargets = Array.from(document.querySelectorAll([
+      '.page-detail .detail-gallery > figure',
+      '.page-detail .detail-media > figure',
+      '.page-detail .detail-thumbnail-gallery > figure',
+      '.archive-entry-gallery > figure',
+      '.project-overview-list > li',
+    ].join(', ')));
+    if (reduceMotion || !revealTargets.length || !('IntersectionObserver' in window)) return;
+
+    root.classList.add('has-reveal');
+    revealTargets.forEach((target) => target.classList.add('reveal'));
+    const observer = new IntersectionObserver((entries) => {
+      const entering = entries.filter((entry) => entry.isIntersecting);
+      entering.forEach((entry, index) => {
+        entry.target.style.transitionDelay = `${Math.min(index, 5) * 70}ms`;
+        entry.target.classList.add('is-revealed');
+        observer.unobserve(entry.target);
+      });
+    }, { rootMargin: '0px 0px -6% 0px', threshold: 0.06 });
+    revealTargets.forEach((target) => observer.observe(target));
+  };
+
   const setupProjectInformation = () => {
     const panel = document.querySelector('[data-project-information]');
     const toggle = panel?.querySelector('.project-information-toggle');
@@ -1603,4 +1681,5 @@
   setupHomeProjectPreviews();
   setupHomePortraitPreview();
   setupProjectInformation();
+  setupMotion();
 })();

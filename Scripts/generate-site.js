@@ -526,6 +526,18 @@ function renderHead({
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&amp;family=Open+Sans:ital,wght@0,300..800;1,300..800&amp;display=swap" rel="stylesheet">
+  <script>
+    // Arriving through a link click: keep the blue page transition covering the page until site.js opens it.
+    try {
+      var swoosh = JSON.parse(sessionStorage.getItem('swoosh') || 'null');
+      if (swoosh && Date.now() - swoosh.t < 5000) {
+        document.documentElement.classList.add('swoosh-in');
+        document.documentElement.style.setProperty('--swoosh-x', swoosh.x + '%');
+        document.documentElement.style.setProperty('--swoosh-y', swoosh.y + '%');
+      }
+      sessionStorage.removeItem('swoosh');
+    } catch (err) {}
+  </script>
   <link rel="stylesheet" href="Css/style.css">${structuredData}
 </head>`;
 }
@@ -1088,7 +1100,7 @@ function renderProjectPage(item, type, nav = null) {
   const projectInformationClass = type === 'projects' && filesBlock ? ' project-information--has-files' : '';
 
   const backLink = type === 'projects'
-    ? '<a class="back-link" href="index.html">&larr; Back to home</a>'
+    ? '<a class="back-link" href="index.html">&lt; Back to home</a>'
     : '';
 
   return `
@@ -1133,7 +1145,7 @@ function renderAboutPage() {
   return `
 <main class="page-simple">
   <section class="about-intro" tabindex="0" aria-label="Biography and contact information">
-    <a class="back-link" href="index.html">&larr; Index</a>
+    <a class="back-link" href="index.html">&lt; Index</a>
     <h1 class="title-font">About</h1>
     <p>I&#39;m Jorne Scholiers, I am studying Visual Design at LUCA School of Arts in Ghent. My creative style is best described as abstract, experimental and bold. I&#39;ve always been drawn to visually dense work, the kind that invites you to look closer and keep discovering new details.</p>
     <p>I&#39;m always open to opportunities or collaborations. Feel free to contact me.</p>

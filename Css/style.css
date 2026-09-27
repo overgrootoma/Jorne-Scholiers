@@ -5720,11 +5720,8 @@ button,
   .site-footer a
 ):is(:hover, :focus-visible) {
   color: var(--white) !important;
-  background: var(--accent-blue) !important;
-  box-shadow: 0 0 0 4px var(--accent-blue);
+  background-size: 100% 100% !important;
   text-decoration: none !important;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
 }
 
 :is(
@@ -5813,4 +5810,147 @@ body.page-home .site-footer * {
   body.page-detail .detail-gallery.detail-gallery--grid > figure[data-start="4"] { grid-column-start: 4; }
   body.page-detail .detail-gallery.detail-gallery--grid > figure[data-start="5"] { grid-column-start: 5; }
   body.page-detail .detail-gallery.detail-gallery--grid > figure[data-start="6"] { grid-column-start: 6; }
+}
+
+/* ---------- Motion: soft, quick, blue ---------- */
+:root {
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Blue bar that grows under text links (left to right) and buttons (from the middle out). */
+:is(
+  .home-archive-link,
+  .home-information a,
+  .back-link,
+  .about-link,
+  .about-intro a,
+  .detail-files a,
+  .project-overview-title a,
+  .archive-heading-link,
+  .simple-block a,
+  .site-footer a
+) {
+  margin: -2px -4px;
+  padding: 2px 4px;
+  background-color: transparent !important;
+  background-image: linear-gradient(var(--accent-blue), var(--accent-blue)) !important;
+  background-repeat: no-repeat !important;
+  background-position: left center !important;
+  background-size: 0% 100% !important;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition: background-size 320ms var(--ease-soft), color 220ms var(--ease-soft) !important;
+}
+
+.page-home .home-exhibition .home-project-link,
+.home-projects-heading a,
+.project-overview-label,
+.project-step,
+.projects-view-toggle__button {
+  background-color: transparent !important;
+  background-image: linear-gradient(var(--accent-blue), var(--accent-blue)) !important;
+  background-repeat: no-repeat !important;
+  background-position: left center !important;
+  background-size: 0% 100% !important;
+  transition: background-size 320ms var(--ease-soft), color 220ms var(--ease-soft) !important;
+}
+
+.project-step,
+.projects-view-toggle__button {
+  background-position: center !important;
+}
+
+.projects-view-toggle__button.is-active {
+  background-size: 100% 100% !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .page-home .home-exhibition .home-project-link:is(:hover, :focus-visible, .is-active),
+  .home-projects-heading a:is(:hover, :focus-visible),
+  .project-overview-item:is(:hover, :focus-visible) .project-overview-label,
+  .project-step:is(:hover, :focus-visible),
+  .projects-view-toggle__button:is(:hover, :focus-visible) {
+    background-size: 100% 100% !important;
+  }
+}
+
+/* Page transition: a blue circle grows from the click point, then opens on the next page. */
+.page-swoosh {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: var(--accent-blue);
+  pointer-events: none;
+  clip-path: circle(0% at var(--swoosh-x, 50%) var(--swoosh-y, 50%));
+  transition: clip-path 460ms var(--ease-soft);
+}
+
+.page-swoosh.is-active {
+  clip-path: circle(150% at var(--swoosh-x, 50%) var(--swoosh-y, 50%));
+  pointer-events: auto;
+}
+
+html.swoosh-in::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: var(--accent-blue);
+  pointer-events: none;
+  clip-path: circle(150% at var(--swoosh-x, 50%) var(--swoosh-y, 50%));
+  transition: clip-path 600ms var(--ease-soft);
+}
+
+html.swoosh-in.swoosh-out::after {
+  clip-path: circle(0% at var(--swoosh-x, 50%) var(--swoosh-y, 50%));
+}
+
+/* Images ease in while scrolling, uncovered by a blue panel that slides away. */
+.has-reveal .reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 700ms var(--ease-soft), transform 700ms var(--ease-soft);
+}
+
+.has-reveal .reveal.is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+.has-reveal .reveal :is(.media-frame, .project-overview-image) {
+  position: relative;
+  overflow: hidden;
+}
+
+.has-reveal .reveal :is(.media-frame, .project-overview-image)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--accent-blue);
+  transform: scaleX(1);
+  transform-origin: right center;
+  transition: transform 650ms var(--ease-soft) 120ms;
+  pointer-events: none;
+}
+
+.has-reveal .reveal.is-revealed :is(.media-frame, .project-overview-image)::after {
+  transform: scaleX(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-swoosh,
+  html.swoosh-in::after {
+    display: none;
+  }
+
+  .has-reveal .reveal,
+  .has-reveal .reveal :is(.media-frame, .project-overview-image)::after {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  :is(.home-archive-link, .home-information a, .back-link, .home-project-link, .project-step, .projects-view-toggle__button, .project-overview-label) {
+    transition: none !important;
+  }
 }
