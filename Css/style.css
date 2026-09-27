@@ -5741,3 +5741,42 @@ button,
 ):is(:hover, :focus-visible) * {
   color: var(--white) !important;
 }
+
+/* Project pages: no rule above the project title and text. */
+body.page-detail .project-information {
+  border-top: 0 !important;
+}
+
+/* Footer: light Open Sans in grey so it stays in the background (homepage included). */
+.site-footer,
+.site-footer *,
+body.page-home .site-footer,
+body.page-home .site-footer * {
+  font-family: var(--body-font) !important;
+  font-weight: 300 !important;
+  letter-spacing: 0.01em;
+}
+
+.site-footer-copy {
+  color: #8a8a8a;
+}
+
+/* Mobile homepage: more air between the sections (Archive, About, Exhibitions, ...). */
+@media (max-width: 900px), (hover: none), (pointer: coarse) {
+  body.page-home .page-home.home-exhibition {
+    row-gap: 56px;
+  }
+
+  body.page-home .home-archive-link {
+    margin-top: 0;
+  }
+
+  body.page-home .home-about-columns {
+    gap: 64px;
+  }
+
+  body.page-home .home-experience,
+  body.page-home .home-education {
+    margin-top: 64px !important;
+  }
+}
