@@ -70,6 +70,15 @@ ernaast.
 Foto D vult kolom 1 tot 3; kolom 4 tot 6 blijft leeg omdat E een nieuwe rij begint.
 Wil je D rechts, met de witruimte links? Zet dan bij D **Start at column** op **4**.
 
+## 4b. Gevonden worden op Google
+
+Per project kan je in het CMS nog drie dingen invullen (alles is optioneel):
+
+- **Keywords**: het eerste keyword komt in de titel in Google, bv. "Isolation – Creative Coding".
+- **Google title** en **Google description**: wat mensen in Google zien. Leeg = automatisch.
+- **alt text** per foto: een korte beschrijving van wat erop staat. Helpt Google Afbeeldingen
+  en mensen met een schermlezer.
+
 ## 5. Foto's in Archive of Photography
 
 Hier hoef je niets in te vullen: alles wat in de map staat, komt op de site.
