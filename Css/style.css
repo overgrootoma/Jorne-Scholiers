@@ -5781,10 +5781,10 @@ body.page-home .site-footer * {
   }
 }
 
-/* Desktop: 6-column grid for project images, set per image in the CMS (columns, start column,
-   new row). Only used when a project has a custom layout; otherwise every image stays full width.
-   Phones and tablets always show one image under the other. */
-@media (min-width: 901px) {
+/* Desktop and tablet (from 700px): 6-column grid for project images, set per image in the CMS
+   (columns, start column, new row). Only used when a project has a custom layout; otherwise every
+   image stays full width. Phones always show one image under the other. */
+@media (min-width: 700px) {
   body.page-detail .detail-gallery.detail-gallery--grid {
     display: grid;
     grid-template-columns: repeat(6, minmax(0, 1fr));

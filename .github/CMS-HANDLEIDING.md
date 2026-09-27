@@ -44,7 +44,7 @@ project**, en voeg ze dan toe bij **Project images**.
 
 ## 4. Foto's schikken op het grid (desktop)
 
-Op een computer staan de foto's van een projectpagina op een grid van **6 kolommen**.
+Op een computer en tablet (zoals een iPad) staan de foto's van een projectpagina op een grid van **6 kolommen**.
 Per foto stel je drie dingen in:
 
 - **Width (columns of 6)**: hoe breed de foto is. 6 = volle breedte, 3 = de helft,
@@ -54,7 +54,7 @@ Per foto stel je drie dingen in:
 - **Start a new row**: begint een nieuwe rij, zodat de rest van de vorige rij leeg blijft.
 
 Een foto die niet meer past in de rij, schuift vanzelf door naar de volgende rij.
-Op een telefoon staan alle foto's altijd onder elkaar op volle breedte.
+Op een telefoon (smaller dan 700 px) staan alle foto's altijd onder elkaar op volle breedte.
 
 **Voorbeeld:** drie foto's naast elkaar, daaronder één foto op de linkerhelft met witruimte
 ernaast.
