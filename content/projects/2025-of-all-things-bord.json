@@ -1,18 +1,18 @@
 {
   "title": "Of All Things: Bord",
-  "short_title": "",
   "year": 2025,
   "order": 6,
   "hidden": false,
   "folder": "2025 Off all things bord ",
   "cover": "/images/cover photo's/OfAllThingsBord.webp",
   "description": "Of All Things is a magazine centered around a single object. We chose \"board\" as the theme, exploring its many interpretations. From snowboards to traffic signs. Through experimental layouts and typography we created an interesting magazine.\n\nEach \"board\" was given its own article, brought to life through experimental layouts and bold typography. The magazine is held together by a flexible six-column grid, while a color system inspired by traffic signs guides the chapters. The result is a magazine that constantly shifts in meaning yet remains connected through one word.",
-  "keywords": [
-    "editorial design",
-    "magazine design",
-    "typography"
-  ],
   "images": [
+    {
+      "image": "/Projects/2025 Off all things bord /RubenDejonge_JorneScholiers_magazine_Packshot_4.webp",
+      "columns": "6",
+      "start": "auto",
+      "new_row": false
+    },
     {
       "image": "/Projects/2025 Off all things bord /RubenDejonge_JorneScholiers_magazine_Packshot_1.webp",
       "columns": "6",
@@ -27,12 +27,6 @@
     },
     {
       "image": "/Projects/2025 Off all things bord /RubenDejonge_JorneScholiers_magazine_Packshot_3.webp",
-      "columns": "6",
-      "start": "auto",
-      "new_row": false
-    },
-    {
-      "image": "/Projects/2025 Off all things bord /RubenDejonge_JorneScholiers_magazine_Packshot_4.webp",
       "columns": "6",
       "start": "auto",
       "new_row": false
@@ -85,5 +79,9 @@
       "label": "Magazine"
     }
   ],
-  "youtube": ""
+  "keywords": [
+    "editorial design",
+    "magazine design",
+    "typography"
+  ]
 }
