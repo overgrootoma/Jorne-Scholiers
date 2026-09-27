@@ -23,7 +23,7 @@ Links zie je nu: **Projects**, **Homepage information** en **Media**.
    - **Cover image**: de hoofdfoto voor de Projects-pagina
    - **Text**: je beschrijving. Laat een lege regel tussen paragrafen.
    - **Project images**: voeg per foto een rij toe, in de volgorde van de pagina (sleep om
-     te herschikken). Kies bij **Width on desktop** hoe breed de foto op een computer staat
+     te herschikken). Kies bij **Width (columns of 6)** hoe breed de foto op een computer staat
      (zie hieronder).
    - **Homepage hover images**: max. 4 foto's die verschijnen als je over de titel beweegt
    - **Files**: PDF's (worden een link, met jouw **Link text**) of video's (worden getoond)

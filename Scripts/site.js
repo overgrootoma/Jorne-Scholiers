@@ -1524,11 +1524,44 @@
       });
     };
 
+    // Previews ease in after a short pause, and moving from one project to the next
+    // crossfades (the old image stays underneath until the new one is in), so quick
+    // movements over the list no longer make the images jump.
+    const enterDelay = 90;
+    const leaveDelay = 140;
+    const crossfadeTime = 650;
+    let enterTimer = null;
+    let leaveTimer = null;
+
+    const clearTimers = () => {
+      window.clearTimeout(enterTimer);
+      window.clearTimeout(leaveTimer);
+      enterTimer = null;
+      leaveTimer = null;
+    };
+
+    const releasePreview = (preview, { keepUnderneath = false } = {}) => {
+      if (!preview) return;
+      preview.classList.remove('is-visible');
+      if (keepUnderneath) {
+        preview.classList.add('is-leaving');
+        window.setTimeout(() => {
+          if (preview === activePreview) return;
+          preview.classList.remove('is-leaving');
+          preview.querySelectorAll('img').forEach((image) => image.classList.remove('is-current'));
+        }, crossfadeTime);
+      } else {
+        window.setTimeout(() => {
+          if (preview === activePreview) return;
+          preview.querySelectorAll('img').forEach((image) => image.classList.remove('is-current'));
+        }, crossfadeTime);
+      }
+    };
+
     const deactivate = () => {
       stopRotation();
       activeLink?.classList.remove('is-active');
-      activePreview?.classList.remove('is-visible');
-      activePreview?.querySelectorAll('img').forEach((image) => image.classList.remove('is-current'));
+      releasePreview(activePreview);
       activeLink = null;
       activePreview = null;
       document.body.classList.remove('home-preview-active');
@@ -1538,24 +1571,41 @@
       const projectId = link.dataset.homeProject;
       const preview = document.querySelector(`[data-home-preview="${CSS.escape(projectId)}"]`);
       if (!preview || activeLink === link) return;
-      deactivate();
+      stopRotation();
+      const previousPreview = activePreview;
+      activeLink?.classList.remove('is-active');
+      releasePreview(previousPreview, { keepUnderneath: true });
       activeLink = link;
       activePreview = preview;
       activeIndex = 0;
+      preview.classList.remove('is-leaving');
       link.classList.add('is-active');
       preview.classList.add('is-visible');
       document.body.classList.add('home-preview-active');
       showImage(0);
       if (preview.querySelectorAll('img').length > 1) {
-        rotationTimer = window.setInterval(() => showImage(activeIndex + 1), 2000);
+        rotationTimer = window.setInterval(() => showImage(activeIndex + 1), 2400);
       }
     };
 
+    const scheduleActivate = (link) => {
+      clearTimers();
+      // Already showing a project: switch right away (it crossfades); otherwise wait a moment.
+      const delay = activeLink ? 0 : enterDelay;
+      enterTimer = window.setTimeout(() => activate(link), delay);
+    };
+
+    const scheduleDeactivate = () => {
+      window.clearTimeout(enterTimer);
+      window.clearTimeout(leaveTimer);
+      leaveTimer = window.setTimeout(deactivate, leaveDelay);
+    };
+
     links.forEach((link) => {
-      link.addEventListener('pointerenter', () => activate(link));
-      link.addEventListener('pointerleave', deactivate);
-      link.addEventListener('focus', () => activate(link));
-      link.addEventListener('blur', deactivate);
+      link.addEventListener('pointerenter', () => scheduleActivate(link));
+      link.addEventListener('pointerleave', scheduleDeactivate);
+      link.addEventListener('focus', () => { clearTimers(); activate(link); });
+      link.addEventListener('blur', scheduleDeactivate);
     });
 
     window.addEventListener('pagehide', stopRotation);

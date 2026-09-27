@@ -5933,3 +5933,32 @@ html.swoosh-in.swoosh-out::after {
     transition: none !important;
   }
 }
+
+/* Homepage hover previews: a slow ease-in with a gentle settle, and a crossfade between projects. */
+@media (hover: hover) and (pointer: fine) {
+  .page-home .home-project-preview {
+    z-index: 1;
+    transition: opacity 560ms var(--ease-soft), visibility 0s linear 560ms;
+  }
+
+  .page-home .home-project-preview.is-visible {
+    z-index: 2;
+    transition: opacity 560ms var(--ease-soft), visibility 0s;
+  }
+
+  .page-home .home-project-preview.is-leaving {
+    z-index: 1;
+    opacity: 1;
+    visibility: visible;
+    transition: none;
+  }
+
+  .page-home .home-project-preview img {
+    transform: scale(1.035);
+    transition: opacity 800ms var(--ease-soft), transform 1600ms var(--ease-soft);
+  }
+
+  .page-home .home-project-preview img.is-current {
+    transform: scale(1);
+  }
+}
