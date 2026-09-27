@@ -1,4 +1,13 @@
 {
   "image_spans": {},
-  "other_file_spans": {}
+  "other_file_spans": {},
+  "ignored_files": [
+    "36.webp",
+    "37.webp",
+    "38.webp",
+    "39.webp",
+    "40.webp",
+    "41.webp",
+    "42.webp"
+  ]
 }
