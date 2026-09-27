@@ -5705,3 +5705,39 @@ button,
     margin-top: -12px;
   }
 }
+
+/* One hover for every text link: the blue bar with white text used by "Projects". */
+:is(
+  .home-archive-link,
+  .home-information a,
+  .back-link,
+  .about-link,
+  .about-intro a,
+  .detail-files a,
+  .project-overview-title a,
+  .archive-heading-link,
+  .simple-block a,
+  .site-footer a
+):is(:hover, :focus-visible) {
+  color: var(--white) !important;
+  background: var(--accent-blue) !important;
+  box-shadow: 0 0 0 4px var(--accent-blue);
+  text-decoration: none !important;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+:is(
+  .home-archive-link,
+  .home-information a,
+  .back-link,
+  .about-link,
+  .about-intro a,
+  .detail-files a,
+  .project-overview-title a,
+  .archive-heading-link,
+  .simple-block a,
+  .site-footer a
+):is(:hover, :focus-visible) * {
+  color: var(--white) !important;
+}
