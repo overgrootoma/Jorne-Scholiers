@@ -5739,9 +5739,12 @@ button,
   color: var(--white) !important;
 }
 
-/* Project pages: no rule above the project title and text. */
-body.page-detail .project-information {
+/* Project pages: no rules above or below the project title and text. */
+body.page-detail .project-information,
+body.page-detail .project-information .detail-description,
+body.page-detail .project-information .detail-files {
   border-top: 0 !important;
+  border-bottom: 0 !important;
 }
 
 /* Footer: light Open Sans in grey so it stays in the background (homepage included). */
