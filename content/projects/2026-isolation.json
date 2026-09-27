@@ -1,0 +1,20 @@
+{
+  "title": "Isolation",
+  "short_title": "",
+  "year": 2026,
+  "order": 2,
+  "hidden": false,
+  "folder": "2026 Isolation",
+  "cover": "/images/cover photo's/Isolation.png",
+  "description": "This book explores isolation both as a visual theme and as a design method. Moving away from traditional design software, I developed a custom tool to generate and transform images. Using 100 photographs sourced from Unsplash through the keyword “isolation,” the tool reconstructs each image into a line-based grid and introduces a force field around the isolated subject, distorting its surroundings while keeping the subject intact. The result is a series of experimental images in which isolation is not only represented, but embedded in the structure of the image itself.",
+  "keywords": [
+    "creative coding",
+    "generative design",
+    "editorial design",
+    "experimental photography"
+  ],
+  "images": [],
+  "homepage_images": [],
+  "files": [],
+  "youtube": ""
+}

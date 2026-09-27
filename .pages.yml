@@ -1,0 +1,153 @@
+# Pages CMS configuration (https://pagescms.org).
+# Log in at https://app.pagescms.org with GitHub and open this repository.
+# Every save is a commit to main; the "Deploy static content to Pages" workflow
+# then runs `npm run build` and puts the site online.
+
+media:
+  - name: projects
+    label: Project images
+    input: Projects
+    output: /Projects
+    rename: safe
+    categories: [image, document, video]
+  - name: archive
+    label: Archive
+    input: Archive
+    output: /Archive
+    rename: safe
+    categories: [image, video]
+  - name: photography
+    label: Photography
+    input: photography
+    output: /photography
+    rename: safe
+    categories: [image]
+
+content:
+  - name: projects
+    label: Projects
+    type: collection
+    path: content/projects
+    format: json
+    filename: "{fields.year}-{primary}.json"
+    view:
+      fields: [title, year, order, hidden]
+      primary: title
+      sort: [order, year, title]
+      default:
+        sort: order
+        order: asc
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: short_title
+        label: Short title (optional)
+        description: Shown in the homepage list instead of the title, e.g. "STFF".
+        type: string
+      - name: year
+        label: Year
+        type: number
+        required: true
+      - name: order
+        label: Position
+        description: 1 is the top of the list. Leave empty to place the project at the end.
+        type: number
+      - name: hidden
+        label: Hide this project
+        description: Keeps the project off the site without deleting it.
+        type: boolean
+      - name: folder
+        label: Project folder
+        description: Only for projects that were set up before the CMS (their layout lives in Projects/<folder>/page.json). Leave empty for new projects.
+        type: string
+      - name: cover
+        label: Cover image
+        description: Used on the Projects overview and when the page is shared.
+        type: image
+        options:
+          media: projects
+      - name: description
+        label: Text
+        description: Leave an empty line between paragraphs.
+        type: text
+      - name: images
+        label: Project images
+        description: Shown on the project page in this order. Upload them into a folder for this project, e.g. "2027 Project name". Leave empty for older projects to keep the images of their folder.
+        type: image
+        options:
+          media: projects
+          multiple: true
+      - name: homepage_images
+        label: Homepage hover images
+        description: Up to 4 images shown when hovering the project on the homepage. Empty = the first project images.
+        type: image
+        options:
+          media: projects
+          multiple:
+            max: 4
+      - name: files
+        label: Files (PDF, video)
+        type: object
+        list: true
+        fields:
+          - name: file
+            label: File
+            type: file
+            options:
+              media: projects
+          - name: label
+            label: Link text
+            description: e.g. "Isolation Book". Videos are shown on the page, other files as a link.
+            type: string
+      - name: youtube
+        label: YouTube link (optional)
+        type: string
+      - name: keywords
+        label: Keywords (for Google)
+        type: string
+        list: true
+
+  - name: site
+    label: Homepage information
+    type: file
+    path: content/site.json
+    format: json
+    fields:
+      - name: personal
+        label: About
+        type: string
+        list: true
+      - name: exhibitions
+        label: Exhibitions
+        type: object
+        list: true
+        fields:
+          - name: label
+            label: Text
+            type: string
+            required: true
+          - name: href
+            label: Link (optional)
+            type: string
+      - name: experience
+        label: Experience
+        type: string
+        list: true
+      - name: education
+        label: Education
+        type: string
+        list: true
+      - name: links
+        label: Links
+        type: object
+        list: true
+        fields:
+          - name: label
+            label: Text
+            type: string
+            required: true
+          - name: href
+            label: Link
+            type: string

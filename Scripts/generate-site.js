@@ -14,66 +14,11 @@ const defaultSocialImage = 'images/ME.webp';
 const defaultDescription = 'Portfolio of Jorne Scholiers, a visual and graphic designer in Ghent working across identities, editorial design, typography, photography, and creative coding.';
 
 const palette = ['#0000FF'];
-// Edit these lists to update the quiet information columns on the homepage.
-const homepageProfile = {
-  personal: [
-    'Jorne Scholiers',
-    '2005',
-    'Visual Designer',
-    'Belgium',
-  ],
-  exhibitions: [
-    {
-      label: 'Antwerp Art Weekend — MONAR X UGG, 2025',
-      href: 'project-2025-0-big-summer-energy.html',
-    },
-  ],
-  experience: [
-    'Intern at Broos Stoffels 2026',
-  ],
-  education: [
-    'LUCA, Visual Design, Graphic Studio 2023-2026',
-  ],
-  links: [
-    { label: 'Accidental Graphics', href: 'https://overgrootoma.github.io/Accidental-Graphics/index.html' },
-    { label: 'Instagram', href: 'https://www.instagram.com/byjorne/' },
-    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/jorne-scholiers-28555923b/' },
-    { label: 'Email', href: 'mailto:jorne.scholiers@icloud.com' },
-    { label: '+32472 45 21 64', href: 'tel:+32472452164' },
-  ],
-};
-const projectOrder = [
-  '2026 Sound Translations of Fungal Forms',
-  '2026 Isolation',
-  '2025 BrilliantBooks',
-  '2025 Big summer energy',
-  '2025 Colis Paris',
-  '2025 Off all things bord ',
-  '2025 Hotel Identity',
-  '2024 Poster Party',
-  '2024 Mars Attacks',
-  '2024 YesYouCan',
-];
-
-const titleOverrides = {
-  '2025 BrilliantBooks': 'Brilliant Books',
-  '2025 Big summer energy': 'Big Summer Energy',
-  '2025 Colis Paris': 'Colis Paris',
-  '2025 Off all things bord ': 'Of All Things: Bord',
-  '2025 Hotel Identity': 'Hotel Identity',
-};
-
-const projectKeywords = {
-  '2026 Sound Translations of Fungal Forms': ['creative coding', 'generative design', 'sound design', 'installation design'],
-  '2026 Isolation': ['creative coding', 'generative design', 'editorial design', 'experimental photography'],
-  '2025 BrilliantBooks': ['book design', 'editorial design', 'typography'],
-  '2025 Big summer energy': ['experimental photography', 'art direction', 'exhibition design'],
-  '2025 Colis Paris': ['packaging design', 'visual identity', 'graphic design'],
-  '2025 Off all things bord ': ['editorial design', 'magazine design', 'typography'],
-  '2025 Hotel Identity': ['brand identity', 'visual identity', 'graphic design'],
-  '2024 Poster Party': ['poster design', 'typography', 'graphic design'],
-  '2024 YesYouCan': ['packaging design', 'brand identity', 'graphic design'],
-};
+// Editable content (also through Pages CMS, see .pages.yml):
+// - content/site.json           homepage information columns
+// - content/projects/*.json     one file per project: title, order, text, images, ...
+const contentDir = path.join(root, 'content');
+const cmsProjectsDir = path.join(contentDir, 'projects');
 
 const mediaSizeOverrides = {
   projects: {
@@ -335,21 +280,40 @@ function readDescription(dir) {
   return '';
 }
 
-function readPageConfig(dir) {
-  const fullPath = path.join(dir, pageConfigFile);
-  if (!fs.existsSync(fullPath)) return {};
+function relativeToRoot(fullPath) {
+  return path.relative(root, fullPath).split(path.sep).join('/');
+}
+
+// Invalid JSON stops the build (and so the deploy), keeping the live site as it was.
+function readJsonFile(fullPath, fallback) {
+  if (!fs.existsSync(fullPath)) return fallback;
   try {
     return JSON.parse(fs.readFileSync(fullPath, 'utf8'));
   } catch (err) {
-    return {};
+    throw new Error(`${relativeToRoot(fullPath)} is not valid JSON: ${err.message}`);
   }
+}
+
+function readPageConfig(dir) {
+  return readJsonFile(path.join(dir, pageConfigFile), {});
+}
+
+function warn(message) {
+  console.warn(`Warning: ${message}`);
+}
+
+// Project files are stored relative to their project folder, or as "/path/from/site/root"
+// when they are picked in the CMS.
+function projectFileParts(item, base, file) {
+  if (typeof file === 'string' && file.startsWith('/')) return file.slice(1).split('/');
+  return [base, item.dirName, file];
 }
 
 function previewImagePath(project) {
   const preferred = project.pageConfig?.preview_image;
   if (preferred && rootImageDimensionAttributes(preferred)) return preferred;
   return project.images[0]
-    ? toUrlPath('Projects', project.dirName, project.images[0])
+    ? toUrlPath(...projectFileParts(project, 'Projects', project.images[0]))
     : '';
 }
 
@@ -368,6 +332,8 @@ function rootImageDimensionAttributes(urlPath) {
 }
 
 function homepageImages(project) {
+  if (project.cmsHomepageImages?.length) return project.cmsHomepageImages;
+  if (!project.dirName) return project.images.slice(0, 5);
   const homepageDir = readDirSafe(path.join(projectsDir, project.dirName))
     .filter((entry) => entry.isDirectory() && /^homepage/i.test(entry.name))
     .map((entry) => entry.name)
@@ -651,7 +617,7 @@ function renderHomeProjectGrid(projects) {
   </section>`;
 }
 
-function renderHome(projects) {
+function renderHome(projects, homepageProfile) {
   const renderTextList = (items, { interactiveFirst = false } = {}) => items.map((item, index) => {
     if (interactiveFirst && index === 0) {
       return `<li>${escapeHtml(item)}</li>`;
@@ -670,9 +636,11 @@ function renderHome(projects) {
     const preferredImages = homepageImages(project);
     const previewImages = preferredImages.slice(0, 4);
     const images = previewImages.map((file, imageIndex) => {
-        const fileParts = file.split(/[\\/]/).filter(Boolean);
-        const src = toUrlPath('Projects', project.dirName, ...fileParts);
-        const dimensions = imageDimensionAttributes(path.join(projectsDir, project.dirName, ...fileParts));
+        const fileParts = file.startsWith('/')
+          ? file.slice(1).split('/')
+          : ['Projects', project.dirName, ...file.split(/[\\/]/).filter(Boolean)];
+        const src = toUrlPath(...fileParts);
+        const dimensions = imageDimensionAttributes(path.join(root, ...fileParts));
         const loading = projectIndex === 0 && imageIndex === 0 ? ' loading="eager" fetchpriority="high"' : ' loading="lazy"';
         return `<img src="${src}" alt="${escapeHtml(project.title)}, image ${imageIndex + 1}"${dimensions}${loading} decoding="async">`;
       }).join('\n');
@@ -977,8 +945,8 @@ function renderProjectPage(item, type, nav = null) {
   const orderedOtherFiles = orderFilesByPreference(item.otherFiles, pageConfig.other_file_order);
   const images = orderedImages
     .map((file, idx) => {
-      const src = toUrlPath(base, item.dirName, file);
-      const dimensions = imageDimensionAttributes(path.join(root, base, item.dirName, file));
+      const src = toUrlPath(...projectFileParts(item, base, file));
+      const dimensions = imageDimensionAttributes(path.join(root, ...projectFileParts(item, base, file)));
       const loading = idx === 0 ? ' loading="eager" fetchpriority="high"' : ' loading="lazy"';
       const span = resolveMediaSpan({
         type,
@@ -1002,7 +970,7 @@ function renderProjectPage(item, type, nav = null) {
   const downloadLinks = [];
 
   orderedOtherFiles.forEach((file) => {
-    const href = toUrlPath(base, item.dirName, file);
+    const href = toUrlPath(...projectFileParts(item, base, file));
     const ext = path.extname(file).toLowerCase();
     const span = resolveMediaSpan({
       type,
@@ -1256,35 +1224,157 @@ function writeLegacyRedirect(fileName, canonicalFile, label) {
 </html>`);
 }
 
-function buildSite() {
-  let projects = buildItems(projectsDir, 'projects');
-  const archive = buildItems(archiveDir, 'archive');
-  const photography = buildItems(photographyDir, 'photography');
+function stringList(value) {
+  return Array.isArray(value)
+    ? value.filter((entry) => typeof entry === 'string' && entry.trim()).map((entry) => entry.trim())
+    : [];
+}
 
-  projects.forEach((project) => {
-    const override = titleOverrides[project.dirName];
-    if (override) {
-      project.title = override;
+function linkList(value) {
+  return Array.isArray(value)
+    ? value
+      .filter((entry) => entry && typeof entry.label === 'string' && entry.label.trim())
+      .map((entry) => ({ label: entry.label.trim(), href: typeof entry.href === 'string' ? entry.href.trim() : '' }))
+    : [];
+}
+
+function readSiteContent() {
+  const site = readJsonFile(path.join(contentDir, 'site.json'), {});
+  return {
+    personal: stringList(site.personal),
+    exhibitions: linkList(site.exhibitions),
+    experience: stringList(site.experience),
+    education: stringList(site.education),
+    links: linkList(site.links),
+  };
+}
+
+// Turns a path picked in the CMS ("/Projects/2027 Name/photo.jpg", URL-encoded or not)
+// into "/Projects/2027 Name/photo.jpg" when that file exists, or '' with a warning.
+function cmsFilePath(value, context) {
+  if (typeof value !== 'string' || !value.trim()) return '';
+  let cleaned = value.trim().split(/[?#]/)[0];
+  try {
+    cleaned = decodeURIComponent(cleaned);
+  } catch (err) {
+    // Keep the raw value.
+  }
+  cleaned = path.posix.normalize(cleaned.replace(/\\/g, '/').replace(/^\/+/, ''));
+  if (!cleaned || cleaned.startsWith('..')) {
+    warn(`${context}: "${value}" is not a file inside the site.`);
+    return '';
+  }
+  if (!fs.existsSync(path.join(root, cleaned))) {
+    warn(`${context}: "${value}" does not exist and was skipped.`);
+    return '';
+  }
+  return `/${cleaned}`;
+}
+
+function readCmsProjects() {
+  return readDirSafe(cmsProjectsDir)
+    .filter((entry) => entry.isFile() && entry.name.endsWith('.json'))
+    .map((entry) => entry.name)
+    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+    .map((file) => ({ file: `content/projects/${file}`, data: readJsonFile(path.join(cmsProjectsDir, file), {}) }));
+}
+
+function applyCmsProject(item, data, file) {
+  if (typeof data.title === 'string' && data.title.trim()) item.title = data.title.trim();
+  const year = Number(data.year);
+  if (Number.isFinite(year) && year > 0) item.year = year;
+  const order = Number(data.order);
+  item.order = Number.isFinite(order) && data.order !== '' && data.order !== null ? order : Infinity;
+  if (typeof data.description === 'string' && data.description.trim()) item.description = data.description.trim();
+  const keywords = stringList(data.keywords);
+  if (keywords.length) item.keywords = keywords;
+
+  const pageConfig = { ...item.pageConfig };
+  if (typeof data.short_title === 'string' && data.short_title.trim()) pageConfig.index_title = data.short_title.trim();
+
+  const cover = cmsFilePath(data.cover, `${file} cover`);
+  if (cover) {
+    pageConfig.index_image = toUrlPath(...cover.slice(1).split('/'));
+    if (!pageConfig.preview_image) pageConfig.preview_image = pageConfig.index_image;
+  }
+
+  const images = (Array.isArray(data.images) ? data.images : [])
+    .map((image) => cmsFilePath(image, `${file} images`))
+    .filter((image) => image && isImage(image));
+  if (images.length) item.images = images;
+
+  item.cmsHomepageImages = (Array.isArray(data.homepage_images) ? data.homepage_images : [])
+    .map((image) => cmsFilePath(image, `${file} homepage_images`))
+    .filter((image) => image && isImage(image));
+
+  const files = (Array.isArray(data.files) ? data.files : [])
+    .map((entry) => {
+      const source = typeof entry === 'string' ? entry : entry?.file;
+      const filePath = cmsFilePath(source, `${file} files`);
+      return filePath ? { filePath, label: typeof entry?.label === 'string' ? entry.label.trim() : '' } : null;
+    })
+    .filter(Boolean);
+  if (files.length) {
+    item.otherFiles = files.map((entry) => entry.filePath);
+    pageConfig.file_labels = { ...pageConfig.file_labels };
+    files.forEach((entry) => {
+      if (entry.label) pageConfig.file_labels[entry.filePath] = entry.label;
+    });
+  }
+
+  if (typeof data.youtube === 'string' && youtubeVideoId(data.youtube)) {
+    pageConfig.youtube_showcase = { ...pageConfig.youtube_showcase, url: data.youtube.trim() };
+  }
+
+  item.pageConfig = pageConfig;
+}
+
+// Combines the project folders with content/projects/*.json. A JSON file linked to a folder
+// ("folder") adds its title, order, text and images to that folder; a JSON file without a
+// folder is a project of its own. Folders without a JSON file still appear, after the rest.
+function mergeCmsProjects(folderItems) {
+  const folderKey = (name) => String(name || '').trim().toLowerCase();
+  const byFolder = new Map(folderItems.map((item) => [folderKey(item.dirName), item]));
+  const usedSlugs = new Set();
+  const merged = [];
+
+  readCmsProjects().forEach(({ file, data }) => {
+    const key = folderKey(data.folder);
+    let item = key ? byFolder.get(key) : null;
+    if (key && item) byFolder.delete(key);
+    if (key && !item) warn(`${file}: folder "${data.folder}" not found in Projects/.`);
+    if (data.hidden === true) return;
+    if (!item) {
+      if (typeof data.title !== 'string' || !data.title.trim()) {
+        warn(`${file}: a project needs a title; skipped.`);
+        return;
+      }
+      item = {
+        dirName: '', title: '', year: 0, index: 0, slug: '', images: [], otherFiles: [],
+        thumbnailDir: '', thumbnailImages: [], description: '', pageConfig: {},
+      };
     }
+    applyCmsProject(item, data, file);
+    if (!item.slug) {
+      const base = slugify(`${item.year || '0000'}-0-${item.title}`);
+      let slug = base;
+      for (let n = 2; usedSlugs.has(slug); n += 1) slug = `${base}-${n}`;
+      item.slug = slug;
+    }
+    usedSlugs.add(item.slug);
+    merged.push(item);
   });
 
-  if (projectOrder.length) {
-    const lookup = new Map(projects.map((project) => [project.dirName.toLowerCase(), project]));
-    const ordered = [];
-    projectOrder.forEach((dirName) => {
-      const item = lookup.get(dirName.toLowerCase());
-      if (item) {
-        ordered.push(item);
-        lookup.delete(dirName.toLowerCase());
-      }
-    });
-    projects.forEach((project) => {
-      if (lookup.has(project.dirName.toLowerCase())) {
-        ordered.push(project);
-      }
-    });
-    projects = ordered;
-  }
+  merged.sort((a, b) => (a.order - b.order) || (b.year - a.year) || a.title.localeCompare(b.title));
+  const remaining = folderItems.filter((item) => byFolder.has(folderKey(item.dirName)));
+  return [...merged, ...remaining];
+}
+
+function buildSite() {
+  const homepageProfile = readSiteContent();
+  const projects = mergeCmsProjects(buildItems(projectsDir, 'projects'));
+  const archive = buildItems(archiveDir, 'archive');
+  const photography = buildItems(photographyDir, 'photography');
 
   projects.forEach((project, index) => {
     project.accent = palette[index % palette.length];
@@ -1319,7 +1409,7 @@ function buildSite() {
       ],
     },
     bodyClass: 'page-home',
-    main: renderHome(projects),
+    main: renderHome(projects, homepageProfile),
   });
 
   const archiveHtml = renderLayout({
@@ -1386,7 +1476,7 @@ function buildSite() {
         image: absoluteUrl(previewImagePath(project) || defaultSocialImage),
         dateCreated: String(project.year || ''),
         creator: { '@id': `${siteUrl}#jorne-scholiers` },
-        keywords: (projectKeywords[project.dirName] || ['visual design', 'graphic design']).join(', '),
+        keywords: (project.keywords?.length ? project.keywords : ['visual design', 'graphic design']).join(', '),
       },
       bodyClass: 'page-detail',
       main: renderProjectPage(project, 'projects', {
@@ -1420,7 +1510,12 @@ function buildSite() {
 }
 
 if (require.main === module) {
-  buildSite();
+  try {
+    buildSite();
+  } catch (err) {
+    console.error(`Build stopped: ${err.message}`);
+    process.exit(1);
+  }
 }
 
 module.exports = { buildSite };
