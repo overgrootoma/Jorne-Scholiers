@@ -5962,3 +5962,47 @@ html.swoosh-in.swoosh-out::after {
     transform: scale(1);
   }
 }
+
+/* Mobile homepage: "Projects" title (no link), larger project images, Archive as a blue button at the top. */
+@media (max-width: 900px), (hover: none), (pointer: coarse) {
+  .page-home .home-exhibition .home-projects-heading {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0 0 16px;
+    padding: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+
+  .page-home .home-exhibition .home-projects-heading a {
+    margin-left: 0;
+    padding: 0;
+    color: var(--black) !important;
+    background: none !important;
+    pointer-events: none;
+    cursor: default;
+  }
+
+  body.page-home .home-project-index li {
+    grid-template-columns: minmax(0, 1fr) 46vw;
+    gap: 14px;
+  }
+
+  body.page-home .home-project-preview {
+    width: 46vw;
+  }
+
+  body.page-home .home-exhibition .home-archive-link {
+    order: -1;
+    justify-self: start;
+    margin: 0;
+    padding: 10px 16px;
+    color: var(--white) !important;
+    background-color: var(--accent-blue) !important;
+    background-image: none !important;
+    font-family: var(--title-font);
+    line-height: 1;
+  }
+}
