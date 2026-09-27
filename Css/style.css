@@ -5905,36 +5905,16 @@ html.swoosh-in.swoosh-out::after {
   clip-path: circle(0% at var(--swoosh-x, 50%) var(--swoosh-y, 50%));
 }
 
-/* Images ease in while scrolling, uncovered from top to bottom by a blue panel. */
+/* Images ease in softly while scrolling. */
 .has-reveal .reveal {
   opacity: 0;
   transform: translateY(28px);
-  transition: opacity 700ms var(--ease-soft), transform 700ms var(--ease-soft);
+  transition: opacity 800ms var(--ease-soft), transform 800ms var(--ease-soft);
 }
 
 .has-reveal .reveal.is-revealed {
   opacity: 1;
   transform: none;
-}
-
-.has-reveal .reveal :is(.media-frame, .project-overview-image) {
-  position: relative;
-  overflow: hidden;
-}
-
-.has-reveal .reveal :is(.media-frame, .project-overview-image)::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--accent-blue);
-  transform: scaleY(1);
-  transform-origin: center bottom;
-  transition: transform 650ms var(--ease-soft) 120ms;
-  pointer-events: none;
-}
-
-.has-reveal .reveal.is-revealed :is(.media-frame, .project-overview-image)::after {
-  transform: scaleY(0);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -5943,8 +5923,7 @@ html.swoosh-in.swoosh-out::after {
     display: none;
   }
 
-  .has-reveal .reveal,
-  .has-reveal .reveal :is(.media-frame, .project-overview-image)::after {
+  .has-reveal .reveal {
     opacity: 1;
     transform: none;
     transition: none;
