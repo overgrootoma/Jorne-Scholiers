@@ -12,8 +12,85 @@
     "art direction",
     "exhibition design"
   ],
-  "images": [],
-  "homepage_images": [],
+  "images": [
+    {
+      "image": "/Projects/2025 Big summer energy/BSE_1.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Big summer energy/BSE_2.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Big summer energy/BSE_3.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Big summer energy/BSE_4.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Big summer energy/BSE_5.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Big summer energy/BSE_6.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Big summer energy/BSE_7.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Big summer energy/AAW2.webp",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Big summer energy/AAW3.webp",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Big summer energy/AAW4.webp",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Big summer energy/AAW5.webp",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Big summer energy/AAW6.webp",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Big summer energy/AAW7.webp",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Big summer energy/AAW8.webp",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Big summer energy/AAW9.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Big summer energy/AAW10.webp",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Big summer energy/BSE_MailScreenshot.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Big summer energy/AAW1.webp",
+      "layout": "full"
+    }
+  ],
+  "homepage_images": [
+    "/Projects/2025 Big summer energy/Homepage BSE/BSE_1.jpg",
+    "/Projects/2025 Big summer energy/Homepage BSE/BSE_2.jpg",
+    "/Projects/2025 Big summer energy/Homepage BSE/BSE_3.jpg"
+  ],
   "files": [],
   "youtube": ""
 }

@@ -1,35 +1,6 @@
 {
   "meta": "2025<br>school assignment<br>group project",
   "preview_image": "images/cover photo's/Brilliant_Books.webp",
-  "homepage_images": [
-    "Homepage Brilliant books/Team6_PortfolipPhoto_6.jpg",
-    "Homepage Brilliant books/Team6_PortfolipPhoto_10.jpg",
-    "Homepage Brilliant books/Team6_PortfolipPhoto_16.webp"
-  ],
   "image_spans": {},
-  "other_file_spans": {},
-  "image_order": [
-    "Team6_PortfolipPhoto_1.webp",
-    "Team6_PortfolipPhoto_2.webp",
-    "Team6_PortfolipPhoto_3.webp",
-    "Team6_PortfolipPhoto_4.webp",
-    "Team6_PortfolipPhoto_5.webp",
-    "Team6_PortfolipPhoto_6.webp",
-    "Team6_PortfolipPhoto_7.webp",
-    "Team6_PortfolipPhoto_8.webp",
-    "Team6_PortfolipPhoto_9.webp",
-    "Team6_PortfolipPhoto_10.jpg",
-    "Team6_PortfolipPhoto_11.webp",
-    "Team6_PortfolipPhoto_12.webp",
-    "Team6_PortfolipPhoto_13.webp",
-    "Team6_PortfolipPhoto_14.webp",
-    "Team6_PortfolipPhoto_15.webp",
-    "Team6_PortfolipPhoto_16.webp",
-    "Team6_PortfolipPhoto_17.webp",
-    "Team6_PortfolipPhoto_18.webp",
-    "Team6_PortfolipPhoto_19.webp",
-    "Team6_PortfolipPhoto_20.webp",
-    "Team6_PortfolipPhoto_21.webp",
-    "Team6_PortfolipPhoto_22.webp"
-  ]
+  "other_file_spans": {}
 }

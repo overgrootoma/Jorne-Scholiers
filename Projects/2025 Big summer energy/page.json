@@ -1,31 +1,7 @@
 {
   "meta": "2025<br>Exhibition",
   "preview_image": "Projects/2025%20Big%20summer%20energy/BSE_1.jpg",
-  "homepage_images": [
-    "Homepage BSE/BSE_1.jpg",
-    "Homepage BSE/BSE_2.jpg",
-    "Homepage BSE/BSE_3.jpg"
-  ],
   "gallery_class": "detail-gallery detail-gallery--four-stagger",
   "image_spans": {},
-  "other_file_spans": {},
-  "image_order": [
-    "BSE_1.jpg",
-    "BSE_2.jpg",
-    "BSE_3.jpg",
-    "BSE_4.jpg",
-    "BSE_5.jpg",
-    "BSE_6.jpg",
-    "BSE_7.jpg",
-    "AAW2.webp",
-    "AAW3.webp",
-    "AAW4.webp",
-    "AAW5.webp",
-    "AAW6.webp",
-    "AAW7.webp",
-    "AAW8.webp",
-    "AAW9.jpg",
-    "AAW10.webp",
-    "BSE_MailScreenshot.jpg"
-  ]
+  "other_file_spans": {}
 }

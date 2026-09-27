@@ -22,7 +22,9 @@ Links zie je nu: **Projects**, **Homepage information** en **Media**.
    - **Position**: 1 = bovenaan. Leeg = onderaan de lijst.
    - **Cover image**: de hoofdfoto voor de Projects-pagina
    - **Text**: je beschrijving. Laat een lege regel tussen paragrafen.
-   - **Project images**: kies de foto's in de volgorde waarin ze op de pagina moeten staan
+   - **Project images**: voeg per foto een rij toe, in de volgorde van de pagina (sleep om
+     te herschikken). Kies bij **Width on desktop** hoe breed de foto op een computer staat
+     (zie hieronder).
    - **Homepage hover images**: max. 4 foto's die verschijnen als je over de titel beweegt
    - **Files**: PDF's (worden een link, met jouw **Link text**) of video's (worden getoond)
    - **Project folder**: leeg laten
@@ -33,14 +35,26 @@ maar niemand ziet het.
 
 ## 3. Een bestaand project aanpassen
 
-Open het project onder **Projects**. Titel, korte titel, positie, tekst, cover en
-keywords pas je hier aan.
+Open het project onder **Projects**. Alles staat er al in: titel, positie, tekst, cover,
+alle foto's in hun huidige volgorde, de hover-foto's, PDF's en video's. Pas aan wat je wil
+en klik **Save**.
 
-De oudere projecten hebben een ingevuld **Project folder**. Hun foto's en speciale
-layout (grote/kleine beelden) komen uit die map, dus laat **Project images** daar leeg.
-Nieuwe foto's voor zo'n project upload je in **Media → Project images → die map**.
+Een extra foto toevoegen? Upload ze eerst in **Media → Project images → de map van het
+project**, en voeg ze dan toe bij **Project images**.
 
-## 4. Foto's in Archive of Photography
+## 4. Foto's naast elkaar zetten (desktop)
+
+Elke foto heeft een **Width on desktop**:
+
+- **full**: volle breedte (zo staat alles nu)
+- **half**: twee foto's naast elkaar
+- **third**: drie foto's naast elkaar
+
+Geef foto's die na elkaar komen dezelfde breedte om ze naast elkaar te zetten, bv. twee
+staande foto's allebei op **half**. Zo passen ze samen op één scherm. Op een telefoon
+staan alle foto's altijd onder elkaar op volle breedte.
+
+## 5. Foto's in Archive of Photography
 
 Hier hoef je niets in te vullen: alles wat in de map staat, komt op de site.
 
@@ -48,12 +62,12 @@ Hier hoef je niets in te vullen: alles wat in de map staat, komt op de site.
 2. Open de map van het jaar (bv. `2026` of `Photo 2026`) en klik **Upload**.
 3. Nieuw jaar? Maak een nieuwe map: `2027` in Archive, `Photo 2027` in Photography.
 
-## 5. Homepage-info
+## 6. Homepage-info
 
 Onder **Homepage information** pas je About, Exhibitions, Experience, Education en
 de links aan.
 
-## 6. Controleren of het online staat
+## 7. Controleren of het online staat
 
 Op GitHub, tab **Actions**, zie je per wijziging een run
 "Deploy static content to Pages":
@@ -64,7 +78,7 @@ Op GitHub, tab **Actions**, zie je per wijziging een run
 
 Een foto die niet (meer) bestaat, wordt overgeslagen, dus je site breekt daar niet van.
 
-## 7. Samen met VS Code werken
+## 8. Samen met VS Code werken
 
 Het CMS maakt commits op GitHub. Doe daarom in VS Code **altijd eerst `git pull`**
 (of Sync Changes) voor je zelf iets aanpast, anders krijg je conflicten.
@@ -76,7 +90,7 @@ Waar alles staat:
 
 - `content/projects/*.json`: één bestand per project (dit bewerkt het CMS)
 - `content/site.json`: de homepage-info
-- `Projects/<map>/page.json`: de layout van de oudere projecten (beeldgroottes, volgorde)
+- `Projects/<map>/page.json`: extra instellingen van de oudere projecten (bv. het raster onderaan Isolation)
 - `.pages.yml`: de instellingen van het CMS zelf
 
 ## Tips

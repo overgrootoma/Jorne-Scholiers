@@ -410,7 +410,7 @@ function orderFilesByPreference(files, preferredOrder) {
 // Display name for a file link; set "file_labels" in page.json to override the file name.
 function fileLabel(pageConfig, file) {
   const label = pageConfig?.file_labels?.[file];
-  return typeof label === 'string' && label.trim() ? label.trim() : file;
+  return typeof label === 'string' && label.trim() ? label.trim() : path.basename(file);
 }
 
 function youtubeVideoId(value) {
@@ -936,6 +936,14 @@ function renderProjectStepNav(nav) {
   </nav>`;
 }
 
+// Desktop layout picked per image in the CMS: "half" and "third" put images side by side.
+const imageLayouts = new Set(['half', 'third']);
+
+function layoutAttribute(item, file) {
+  const layout = item.imageLayouts?.[file];
+  return imageLayouts.has(layout) ? ` data-layout="${layout}"` : '';
+}
+
 function renderProjectPage(item, type, nav = null) {
   const title = escapeHtml(item.title);
   const base = type === 'projects' ? 'Projects' : 'Archive';
@@ -951,13 +959,13 @@ function renderProjectPage(item, type, nav = null) {
       const span = resolveMediaSpan({
         type,
         dirName: item.dirName,
-        fileName: file,
+        fileName: path.basename(file),
         pageConfig,
         kind: 'image',
         fallback: 4,
       });
       return `
-      <figure data-span="${span}">
+      <figure data-span="${span}"${layoutAttribute(item, file)}>
         <div class="media-frame">
           <img src="${src}" alt="${title} by Jorne Scholiers — image ${idx + 1}"${dimensions}${loading} decoding="async">
         </div>
@@ -975,7 +983,7 @@ function renderProjectPage(item, type, nav = null) {
     const span = resolveMediaSpan({
       type,
       dirName: item.dirName,
-      fileName: file,
+      fileName: path.basename(file),
       pageConfig,
       kind: 'other',
       fallback: 4,
@@ -1298,10 +1306,21 @@ function applyCmsProject(item, data, file) {
     if (!pageConfig.preview_image) pageConfig.preview_image = pageConfig.index_image;
   }
 
+  // Each entry is { image, layout } (or a plain path); layout is "full", "half" or "third".
+  const imageLayoutsByPath = {};
   const images = (Array.isArray(data.images) ? data.images : [])
-    .map((image) => cmsFilePath(image, `${file} images`))
-    .filter((image) => image && isImage(image));
-  if (images.length) item.images = images;
+    .map((entry) => {
+      const source = typeof entry === 'string' ? entry : entry?.image;
+      const imagePath = cmsFilePath(source, `${file} images`);
+      if (!imagePath || !isImage(imagePath)) return '';
+      if (typeof entry?.layout === 'string') imageLayoutsByPath[imagePath] = entry.layout.trim().toLowerCase();
+      return imagePath;
+    })
+    .filter(Boolean);
+  if (images.length) {
+    item.images = images;
+    item.imageLayouts = imageLayoutsByPath;
+  }
 
   item.cmsHomepageImages = (Array.isArray(data.homepage_images) ? data.homepage_images : [])
     .map((image) => cmsFilePath(image, `${file} homepage_images`))
@@ -1518,4 +1537,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { buildSite };
+module.exports = { buildSite, buildItems, homepageImages, orderFilesByPreference };

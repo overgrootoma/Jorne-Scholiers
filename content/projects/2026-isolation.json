@@ -13,8 +13,99 @@
     "editorial design",
     "experimental photography"
   ],
-  "images": [],
-  "homepage_images": [],
-  "files": [],
-  "youtube": ""
+  "images": [
+    {
+      "image": "/Projects/2026 Isolation/01.png",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2026 Isolation/02.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2026 Isolation/03.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2026 Isolation/04.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2026 Isolation/05.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2026 Isolation/06.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2026 Isolation/07.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2026 Isolation/08.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2026 Isolation/09.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2026 Isolation/10.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2026 Isolation/11.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2026 Isolation/12.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2026 Isolation/13.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2026 Isolation/14.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2026 Isolation/15.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2026 Isolation/16.png",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2026 Isolation/17.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2026 Isolation/18.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2026 Isolation/19.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2026 Isolation/20.jpg",
+      "layout": "full"
+    }
+  ],
+  "homepage_images": [
+    "/Projects/2026 Isolation/Homepage isolation/slide.jpg",
+    "/Projects/2026 Isolation/Homepage isolation/slide2.jpg",
+    "/Projects/2026 Isolation/Homepage isolation/slide10.jpg",
+    "/Projects/2026 Isolation/Homepage isolation/thumbnail.png"
+  ],
+  "files": [
+    {
+      "file": "/Projects/2026 Isolation/Isolation_Book.pdf",
+      "label": "Isolation Book"
+    }
+  ],
+  "youtube": "https://youtu.be/du45HUgaIQ0"
 }

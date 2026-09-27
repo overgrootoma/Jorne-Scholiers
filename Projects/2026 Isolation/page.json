@@ -1,50 +1,15 @@
 {
   "meta": "2026<br>school assignment",
   "preview_image": "images/cover photo's/Isolation.png",
-  "homepage_images": [
-    "Homepage isolation/slide.jpg",
-    "Homepage isolation/slide2.jpg",
-    "Homepage isolation/slide10.jpg",
-    "Homepage isolation/thumbnail.png"
-  ],
   "default_image_span": 6,
   "image_spans": {
     "01.png": 3
   },
-  "image_order": [
-    "01.png",
-    "02.jpg",
-    "03.jpg",
-    "04.jpg",
-    "05.jpg",
-    "06.jpg",
-    "07.jpg",
-    "08.jpg",
-    "09.jpg",
-    "10.jpg",
-    "11.jpg",
-    "12.jpg",
-    "13.jpg",
-    "14.jpg",
-    "15.jpg",
-    "16.png",
-    "17.jpg",
-    "18.jpg",
-    "19.jpg",
-    "20.jpg"
-  ],
   "youtube_showcase": {
-    "title": "Tool showcase",
-    "url": "https://youtu.be/du45HUgaIQ0"
+    "title": "Tool showcase"
   },
   "thumbnail_gallery": {
     "title": "All generated images",
     "directory": "All images"
-  },
-  "other_file_order": [
-    "Isolation_Book.pdf"
-  ],
-  "file_labels": {
-    "Isolation_Book.pdf": "Isolation Book"
   }
 }

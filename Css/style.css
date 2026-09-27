@@ -5780,3 +5780,30 @@ body.page-home .site-footer * {
     margin-top: 64px !important;
   }
 }
+
+/* Desktop: images marked "half" or "third" in the CMS sit side by side; everything else stays
+   full width. Phones and tablets always show one image under the other. */
+@media (min-width: 901px) {
+  body.page-detail .detail-gallery:has(figure[data-layout]) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    column-gap: 28px;
+  }
+
+  body.page-detail .detail-gallery:has(figure[data-layout]) > figure {
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  body.page-detail .detail-gallery:has(figure[data-layout]) > figure[data-layout="half"] {
+    flex-basis: calc((100% - 28px) / 2);
+    width: calc((100% - 28px) / 2);
+  }
+
+  body.page-detail .detail-gallery:has(figure[data-layout]) > figure[data-layout="third"] {
+    flex-basis: calc((100% - 56px) / 3);
+    width: calc((100% - 56px) / 3);
+  }
+}

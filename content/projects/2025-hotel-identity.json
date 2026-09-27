@@ -12,8 +12,131 @@
     "visual identity",
     "graphic design"
   ],
-  "images": [],
-  "homepage_images": [],
-  "files": [],
+  "images": [
+    {
+      "image": "/Projects/2025 Hotel Identity/syncope merch-2.webp",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Hotel Identity/syncope merch-3.webp",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Hotel Identity/syncope merch-4.webp",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Hotel Identity/syncope merch-6.webp",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Hotel Identity/syncope merch-7.webp",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Hotel Identity/syncope merch-8.webp",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Hotel Identity/Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Instagram_01.webp",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Hotel Identity/Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Instagram_02.webp",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Hotel Identity/Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Instagram_03.webp",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Hotel Identity/Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Instagram_04.webp",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Hotel Identity/3DHotel_1.webp",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Hotel Identity/3DHotel_2.webp",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Hotel Identity/come-in-mockup.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Hotel Identity/do-not-disturb-mockup.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Hotel Identity/drinks-mockup-copy.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Hotel Identity/food-mockup-copy.webp",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Hotel Identity/3DHotel_3.webp",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Hotel Identity/food.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Hotel Identity/syncope merch-5.jpg",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Hotel Identity/syncope merch-9.webp",
+      "layout": "full"
+    },
+    {
+      "image": "/Projects/2025 Hotel Identity/syncope merch.webp",
+      "layout": "full"
+    }
+  ],
+  "homepage_images": [
+    "/Projects/2025 Hotel Identity/Homepage Hotel Identity/come-in-mockup.jpg",
+    "/Projects/2025 Hotel Identity/Homepage Hotel Identity/drinks-mockup-copy.jpg",
+    "/Projects/2025 Hotel Identity/Homepage Hotel Identity/food.jpg",
+    "/Projects/2025 Hotel Identity/Homepage Hotel Identity/syncope merch-3.webp"
+  ],
+  "files": [
+    {
+      "file": "/Projects/2025 Hotel Identity/Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Website_Desktop.m4v",
+      "label": ""
+    },
+    {
+      "file": "/Projects/2025 Hotel Identity/Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_WebsiteMobile.mp4",
+      "label": ""
+    },
+    {
+      "file": "/Projects/2025 Hotel Identity/Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_HouseRules.pdf",
+      "label": "House Rules"
+    },
+    {
+      "file": "/Projects/2025 Hotel Identity/Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Menu.pdf",
+      "label": "Menu"
+    },
+    {
+      "file": "/Projects/2025 Hotel Identity/Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_Presentation.pdf",
+      "label": "Presentation"
+    },
+    {
+      "file": "/Projects/2025 Hotel Identity/Team4_JorneScholiers_SarahDeSmedt_HotelIdentity_StyleGuide.pdf",
+      "label": "Style Guide"
+    },
+    {
+      "file": "/Projects/2025 Hotel Identity/drinksmenu.mp4",
+      "label": ""
+    },
+    {
+      "file": "/Projects/2025 Hotel Identity/house.mp4",
+      "label": ""
+    }
+  ],
   "youtube": ""
 }
