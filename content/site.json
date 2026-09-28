@@ -1,9 +1,9 @@
 {
   "personal": [
     "Jorne Scholiers",
-    "2005",
+    "°2005",
     "Visual Designer",
-    "Belgium"
+    "Ghent, Belgium"
   ],
   "exhibitions": [
     {
@@ -15,15 +15,21 @@
   "experience": [
     {
       "date": "2026",
-      "label": "Intern at Broos Stoffels",
-      "href": ""
+      "label": "Intern at Broos Stoffels"
     }
   ],
   "education": [
     {
-      "date": "2023–2026",
-      "label": "LUCA, Visual Design, Graphic Studio",
-      "href": ""
+      "date": "2023 — 2026",
+      "label": "LUCA, Visual Design, Graphic design "
+    },
+    {
+      "date": "2026 — Now",
+      "label": "LUCA, Visual Design, Digital experience "
+    },
+    {
+      "date": "2026 — Now",
+      "label": "LUCA, Continue, Traject 3D"
     }
   ],
   "links": [
