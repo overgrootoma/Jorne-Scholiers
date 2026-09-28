@@ -7,15 +7,24 @@
   ],
   "exhibitions": [
     {
-      "label": "Antwerp Art Weekend — MONAR X UGG, 2025",
+      "date": "2025",
+      "label": "Antwerp Art Weekend — MONAR X UGG",
       "href": "project-2025-0-big-summer-energy.html"
     }
   ],
   "experience": [
-    "Intern at Broos Stoffels 2026"
+    {
+      "date": "2026",
+      "label": "Intern at Broos Stoffels",
+      "href": ""
+    }
   ],
   "education": [
-    "LUCA, Visual Design, Graphic Studio 2023-2026"
+    {
+      "date": "2023–2026",
+      "label": "LUCA, Visual Design, Graphic Studio",
+      "href": ""
+    }
   ],
   "links": [
     {

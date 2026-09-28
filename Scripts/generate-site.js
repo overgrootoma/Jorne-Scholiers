@@ -657,6 +657,15 @@ function renderHome(projects, homepageProfile) {
     return `<li><a href="${escapeHtml(item.href)}"${external}>${escapeHtml(item.label)}</a></li>`;
   }).join('');
 
+  // "2025  Antwerp Art Weekend", laid out like the project list (year, space, text).
+  const renderDatedList = (items) => items.map((item) => {
+    const external = /^https?:/i.test(item.href) ? ' target="_blank" rel="noopener"' : '';
+    const label = item.href
+      ? `<a href="${escapeHtml(item.href)}"${external}>${escapeHtml(item.label)}</a>`
+      : escapeHtml(item.label);
+    return `<li class="home-dated-item"><small>${escapeHtml(item.date)}</small><span>${label}</span></li>`;
+  }).join('');
+
   const projectLinks = projects.map((project, projectIndex) => {
     const page = `project-${project.slug}.html`;
     const displayTitle = project.pageConfig?.index_title || project.title;
@@ -699,15 +708,15 @@ function renderHome(projects, homepageProfile) {
       <div class="home-about-secondary">
         <section>
           <h2>Exhibitions</h2>
-          <ul class="home-info-list">${renderLinkList(homepageProfile.exhibitions)}</ul>
+          <ul class="home-info-list">${renderDatedList(homepageProfile.exhibitions)}</ul>
         </section>
         <section class="home-experience">
           <h2>Experience</h2>
-          <ul class="home-info-list">${renderTextList(homepageProfile.experience)}</ul>
+          <ul class="home-info-list">${renderDatedList(homepageProfile.experience)}</ul>
         </section>
         <section class="home-education">
           <h2>Education</h2>
-          <ul class="home-info-list">${renderTextList(homepageProfile.education)}</ul>
+          <ul class="home-info-list">${renderDatedList(homepageProfile.education)}</ul>
         </section>
       </div>
     </div>
@@ -1289,13 +1298,27 @@ function linkList(value) {
     : [];
 }
 
+// Dated homepage entries: { date, label, href } (plain strings still work).
+function datedList(value) {
+  return Array.isArray(value)
+    ? value
+      .map((entry) => (typeof entry === 'string' ? { label: entry } : entry))
+      .filter((entry) => entry && typeof entry.label === 'string' && entry.label.trim())
+      .map((entry) => ({
+        date: typeof entry.date === 'string' || typeof entry.date === 'number' ? String(entry.date).trim() : '',
+        label: entry.label.trim(),
+        href: typeof entry.href === 'string' ? entry.href.trim() : '',
+      }))
+    : [];
+}
+
 function readSiteContent() {
   const site = readJsonFile(path.join(contentDir, 'site.json'), {});
   return {
     personal: stringList(site.personal),
-    exhibitions: linkList(site.exhibitions),
-    experience: stringList(site.experience),
-    education: stringList(site.education),
+    exhibitions: datedList(site.exhibitions),
+    experience: datedList(site.experience),
+    education: datedList(site.education),
     links: linkList(site.links),
   };
 }

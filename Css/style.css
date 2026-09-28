@@ -6023,3 +6023,24 @@ html.swoosh-in.swoosh-out::after {
     transition: --hover-r 380ms var(--ease-soft), color 450ms var(--ease-soft) !important;
   }
 }
+
+/* Homepage Exhibitions, Experience and Education: year first, then the text, like the project list. */
+.page-home .home-exhibition .home-information .home-info-list li.home-dated-item {
+  display: flex;
+  gap: 14px;
+  align-items: baseline;
+  white-space: normal;
+}
+
+.page-home .home-exhibition .home-information .home-dated-item small {
+  /* Fixed column (fits "2023–2026") so every text starts at the same line, like the project list. */
+  flex: 0 0 7em;
+  font-size: 0.63rem;
+  font-weight: 400 !important;
+  white-space: nowrap;
+}
+
+.page-home .home-exhibition .home-information .home-dated-item span,
+.page-home .home-exhibition .home-information .home-dated-item a {
+  font-weight: 400 !important;
+}

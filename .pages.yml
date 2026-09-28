@@ -161,6 +161,10 @@ content:
         type: object
         list: true
         fields:
+          - name: date
+            label: Year or dates
+            description: e.g. "2025" or "2023–2026". Shown in front of the text, like the project years.
+            type: string
           - name: label
             label: Text
             type: string
@@ -170,12 +174,36 @@ content:
             type: string
       - name: experience
         label: Experience
-        type: string
+        type: object
         list: true
+        fields:
+          - name: date
+            label: Year or dates
+            description: e.g. "2025" or "2023–2026". Shown in front of the text, like the project years.
+            type: string
+          - name: label
+            label: Text
+            type: string
+            required: true
+          - name: href
+            label: Link (optional)
+            type: string
       - name: education
         label: Education
-        type: string
+        type: object
         list: true
+        fields:
+          - name: date
+            label: Year or dates
+            description: e.g. "2025" or "2023–2026". Shown in front of the text, like the project years.
+            type: string
+          - name: label
+            label: Text
+            type: string
+            required: true
+          - name: href
+            label: Link (optional)
+            type: string
       - name: links
         label: Links
         type: object
