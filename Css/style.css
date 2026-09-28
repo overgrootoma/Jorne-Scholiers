@@ -6044,3 +6044,19 @@ html.swoosh-in.swoosh-out::after {
 .page-home .home-exhibition .home-information .home-dated-item a {
   font-weight: 400 !important;
 }
+
+/* Homepage project names use the body-text size and weight (like Exhibitions, Experience, Education),
+   so the section titles stay the only large, bold text. */
+.page-home .home-exhibition .home-project-link > span,
+.page-home .home-exhibition .home-project-link.is-active > span {
+  font-size: 0.7rem !important;
+  font-weight: 400 !important;
+  letter-spacing: normal;
+  line-height: 1.25;
+}
+
+@media (max-width: 900px), (hover: none), (pointer: coarse) {
+  .page-home .home-exhibition .home-project-link > span {
+    font-size: 0.72rem !important;
+  }
+}
