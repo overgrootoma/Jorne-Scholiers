@@ -8,7 +8,7 @@
   --black: #000000;
   --body-font: "Open Sans", "Helvetica Neue", Arial, sans-serif;
   --body-weight: 700;
-  --title-font: "Silkscreen", "Open Sans", sans-serif;
+  --title-font: "Jersey 10", "Open Sans", sans-serif;
   --site-max-width: 1560px;
   --page-padding-x: clamp(18px, 2.6vw, 32px);
   --page-grid-gap: clamp(16px, 1.8vw, 28px);
@@ -4191,7 +4191,7 @@ body.page-detail {
   border-right: 1px solid var(--black);
 }
 
-/* Reading text uses Open Sans; interface typography uses Silkscreen. */
+/* Reading text uses Open Sans; interface typography uses the title font (Jersey 10). */
 p,
 .detail-description,
 .detail-description p,
@@ -5354,7 +5354,7 @@ body.home-preview-active .home-archive-link {
 /* The years below are right-aligned in a 54px column (7px link padding); line the word up with where they start. */
 .home-projects-heading a {
   display: inline-block;
-  margin-left: 22px;
+  margin-left: 30px;
   padding: 9px 7px;
   color: var(--black);
   text-decoration: none;
@@ -5557,20 +5557,14 @@ main.page-project-overview {
   }
 }
 
-/* Silkscreen (Google Fonts) replaces Bitcount, which rendered broken in some browsers. */
-.silkscreen-regular {
-  font-family: "Silkscreen", sans-serif;
+/* Title font: Jersey 10 (Google Fonts, one weight). */
+.jersey-10-regular {
+  font-family: "Jersey 10", sans-serif;
   font-weight: 400;
   font-style: normal;
 }
 
-.silkscreen-bold {
-  font-family: "Silkscreen", sans-serif;
-  font-weight: 700;
-  font-style: normal;
-}
-
-/* Project pages: reading text in Open Sans Medium. The homepage stays fully in Silkscreen. */
+/* Project pages: reading text in Open Sans Medium. The homepage stays fully in the title font. */
 body.page-detail .detail-description,
 body.page-detail .detail-description p,
 body.page-detail .project-information p {
@@ -5600,12 +5594,12 @@ body.page-home .site-footer * {
   }
 }
 
-/* Silkscreen is wide: let the Education line wrap instead of running into the project list. */
+/* Let the Education line wrap instead of running into the project list. */
 .page-home .home-exhibition .home-education .home-info-list li {
   white-space: normal;
 }
 
-/* Every button uses Silkscreen. */
+/* Every button uses the title font. */
 button,
 .pdf-lightbox__close,
 .lightbox-close,
@@ -6096,4 +6090,28 @@ body.page-detail .project-one-liner {
   font-weight: 500;
   line-height: 1.35;
   opacity: 0.6;
+}
+
+/* ---------- Type scale for Jersey 10 ----------
+   Jersey 10 has one weight, so browsers must not fake bold versions (font-synthesis: none);
+   hierarchy comes from size instead. Its letters are smaller than Open Sans at the same size,
+   so font-size-adjust evens them out, and the root size makes all text a bit larger. */
+html {
+  font-size: 106.25%;
+  font-size-adjust: 0.53;
+  font-synthesis: none;
+}
+
+/* Section titles clearly larger than the text around them. */
+.page-home .home-exhibition .home-about-columns h2,
+.page-home .home-exhibition .home-projects-heading,
+.project-overview-title,
+.page-home .home-exhibition .home-archive-link {
+  font-size: clamp(1.1rem, 0.98rem + 0.4vw, 1.4rem) !important;
+  letter-spacing: 0.04em;
+}
+
+body.page-detail .project-information-content h1,
+body.page-detail .project-information-toggle__title {
+  font-size: 1.15rem !important;
 }
