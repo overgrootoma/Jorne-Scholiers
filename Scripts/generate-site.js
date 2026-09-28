@@ -944,6 +944,7 @@ function renderProjectOverview(projects) {
           <small>${escapeHtml(project.year || '')}</small>
           <span>${escapeHtml(title)}</span>
         </span>
+        ${project.oneLiner ? `<span class="project-overview-summary">${escapeHtml(project.oneLiner)}</span>` : ''}
       </a>
     </li>`;
   }).join('\n');
@@ -1156,6 +1157,7 @@ function renderProjectPage(item, type, nav = null) {
       <div class="project-information-content">
         ${backLink}
         <h1 class="title-font">${title}</h1>
+        ${item.oneLiner ? `<p class="project-one-liner">${escapeHtml(item.oneLiner)}</p>` : ''}
         ${descriptionBlock}${informationFilesBlock}
       </div>
     </aside>
@@ -1372,6 +1374,7 @@ function applyCmsProject(item, data, file) {
   if (typeof data.description === 'string' && data.description.trim()) item.description = data.description.trim();
   const keywords = stringList(data.keywords);
   if (keywords.length) item.keywords = keywords;
+  if (typeof data.one_liner === 'string' && data.one_liner.trim()) item.oneLiner = data.one_liner.trim();
   if (typeof data.seo_title === 'string' && data.seo_title.trim()) item.seoTitle = data.seo_title.trim();
   if (typeof data.seo_description === 'string' && data.seo_description.trim()) item.seoDescription = data.seo_description.trim();
 

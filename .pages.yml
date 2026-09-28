@@ -42,6 +42,10 @@ content:
         label: Title
         type: string
         required: true
+      - name: one_liner
+        label: One-liner
+        description: A very short line on what it is, e.g. "Book of generative images" or "Magazine design". Shown under the title on the project page and the Projects overview.
+        type: string
       - name: short_title
         label: Short title (optional)
         description: Shown in the homepage list instead of the title, e.g. "STFF".

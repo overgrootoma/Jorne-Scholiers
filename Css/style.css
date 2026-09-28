@@ -6060,3 +6060,40 @@ html.swoosh-in.swoosh-out::after {
     font-size: 0.72rem !important;
   }
 }
+
+/* Project pages: the title in the same small size as the text, not bold, with the one-liner under it. */
+body.page-detail .project-information-content h1,
+body.page-detail .project-information-toggle__title {
+  font-size: 0.8rem !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.05em;
+  line-height: 1.3;
+}
+
+body.page-detail .project-information-content h1 {
+  margin-bottom: 4px;
+}
+
+body.page-detail .project-one-liner {
+  margin: 0 0 18px;
+  font-family: var(--body-font) !important;
+  font-size: 0.72rem;
+  font-weight: 500 !important;
+  line-height: 1.4;
+  opacity: 0.6;
+}
+
+/* Projects overview: names not bold, one-liner under each card. */
+.project-overview-label > span {
+  font-weight: 400 !important;
+}
+
+.project-overview-summary {
+  display: block;
+  margin-top: -4px;
+  font-family: var(--body-font);
+  font-size: 0.68rem;
+  font-weight: 500;
+  line-height: 1.35;
+  opacity: 0.6;
+}
