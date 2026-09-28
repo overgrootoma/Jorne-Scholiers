@@ -8,7 +8,7 @@
   --black: #000000;
   --body-font: "Open Sans", "Helvetica Neue", Arial, sans-serif;
   --body-weight: 700;
-  --title-font: "Jersey 10", "Open Sans", sans-serif;
+  --title-font: "Silkscreen", "Open Sans", sans-serif;
   --site-max-width: 1560px;
   --page-padding-x: clamp(18px, 2.6vw, 32px);
   --page-grid-gap: clamp(16px, 1.8vw, 28px);
@@ -4191,7 +4191,7 @@ body.page-detail {
   border-right: 1px solid var(--black);
 }
 
-/* Reading text uses Open Sans; interface typography uses the title font (Jersey 10). */
+/* Reading text uses Open Sans; interface typography uses the title font (Silkscreen). */
 p,
 .detail-description,
 .detail-description p,
@@ -5354,7 +5354,7 @@ body.home-preview-active .home-archive-link {
 /* The years below are right-aligned in a 54px column (7px link padding); line the word up with where they start. */
 .home-projects-heading a {
   display: inline-block;
-  margin-left: 30px;
+  margin-left: 20px;
   padding: 9px 7px;
   color: var(--black);
   text-decoration: none;
@@ -5557,9 +5557,9 @@ main.page-project-overview {
   }
 }
 
-/* Title font: Jersey 10 (Google Fonts, one weight). */
-.jersey-10-regular {
-  font-family: "Jersey 10", sans-serif;
+/* Title font: Silkscreen, regular weight only. */
+.silkscreen-regular {
+  font-family: "Silkscreen", sans-serif;
   font-weight: 400;
   font-style: normal;
 }
@@ -5569,7 +5569,7 @@ body.page-detail .detail-description,
 body.page-detail .detail-description p,
 body.page-detail .project-information p {
   font-family: var(--body-font) !important;
-  font-weight: 500 !important;
+  font-weight: 300 !important;
   letter-spacing: 0.01em;
 }
 
@@ -6072,7 +6072,7 @@ body.page-detail .project-one-liner {
   margin: 0 0 18px;
   font-family: var(--body-font) !important;
   font-size: 0.72rem;
-  font-weight: 500 !important;
+  font-weight: 300 !important;
   line-height: 1.4;
   opacity: 0.6;
 }
@@ -6087,22 +6087,69 @@ body.page-detail .project-one-liner {
   margin-top: -4px;
   font-family: var(--body-font);
   font-size: 0.68rem;
-  font-weight: 500;
+  font-weight: 300;
   line-height: 1.35;
   opacity: 0.6;
 }
 
-/* ---------- Type scale for Jersey 10 ----------
-   Jersey 10 has one weight, so browsers must not fake bold versions (font-synthesis: none);
-   hierarchy comes from size instead. Its letters are smaller than Open Sans at the same size,
-   so font-size-adjust evens them out, and the root size makes all text a bit larger. */
+/* ---------- Type: thin everywhere, hierarchy from size only ----------
+   Only the regular Silkscreen is loaded and browsers may not fake bold (font-synthesis: none),
+   so nothing on the site is bold. Titles are clearly larger than the text; all text is a bit larger. */
 html {
   font-size: 106.25%;
-  font-size-adjust: 0.53;
   font-synthesis: none;
 }
 
-/* Section titles clearly larger than the text around them. */
+:root,
+.home-exhibition,
+.page-home .home-exhibition,
+.page-project-overview,
+main.page-project-overview {
+  --home-weight-regular: 400;
+  --home-weight-strong: 400;
+  --overview-weight-strong: 400;
+  --title-weight: 400;
+  --rail-title-weight: 400;
+  --body-weight: 400;
+}
+
+*,
+*::before,
+*::after {
+  font-weight: 400 !important;
+}
+
+/* Reading text in Open Sans: light and a size up. */
+p,
+.detail-description,
+.detail-description p,
+.project-information p,
+.about-intro p,
+.simple-block p,
+.project-one-liner,
+.project-overview-summary,
+.mobile-intro-copy {
+  font-weight: 300 !important;
+}
+
+body.page-detail .detail-description,
+body.page-detail .detail-description p,
+body.page-detail .project-information p,
+.page-about .about-intro p,
+.page-simple .simple-block p {
+  font-size: 0.86rem !important;
+  line-height: 1.55;
+}
+
+body.page-detail .project-one-liner {
+  font-size: 0.8rem;
+}
+
+.project-overview-summary {
+  font-size: 0.78rem;
+}
+
+/* Titles clearly larger than the text around them. */
 .page-home .home-exhibition .home-about-columns h2,
 .page-home .home-exhibition .home-projects-heading,
 .project-overview-title,
