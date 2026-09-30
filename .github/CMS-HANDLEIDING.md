@@ -22,7 +22,7 @@ Links zie je nu: **Projects**, **Homepage information** en **Media**.
    - **Position**: 1 = bovenaan. Leeg = onderaan de lijst.
    - **Cover image**: de hoofdfoto voor de Projects-pagina
    - **Text**: je beschrijving. Laat een lege regel tussen paragrafen.
-   - **Project images**: voeg per foto een rij toe, in de volgorde van de pagina (sleep om
+   - **Project images and text sections**: voeg per foto een **Image** toe, in de volgorde van de pagina (sleep om
      te herschikken). Kies bij **Width (columns of 6)** hoe breed de foto op een computer staat
      (zie hieronder).
    - **Homepage hover images**: max. 4 foto's die verschijnen als je over de titel beweegt
@@ -70,12 +70,18 @@ ernaast.
 Foto D vult kolom 1 tot 3; kolom 4 tot 6 blijft leeg omdat E een nieuwe rij begint.
 Wil je D rechts, met de witruimte links? Zet dan bij D **Start at column** op **4**.
 
-## 4a. Tekst tussen de foto's en tags
+## 4a. Tekstsecties tussen de foto's en tags
 
-**Tekstblok tussen foto's** (voor een case study): voeg bij **Project images and text blocks**
-een rij toe, laat **Image** leeg en vul **Text** in. Het tekstblok staat op hetzelfde grid als
-de foto's: zet het bv. op **3** kolommen naast een foto van **3** kolommen. Vul je in één rij
-zowel een foto als tekst in, dan komt de tekst meteen na die foto.
+**Tekstsectie tussen foto's** (voor een case study): klik onder **Project images and text
+sections** op **Add** en kies **Text section** (in plaats van **Image**). Een tekstsectie heeft
+drie velden, die je elk leeg mag laten:
+
+- **Title**: een titel in het pixelfont
+- **Introduction**: een inleiding, groter weergegeven
+- **Body text**: de gewone tekst. Laat een lege regel tussen paragrafen.
+
+Sleep de sectie naar de juiste plek tussen de foto's. Ze staat op hetzelfde grid als de
+foto's: zet ze bv. op **3** kolommen naast een foto van **3** kolommen.
 
 **Tags** zijn de kleine blauwe blokjes onder de projecttitel, bv. `book`, `album art`,
 `installation`. Je past ze aan bij **Tags (blue blocks)**, één woord of korte term per regel.

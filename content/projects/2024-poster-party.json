@@ -13,54 +13,63 @@
   "description": "For this project, I designed a series of three posters, each with a different theme, along with three accompanying derivatives: a flyer, a sticker, and Instagram posts.\n\nThe posters were based on the themes \"Museumnacht\" (Museum Night), \"Inscript\", and a quote of my choice.\n\nFor \"Museumnacht\", I was inspired by nightshops and their glowing LED signs.\n\nFor \"Inscript\", I drew inspiration from early 2000s computer interfaces. This because it is a digital event.\n\nFor the quote, I chose a statement by Bob Marley on racism. I brought a human and emotional element into the design through handwritten typography and visual references to skin.\n\nEach poster explores a different visual language.",
   "images": [
     {
+      "type": "image",
       "image": "/Projects/2024 Poster Party/JorneScholiers_GRAPHICMATTERS_STICKER 2_Pagina_09_Afbeelding_0001.jpg",
       "columns": "2",
       "start": "auto",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2024 Poster Party/JorneScholiers_INSCRIPT.webp",
       "columns": "2",
       "start": "auto",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2024 Poster Party/JorneScholiers_GRAPHICMATTERS_STICKER 2_Pagina_02_Afbeelding_0001.webp",
       "columns": "2",
       "start": "auto",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2024 Poster Party/JorneScholiers_GRAPHICMATTERS_STICKER 2_Pagina_01_Afbeelding_0001.webp",
       "columns": "2",
       "start": "2",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2024 Poster Party/JorneScholiers_GRAPHICMATTERS_STICKER 2_Pagina_07_Afbeelding_0001.jpg",
       "columns": "2",
       "start": "1",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2024 Poster Party/JorneScholiers_GRAPHICMATTERS_STICKER 2_Pagina_08_Afbeelding_0001.jpg",
       "columns": "2",
       "start": "auto",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2024 Poster Party/JorneScholiers_INSCRIPT_INSTA1.jpg",
       "columns": "2",
       "start": "auto",
       "new_row": true
     },
     {
+      "type": "image",
       "image": "/Projects/2024 Poster Party/JorneScholiers_INSCRIPT_INSTA2.jpg",
       "columns": "2",
       "start": "auto",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2024 Poster Party/JorneScholiers_INSCRIPT_INSTA3.jpg",
       "columns": "2",
       "start": "auto",

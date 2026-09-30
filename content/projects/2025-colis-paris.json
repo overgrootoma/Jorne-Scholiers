@@ -19,30 +19,35 @@
   ],
   "images": [
     {
+      "type": "image",
       "image": "/Projects/2025 Colis Paris/JorneScholiers_ColisPARIS_Packshot_1.webp",
       "columns": "6",
       "start": "auto",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2025 Colis Paris/JorneScholiers_ColisPARIS_Packshot_2.webp",
       "columns": "6",
       "start": "auto",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2025 Colis Paris/JorneScholiers_ColisPARIS_Packshot_3.webp",
       "columns": "6",
       "start": "auto",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2025 Colis Paris/JorneScholiers_ColisPARIS_Packshot_4.webp",
       "columns": "6",
       "start": "auto",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2025 Colis Paris/JorneScholiers_ColisPARIS_Packshot_5.webp",
       "columns": "6",
       "start": "auto",

@@ -16,84 +16,98 @@
   "description": "STFF is an experimental project that uses fungi as a starting point for music creation. Without a background in music, we treated fungal growth as a bridge between ourselves and sound, translating organic forms into visual and musical compositions. Through a custom-built tool, fungal structures were transformed into audio, resulting in a visual album, an immersive installation, and a series of physical artifacts.",
   "images": [
     {
+      "type": "image",
       "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_5.webp",
       "columns": "2",
       "start": "2",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_10.webp",
       "columns": "2",
       "start": "auto",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_1.webp",
       "columns": "6",
       "start": "auto",
       "new_row": true
     },
     {
+      "type": "image",
       "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_2.jpg",
       "columns": "4",
       "start": "auto",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_3.jpg",
       "columns": "2",
       "start": "auto",
       "new_row": true
     },
     {
+      "type": "image",
       "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_4.jpg",
       "columns": "4",
       "start": "auto",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_12.jpg",
       "columns": "3",
       "start": "4",
       "new_row": true
     },
     {
+      "type": "image",
       "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_7.jpg",
       "columns": "2",
       "start": "auto",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_12.webp",
       "columns": "6",
       "start": "auto",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_13.jpg",
       "columns": "3",
       "start": "auto",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_13.webp",
       "columns": "3",
       "start": "auto",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_14.webp",
       "columns": "4",
       "start": "3",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_16.jpg",
       "columns": "3",
       "start": "auto",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_17.jpg",
       "columns": "3",
       "start": "auto",

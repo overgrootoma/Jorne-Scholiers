@@ -1032,7 +1032,9 @@ function renderProjectPage(item, type, nav = null) {
   // Text blocks set in the CMS sit between the images, on the same grid.
   const renderTextBlock = (block) => `
       <div class="detail-gallery-text"${layoutAttributes(block.layout)}>
-        ${textToHtml(block.text)}
+        ${block.text.title ? `<h2 class="detail-gallery-text__title">${escapeHtml(block.text.title)}</h2>` : ''}
+        ${block.text.intro ? `<div class="detail-gallery-text__intro">${textToHtml(block.text.intro)}</div>` : ''}
+        ${block.text.body ? `<div class="detail-gallery-text__body">${textToHtml(block.text.body)}</div>` : ''}
       </div>`;
   let imageIndex = 0;
   const images = item.gallery?.length
@@ -1403,8 +1405,9 @@ function applyCmsProject(item, data, file) {
     if (!pageConfig.preview_image) pageConfig.preview_image = pageConfig.index_image;
   }
 
-  // Each entry is { image, text, alt, columns, start, new_row } (or a plain path). An entry with
-  // only text is a text block between the images; with both, the text follows the image.
+  // Each entry is a block: { type: "image", image, alt, columns, start, new_row } or
+  // { type: "text", title, intro, body, columns, start, new_row }. Text sections sit between
+  // the images on the same grid. (Rows without a type, or an image row with "text", still work.)
   const imageLayoutsByPath = {};
   const imageAltsByPath = {};
   const images = [];
@@ -1421,10 +1424,11 @@ function applyCmsProject(item, data, file) {
         if (typeof entry.alt === 'string' && entry.alt.trim()) imageAltsByPath[imagePath] = entry.alt.trim();
       }
     }
-    const text = typeof entry?.text === 'string' ? entry.text.trim() : '';
-    if (text) {
+    const field = (name) => (typeof entry?.[name] === 'string' ? entry[name].trim() : '');
+    const section = { title: field('title'), intro: field('intro'), body: field('body') || field('text') };
+    if (section.title || section.intro || section.body) {
       const layout = gridLayout(entry);
-      gallery.push({ text, layout: hasImage ? { columns: layout.columns, start: 0, newRow: false } : layout });
+      gallery.push({ text: section, layout: hasImage ? { columns: layout.columns, start: 0, newRow: false } : layout });
     }
   });
   if (images.length) {

@@ -13,60 +13,70 @@
   "description": "Of All Things is a magazine centered around a single object. We chose \"board\" as the theme, exploring its many interpretations. From snowboards to traffic signs. Through experimental layouts and typography we created an interesting magazine.\n\nEach \"board\" was given its own article, brought to life through experimental layouts and bold typography. The magazine is held together by a flexible six-column grid, while a color system inspired by traffic signs guides the chapters. The result is a magazine that constantly shifts in meaning yet remains connected through one word.",
   "images": [
     {
+      "type": "image",
       "image": "/Projects/2025 Off all things bord /RubenDejonge_JorneScholiers_magazine_Packshot_4.webp",
       "columns": "6",
       "start": "auto",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2025 Off all things bord /RubenDejonge_JorneScholiers_magazine_Packshot_1.webp",
       "columns": "6",
       "start": "auto",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2025 Off all things bord /RubenDejonge_JorneScholiers_magazine_Packshot_2.webp",
       "columns": "6",
       "start": "auto",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2025 Off all things bord /RubenDejonge_JorneScholiers_magazine_Packshot_3.webp",
       "columns": "6",
       "start": "auto",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2025 Off all things bord /RubenDejonge_JorneScholiers_magazine_Packshot_5.webp",
       "columns": "6",
       "start": "auto",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2025 Off all things bord /Packshots ZINE-10.webp",
       "columns": "6",
       "start": "auto",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2025 Off all things bord /zine-2.webp",
       "columns": "6",
       "start": "auto",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2025 Off all things bord /zine-3.webp",
       "columns": "6",
       "start": "auto",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2025 Off all things bord /zine-4.webp",
       "columns": "6",
       "start": "auto",
       "new_row": false
     },
     {
+      "type": "image",
       "image": "/Projects/2025 Off all things bord /zine-bewerkt.webp",
       "columns": "6",
       "start": "auto",

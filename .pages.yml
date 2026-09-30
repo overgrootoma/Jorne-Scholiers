@@ -82,44 +82,69 @@ content:
         description: Leave an empty line between paragraphs.
         type: text
       - name: images
-        label: Project images and text blocks
-        description: Shown on the project page in this order (drag to reorder). Each row is an image, a text block (leave the image empty and fill in Text), or an image followed by its text. On desktop the page is a grid of 6 columns; on phones everything is full width, one under the other. Upload new images into a folder for this project, e.g. "2027 Project name".
-        type: object
-        list:
-          collapsible:
-            collapsed: true
-            summary: "{columns} col · {image} {text}"
-        fields:
+        label: Project images and text sections
+        description: The content of the project page, in this order (drag to reorder). Add an Image or a Text section. On desktop and tablet the page is a grid of 6 columns; on phones everything is full width, one under the other. Upload new images into a folder for this project, e.g. "2027 Project name".
+        type: block
+        list: true
+        blockKey: type
+        blocks:
           - name: image
             label: Image
-            description: Leave empty for a text block.
-            type: image
-            options:
-              media: projects
+            fields:
+            - name: image
+              label: Image
+              type: image
+              options:
+                media: projects
+            - name: alt
+              label: Description for Google and screen readers (alt text)
+              description: What is on the image, e.g. "Isolation book open on a spread with a line grid". Empty = automatic.
+              type: string
+            - name: columns
+              label: Width (columns of 6)
+              description: 6 = full width, 3 = half, 2 = a third, 1 = a sixth.
+              type: select
+              options:
+                values: ["6", "5", "4", "3", "2", "1"]
+            - name: start
+              label: Start at column
+              description: auto = right after the previous block. Pick a later column to leave empty space before it.
+              type: select
+              options:
+                values: ["auto", "1", "2", "3", "4", "5", "6"]
+            - name: new_row
+              label: Start a new row
+              description: Leaves the rest of the previous row empty.
+              type: boolean
           - name: text
-            label: Text
-            description: Text shown between the images (a case-study explanation). With an image in the same row, the text comes right after the image. Leave an empty line between paragraphs.
-            type: text
-          - name: alt
-            label: Description for Google and screen readers (alt text)
-            description: What is on the image, e.g. "Isolation book open on a spread with a line grid". Empty = automatic.
-            type: string
-          - name: columns
-            label: Width (columns of 6)
-            description: 6 = full width, 3 = half, 2 = a third, 1 = a sixth.
-            type: select
-            options:
-              values: ["6", "5", "4", "3", "2", "1"]
-          - name: start
-            label: Start at column
-            description: auto = right after the previous image. Pick a later column to leave empty space before this image.
-            type: select
-            options:
-              values: ["auto", "1", "2", "3", "4", "5", "6"]
-          - name: new_row
-            label: Start a new row
-            description: Leaves the rest of the previous row empty.
-            type: boolean
+            label: Text section
+            fields:
+            - name: title
+              label: Title (optional)
+              type: string
+            - name: intro
+              label: Introduction (optional, shown larger)
+              type: text
+            - name: body
+              label: Body text (optional)
+              description: Leave an empty line between paragraphs.
+              type: text
+            - name: columns
+              label: Width (columns of 6)
+              description: 6 = full width, 3 = half, 2 = a third, 1 = a sixth.
+              type: select
+              options:
+                values: ["6", "5", "4", "3", "2", "1"]
+            - name: start
+              label: Start at column
+              description: auto = right after the previous block. Pick a later column to leave empty space before it.
+              type: select
+              options:
+                values: ["auto", "1", "2", "3", "4", "5", "6"]
+            - name: new_row
+              label: Start a new row
+              description: Leaves the rest of the previous row empty.
+              type: boolean
       - name: homepage_images
         label: Homepage hover images
         description: Up to 4 images shown when hovering the project on the homepage. Empty = the first project images.
