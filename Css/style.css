@@ -6089,7 +6089,7 @@ body.page-detail .project-one-liner {
   font-size: 0.68rem;
   font-weight: 500;
   line-height: 1.35;
-  opacity: 0.6;
+  color: var(--black);
 }
 
 /* ---------- Type: thin everywhere, hierarchy from size only ----------
