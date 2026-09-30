@@ -1,6 +1,10 @@
 {
   "title": "Brilliant Books",
   "one_liner": "Series of artist books in a wood and fabric edition",
+  "tags": [
+    "book",
+    "editorial"
+  ],
   "short_title": "",
   "year": 2025,
   "order": 3,

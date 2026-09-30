@@ -1,6 +1,10 @@
 {
   "title": "Poster Party",
   "one_liner": "Poster series with flyer, sticker and social media posts",
+  "tags": [
+    "posters",
+    "print"
+  ],
   "year": 2024,
   "order": 8,
   "hidden": false,

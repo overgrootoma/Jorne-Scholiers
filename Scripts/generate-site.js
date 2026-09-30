@@ -976,7 +976,10 @@ function renderProjectStepNav(nav) {
 // Desktop grid position picked per image in the CMS: 1-6 columns wide, an optional start
 // column (leaves the columns before it empty) and "start a new row".
 function layoutAttribute(item, file) {
-  const layout = item.imageLayouts?.[file];
+  return layoutAttributes(item.imageLayouts?.[file]);
+}
+
+function layoutAttributes(layout) {
   if (!layout) return '';
   let attributes = '';
   if (layout.columns !== 6) attributes += ` data-cols="${layout.columns}"`;
@@ -986,7 +989,9 @@ function layoutAttribute(item, file) {
 }
 
 function hasCustomGrid(item) {
-  return Object.values(item.imageLayouts || {}).some((layout) => layout.columns !== 6 || layout.start || layout.newRow);
+  const custom = (layout) => layout && (layout.columns !== 6 || layout.start || layout.newRow);
+  return Object.values(item.imageLayouts || {}).some(custom)
+    || (item.gallery || []).some((block) => block.text && custom(block.layout));
 }
 
 // Alt text set per image in the CMS, or "Isolation, creative coding by Jorne Scholiers — image 3".
@@ -1004,8 +1009,7 @@ function renderProjectPage(item, type, nav = null) {
   const galleryClass = `${pageConfig.gallery_class || 'detail-gallery'}${hasCustomGrid(item) ? ' detail-gallery--grid' : ''}`;
   const orderedImages = orderFilesByPreference(item.images, pageConfig.image_order);
   const orderedOtherFiles = orderFilesByPreference(item.otherFiles, pageConfig.other_file_order);
-  const images = orderedImages
-    .map((file, idx) => {
+  const renderFigure = (file, idx) => {
       const src = toUrlPath(...projectFileParts(item, base, file));
       const dimensions = imageDimensionAttributes(path.join(root, ...projectFileParts(item, base, file)));
       const loading = idx === 0 ? ' loading="eager" fetchpriority="high"' : ' loading="lazy"';
@@ -1024,8 +1028,18 @@ function renderProjectPage(item, type, nav = null) {
         </div>
         ${type === 'projects' ? '' : `<figcaption>${escapeHtml(file)}</figcaption>`}
       </figure>`;
-    })
-    .join('\n');
+  };
+  // Text blocks set in the CMS sit between the images, on the same grid.
+  const renderTextBlock = (block) => `
+      <div class="detail-gallery-text"${layoutAttributes(block.layout)}>
+        ${textToHtml(block.text)}
+      </div>`;
+  let imageIndex = 0;
+  const images = item.gallery?.length
+    ? item.gallery
+      .map((block) => (block.image ? renderFigure(block.image, imageIndex++) : renderTextBlock(block)))
+      .join('\n')
+    : orderedImages.map(renderFigure).join('\n');
 
   const mediaBlocks = [];
   const downloadLinks = [];
@@ -1157,7 +1171,9 @@ function renderProjectPage(item, type, nav = null) {
       <div class="project-information-content">
         ${backLink}
         <h1 class="title-font">${title}</h1>
-        ${item.oneLiner ? `<p class="project-one-liner">${escapeHtml(item.oneLiner)}</p>` : ''}
+        ${item.tags?.length
+    ? `<ul class="project-tags" aria-label="Type of project">${item.tags.map((tag) => `<li>${escapeHtml(tag)}</li>`).join('')}</ul>`
+    : (item.oneLiner ? `<p class="project-one-liner">${escapeHtml(item.oneLiner)}</p>` : '')}
         ${descriptionBlock}${informationFilesBlock}
       </div>
     </aside>
@@ -1387,26 +1403,38 @@ function applyCmsProject(item, data, file) {
     if (!pageConfig.preview_image) pageConfig.preview_image = pageConfig.index_image;
   }
 
-  // Each entry is { image, columns, start, new_row } (or a plain path).
+  // Each entry is { image, text, alt, columns, start, new_row } (or a plain path). An entry with
+  // only text is a text block between the images; with both, the text follows the image.
   const imageLayoutsByPath = {};
   const imageAltsByPath = {};
-  const images = (Array.isArray(data.images) ? data.images : [])
-    .map((entry) => {
-      const source = typeof entry === 'string' ? entry : entry?.image;
-      const imagePath = cmsFilePath(source, `${file} images`);
-      if (!imagePath || !isImage(imagePath)) return '';
+  const images = [];
+  const gallery = [];
+  (Array.isArray(data.images) ? data.images : []).forEach((entry) => {
+    const source = typeof entry === 'string' ? entry : entry?.image;
+    const imagePath = cmsFilePath(source, `${file} images`);
+    const hasImage = Boolean(imagePath && isImage(imagePath));
+    if (hasImage) {
+      images.push(imagePath);
+      gallery.push({ image: imagePath });
       if (entry && typeof entry === 'object') {
         imageLayoutsByPath[imagePath] = gridLayout(entry);
         if (typeof entry.alt === 'string' && entry.alt.trim()) imageAltsByPath[imagePath] = entry.alt.trim();
       }
-      return imagePath;
-    })
-    .filter(Boolean);
+    }
+    const text = typeof entry?.text === 'string' ? entry.text.trim() : '';
+    if (text) {
+      const layout = gridLayout(entry);
+      gallery.push({ text, layout: hasImage ? { columns: layout.columns, start: 0, newRow: false } : layout });
+    }
+  });
   if (images.length) {
     item.images = images;
     item.imageLayouts = imageLayoutsByPath;
     item.imageAlts = imageAltsByPath;
+    if (gallery.some((block) => block.text)) item.gallery = gallery;
   }
+  const tags = stringList(data.tags);
+  if (tags.length) item.tags = tags;
 
   item.cmsHomepageImages = (Array.isArray(data.homepage_images) ? data.homepage_images : [])
     .map((image) => cmsFilePath(image, `${file} homepage_images`))

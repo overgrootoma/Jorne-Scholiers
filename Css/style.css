@@ -5788,25 +5788,25 @@ body.page-home .site-footer * {
     row-gap: 28px;
   }
 
-  body.page-detail .detail-gallery.detail-gallery--grid > figure {
+  body.page-detail .detail-gallery.detail-gallery--grid > :is(figure, .detail-gallery-text) {
     grid-column: auto / span 6;
     width: auto;
     max-width: none;
   }
 
-  body.page-detail .detail-gallery.detail-gallery--grid > figure[data-cols="1"] { grid-column: auto / span 1; }
-  body.page-detail .detail-gallery.detail-gallery--grid > figure[data-cols="2"] { grid-column: auto / span 2; }
-  body.page-detail .detail-gallery.detail-gallery--grid > figure[data-cols="3"] { grid-column: auto / span 3; }
-  body.page-detail .detail-gallery.detail-gallery--grid > figure[data-cols="4"] { grid-column: auto / span 4; }
-  body.page-detail .detail-gallery.detail-gallery--grid > figure[data-cols="5"] { grid-column: auto / span 5; }
+  body.page-detail .detail-gallery.detail-gallery--grid > :is(figure, .detail-gallery-text)[data-cols="1"] { grid-column: auto / span 1; }
+  body.page-detail .detail-gallery.detail-gallery--grid > :is(figure, .detail-gallery-text)[data-cols="2"] { grid-column: auto / span 2; }
+  body.page-detail .detail-gallery.detail-gallery--grid > :is(figure, .detail-gallery-text)[data-cols="3"] { grid-column: auto / span 3; }
+  body.page-detail .detail-gallery.detail-gallery--grid > :is(figure, .detail-gallery-text)[data-cols="4"] { grid-column: auto / span 4; }
+  body.page-detail .detail-gallery.detail-gallery--grid > :is(figure, .detail-gallery-text)[data-cols="5"] { grid-column: auto / span 5; }
 
-  body.page-detail .detail-gallery.detail-gallery--grid > figure[data-new-row] { grid-column-start: 1; }
-  body.page-detail .detail-gallery.detail-gallery--grid > figure[data-start="1"] { grid-column-start: 1; }
-  body.page-detail .detail-gallery.detail-gallery--grid > figure[data-start="2"] { grid-column-start: 2; }
-  body.page-detail .detail-gallery.detail-gallery--grid > figure[data-start="3"] { grid-column-start: 3; }
-  body.page-detail .detail-gallery.detail-gallery--grid > figure[data-start="4"] { grid-column-start: 4; }
-  body.page-detail .detail-gallery.detail-gallery--grid > figure[data-start="5"] { grid-column-start: 5; }
-  body.page-detail .detail-gallery.detail-gallery--grid > figure[data-start="6"] { grid-column-start: 6; }
+  body.page-detail .detail-gallery.detail-gallery--grid > :is(figure, .detail-gallery-text)[data-new-row] { grid-column-start: 1; }
+  body.page-detail .detail-gallery.detail-gallery--grid > :is(figure, .detail-gallery-text)[data-start="1"] { grid-column-start: 1; }
+  body.page-detail .detail-gallery.detail-gallery--grid > :is(figure, .detail-gallery-text)[data-start="2"] { grid-column-start: 2; }
+  body.page-detail .detail-gallery.detail-gallery--grid > :is(figure, .detail-gallery-text)[data-start="3"] { grid-column-start: 3; }
+  body.page-detail .detail-gallery.detail-gallery--grid > :is(figure, .detail-gallery-text)[data-start="4"] { grid-column-start: 4; }
+  body.page-detail .detail-gallery.detail-gallery--grid > :is(figure, .detail-gallery-text)[data-start="5"] { grid-column-start: 5; }
+  body.page-detail .detail-gallery.detail-gallery--grid > :is(figure, .detail-gallery-text)[data-start="6"] { grid-column-start: 6; }
 }
 
 /* ---------- Motion: soft, quick, blue ---------- */
@@ -6161,4 +6161,45 @@ body.page-detail .project-one-liner {
 body.page-detail .project-information-content h1,
 body.page-detail .project-information-toggle__title {
   font-size: 1.15rem !important;
+}
+
+/* Project tags: small blue blocks in the pixel font under the project title. */
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 20px;
+  padding: 0;
+  list-style: none;
+}
+
+.project-tags li {
+  padding: 5px 8px 4px;
+  color: var(--white);
+  background: var(--accent-blue);
+  font-family: var(--title-font);
+  font-size: 0.62rem;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Text blocks between the project images (case-study notes), on the same grid as the images. */
+.detail-gallery-text {
+  max-width: 62ch;
+  margin: 0 0 6px;
+  padding: clamp(10px, 2vh, 24px) 0;
+  color: var(--black);
+}
+
+.detail-gallery-text p {
+  margin: 0 0 0.9em;
+  font-family: var(--body-font) !important;
+  font-size: 0.86rem !important;
+  font-weight: 300 !important;
+  line-height: 1.55;
+}
+
+.detail-gallery-text p:last-child {
+  margin-bottom: 0;
 }

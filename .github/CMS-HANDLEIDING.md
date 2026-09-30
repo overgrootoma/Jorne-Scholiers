@@ -70,6 +70,17 @@ ernaast.
 Foto D vult kolom 1 tot 3; kolom 4 tot 6 blijft leeg omdat E een nieuwe rij begint.
 Wil je D rechts, met de witruimte links? Zet dan bij D **Start at column** op **4**.
 
+## 4a. Tekst tussen de foto's en tags
+
+**Tekstblok tussen foto's** (voor een case study): voeg bij **Project images and text blocks**
+een rij toe, laat **Image** leeg en vul **Text** in. Het tekstblok staat op hetzelfde grid als
+de foto's: zet het bv. op **3** kolommen naast een foto van **3** kolommen. Vul je in één rij
+zowel een foto als tekst in, dan komt de tekst meteen na die foto.
+
+**Tags** zijn de kleine blauwe blokjes onder de projecttitel, bv. `book`, `album art`,
+`installation`. Je past ze aan bij **Tags (blue blocks)**, één woord of korte term per regel.
+De **One-liner** staat onder de kaartjes op de Projects-pagina.
+
 ## 4b. Gevonden worden op Google
 
 Per project kan je in het CMS nog drie dingen invullen (alles is optioneel):

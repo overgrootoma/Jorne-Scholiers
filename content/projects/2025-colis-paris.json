@@ -1,6 +1,10 @@
 {
   "title": "Colis Paris",
   "one_liner": "Packaging and printed matter for a Paris design studio",
+  "tags": [
+    "packaging",
+    "print"
+  ],
   "short_title": "",
   "year": 2025,
   "order": 5,
