@@ -5741,18 +5741,20 @@ body.page-detail .project-information .detail-files {
   border-bottom: 0 !important;
 }
 
-/* Footer: light Open Sans in grey so it stays in the background (homepage included). */
+/* Footer: same style as the reading text (Open Sans Medium, same size and colour), homepage included. */
 .site-footer,
 .site-footer *,
 body.page-home .site-footer,
 body.page-home .site-footer * {
   font-family: var(--body-font) !important;
-  font-weight: 300 !important;
+  font-size: 0.86rem !important;
+  font-weight: 500 !important;
+  line-height: 1.55;
   letter-spacing: 0.01em;
 }
 
 .site-footer-copy {
-  color: #8a8a8a;
+  color: var(--black);
 }
 
 /* Mobile homepage: more air between the sections (Archive, About, Exhibitions, ...). */
