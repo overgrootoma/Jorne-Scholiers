@@ -5569,7 +5569,7 @@ body.page-detail .detail-description,
 body.page-detail .detail-description p,
 body.page-detail .project-information p {
   font-family: var(--body-font) !important;
-  font-weight: 300 !important;
+  font-weight: 500 !important;
   letter-spacing: 0.01em;
 }
 
@@ -6072,7 +6072,7 @@ body.page-detail .project-one-liner {
   margin: 0 0 18px;
   font-family: var(--body-font) !important;
   font-size: 0.72rem;
-  font-weight: 300 !important;
+  font-weight: 500 !important;
   line-height: 1.4;
   opacity: 0.6;
 }
@@ -6087,7 +6087,7 @@ body.page-detail .project-one-liner {
   margin-top: -4px;
   font-family: var(--body-font);
   font-size: 0.68rem;
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1.35;
   opacity: 0.6;
 }
@@ -6119,7 +6119,7 @@ main.page-project-overview {
   font-weight: 400 !important;
 }
 
-/* Reading text in Open Sans: light and a size up. */
+/* Reading text in Open Sans: medium weight and a size up. */
 p,
 .detail-description,
 .detail-description p,
@@ -6129,7 +6129,7 @@ p,
 .project-one-liner,
 .project-overview-summary,
 .mobile-intro-copy {
-  font-weight: 300 !important;
+  font-weight: 500 !important;
 }
 
 body.page-detail .detail-description,
@@ -6196,7 +6196,7 @@ body.page-detail .project-information-toggle__title {
   margin: 0 0 0.9em;
   font-family: var(--body-font) !important;
   font-size: 0.86rem !important;
-  font-weight: 300 !important;
+  font-weight: 500 !important;
   line-height: 1.55;
 }
 
