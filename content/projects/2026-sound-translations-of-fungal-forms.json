@@ -45,17 +45,10 @@
     },
     {
       "type": "image",
-      "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_3.jpg",
-      "columns": "2",
-      "start": "auto",
-      "new_row": true
-    },
-    {
-      "type": "image",
       "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_4.jpg",
       "columns": "4",
-      "start": "auto",
-      "new_row": false
+      "start": "2",
+      "new_row": true
     },
     {
       "type": "image",
