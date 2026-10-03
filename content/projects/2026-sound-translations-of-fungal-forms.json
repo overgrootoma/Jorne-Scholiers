@@ -105,11 +105,6 @@
       "columns": "3",
       "start": "auto",
       "new_row": false
-    },
-    {
-      "type": "text",
-      "title": "Remove",
-      "new_row": false
     }
   ],
   "homepage_images": [
