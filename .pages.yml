@@ -85,7 +85,12 @@ content:
         label: Project images and text sections
         description: The content of the project page, in this order (drag to reorder). Add an Image or a Text section. On desktop and tablet the page is a grid of 6 columns; on phones everything is full width, one under the other. Upload new images into a folder for this project, e.g. "2027 Project name".
         type: block
-        list: true
+        # Collapsed rows show their number, type, width and the image file (or the text title);
+        # Pages CMS can only show text here, not a thumbnail.
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{index}. {type} · {columns} col · {image}{title}"
         blockKey: type
         blocks:
           - name: image
