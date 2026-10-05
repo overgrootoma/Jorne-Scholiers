@@ -1,6 +1,6 @@
 # E-mailhandtekening
 
-De handtekening is één bewegende afbeelding (`signature.gif`, 801 × 113 px) in drie kolommen:
+De handtekening is één bewegende afbeelding (`signature-3col.gif`, 801 × 113 px) in drie kolommen:
 je logo-animatie, dan je naam, functie en stad, dan e-mail, telefoon en website, in het
 pixellettertype van je site.
 Omdat het één afbeelding op ware grootte is, kan Mail de kolommen, grootte of het lettertype niet
