@@ -17,10 +17,9 @@ contactgegevens, in de stijl van je site. De afbeelding staat online op jornesch
 
 ## Goed om te weten
 
-- Logo-animatie links, je gegevens rechts. Het logo en je naam/functie zijn afbeeldingen die al
-  op hun echte grootte staan, en de tabel heeft vaste breedtes, zodat Mail niets kan vergroten
-  of onder elkaar zetten.
-- De contactgegevens zijn gewone, klikbare tekst. In mailprogramma's die geen webfonts laden
-  (de meeste), verschijnen ze in Courier New.
-- Sommige ontvangers zien afbeeldingen pas als ze "afbeeldingen laden" aanklikken.
-- Gegevens aanpassen? Wijzig de tekst in `signature.html`, push, en kopieer opnieuw.
+- Logo-animatie links, je gegevens rechts. Alle tekst is een kleine afbeelding in het
+  pixellettertype, op echte grootte, zodat het er in elk mailprogramma hetzelfde uitziet.
+- Elke regel blijft klikbaar: e-mail, telefoon, website, Instagram en LinkedIn.
+- Sommige ontvangers zien afbeeldingen pas als ze "afbeeldingen laden" aanklikken; ze zien dan
+  eerst de tekst van elke regel.
+- Gegevens aanpassen? Vraag het aan Claude: de afbeeldingen worden dan opnieuw gemaakt.
