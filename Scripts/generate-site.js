@@ -1282,6 +1282,8 @@ ${urls}
 `);
   writeFile('robots.txt', `User-agent: *
 Allow: /
+Disallow: /email-signature/
+Disallow: /content/
 
 Sitemap: ${absoluteUrl('sitemap.xml')}
 `);
