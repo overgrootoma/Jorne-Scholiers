@@ -17,10 +17,10 @@ contactgegevens, in de stijl van je site. De afbeelding staat online op jornesch
 
 ## Goed om te weten
 
-- De hele handtekening is één bewegende afbeelding (`signature.gif`, 512 × 138 px, logo-animatie
-  links en je gegevens in het pixellettertype rechts). Zo kan je mailprogramma de opmaak, grootte
-  of het lettertype niet meer veranderen.
-- Een klik op de handtekening opent jornescholiers.be. Je e-mailadres en nummer zijn niet apart
-  klikbaar (ze staan in de afbeelding); mensen kunnen je gewoon antwoorden.
+- Logo-animatie links, je gegevens rechts. Het logo en je naam/functie zijn afbeeldingen die al
+  op hun echte grootte staan, en de tabel heeft vaste breedtes, zodat Mail niets kan vergroten
+  of onder elkaar zetten.
+- De contactgegevens zijn gewone, klikbare tekst. In mailprogramma's die geen webfonts laden
+  (de meeste), verschijnen ze in Courier New.
 - Sommige ontvangers zien afbeeldingen pas als ze "afbeeldingen laden" aanklikken.
-- Gegevens aanpassen? Vraag het aan Claude: de afbeelding wordt dan opnieuw gemaakt.
+- Gegevens aanpassen? Wijzig de tekst in `signature.html`, push, en kopieer opnieuw.
