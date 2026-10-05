@@ -17,14 +17,18 @@ const webglAvailable = () => {
   }
 };
 
+// Phones and tablets keep the flat logo image, so nothing heavy is loaded there.
+const smallOrTouchScreen = window.matchMedia('(max-width: 900px), (hover: none), (pointer: coarse)').matches;
+
 const start = async () => {
-  if (!slot || !canvas || !webglAvailable()) return;
+  if (!slot || !canvas || smallOrTouchScreen || !webglAvailable()) return;
   const THREE = await import('three');
   const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js');
   const { DRACOLoader } = await import('three/addons/loaders/DRACOLoader.js');
 
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  // Render at a higher resolution than the screen (it is a small canvas) for crisp edges.
+  renderer.setPixelRatio(Math.min((window.devicePixelRatio || 1) * 1.5, 3));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
 
