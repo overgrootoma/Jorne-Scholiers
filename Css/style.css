@@ -6235,3 +6235,25 @@ body.page-detail .project-information-toggle__title {
     font-size: 1.1rem !important;
   }
 }
+
+/* 3D corner logo (Scripts/logo3d.js): the flat logo shows until the model has loaded. */
+/* Rendered inverted, like the flat logo image, so the slot's difference blend keeps it dark on
+   light backgrounds and light over dark images. */
+.site-logo-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  filter: invert(1);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 500ms var(--ease-soft);
+}
+
+.site-logo-slot.has-3d-logo img {
+  opacity: 0;
+}
+
+.site-logo-slot.has-3d-logo .site-logo-canvas {
+  opacity: 1;
+}

@@ -46,12 +46,15 @@
       sessionStorage.removeItem('swoosh');
     } catch (err) {}
   </script>
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
+  <script type="module" src="Scripts/logo3d.js"></script>
   <link rel="stylesheet" href="Css/style.css">
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","@id":"https://jornescholiers.be/#jorne-scholiers","name":"Jorne Scholiers","url":"https://jornescholiers.be/","image":"https://jornescholiers.be/images/Jorne%20Scholiers%20about%20picture.jpg","jobTitle":"Graphic and Visual Designer","description":"Jorne Scholiers is a graphic and visual designer in Ghent (Gent), Belgium, making experimental work across visual identity, editorial design, typography, creative coding and photography.","email":"mailto:jorne.scholiers@icloud.com","sameAs":["https://www.instagram.com/byjorne/","https://www.linkedin.com/in/jorne-scholiers-28555923b/"],"affiliation":{"@type":"EducationalOrganization","name":"LUCA School of Arts","url":"https://www.luca-arts.be/"},"alumniOf":{"@type":"EducationalOrganization","name":"LUCA School of Arts"},"address":{"@type":"PostalAddress","addressLocality":"Ghent","addressRegion":"East Flanders","addressCountry":"BE"},"homeLocation":{"@type":"Place","name":"Ghent, Belgium"},"knowsAbout":["Graphic design","Visual design","Experimental graphic design","Visual identity","Editorial design","Book design","Typography","Poster design","Creative coding","Generative design","Experimental photography"]}</script>
 </head>
 <body class="page-simple page-about">
   <a class="site-logo-slot" href="index.html" aria-label="Back to homepage">
     <img src="images/Asset%201.svg" alt="" width="560" height="198">
+    <canvas class="site-logo-canvas" aria-hidden="true"></canvas>
   </a>
 
 <main id="main-content" class="page-simple">

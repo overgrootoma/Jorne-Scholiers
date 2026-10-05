@@ -4,3 +4,6 @@ __pycache__/
 *.vsix
 node_modules/
 node_modules/
+
+# Original 3D export (161 MB, too large for GitHub); the site uses images/3d-logo.glb
+images/3D logo site.glb

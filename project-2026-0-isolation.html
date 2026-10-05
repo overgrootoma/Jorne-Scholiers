@@ -46,12 +46,15 @@
       sessionStorage.removeItem('swoosh');
     } catch (err) {}
   </script>
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
+  <script type="module" src="Scripts/logo3d.js"></script>
   <link rel="stylesheet" href="Css/style.css">
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"CreativeWork","name":"Isolation","url":"https://jornescholiers.be/project-2026-0-isolation.html","description":"This book explores isolation both as a visual theme and as a design method. Moving away from traditional design software, I developed a custom tool to generate and transform images. Using 100 photographs sourced from Unsplash through the keyword “isolation,” the tool reconstructs each image into a…","image":"https://jornescholiers.be/images/cover%20photo's/Isolation.png","dateCreated":"2026","creator":{"@id":"https://jornescholiers.be/#jorne-scholiers"},"author":{"@type":"Person","name":"Jorne Scholiers","url":"https://jornescholiers.be/"},"locationCreated":{"@type":"Place","name":"Ghent, Belgium"},"inLanguage":"en","keywords":"creative coding, generative design, editorial design, experimental photography"}</script>
 </head>
 <body class="page-detail">
   <a class="site-logo-slot" href="index.html" aria-label="Back to homepage">
     <img src="images/Asset%201.svg" alt="" width="560" height="198">
+    <canvas class="site-logo-canvas" aria-hidden="true"></canvas>
   </a>
 
 <main id="main-content" class="page-detail">

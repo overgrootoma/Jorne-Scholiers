@@ -553,6 +553,8 @@ function renderHead({
       sessionStorage.removeItem('swoosh');
     } catch (err) {}
   </script>
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
+  <script type="module" src="Scripts/logo3d.js"></script>
   <link rel="stylesheet" href="Css/style.css">${structuredData}
 </head>`;
 }
@@ -1251,6 +1253,7 @@ function renderFooter() {
 function renderLogoSlot() {
   return `<a class="site-logo-slot" href="index.html" aria-label="Back to homepage">
     <img src="images/Asset%201.svg" alt="" width="560" height="198">
+    <canvas class="site-logo-canvas" aria-hidden="true"></canvas>
   </a>`;
 }
 
