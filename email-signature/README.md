@@ -1,11 +1,10 @@
 # E-mailhandtekening
 
-De handtekening is één bewegende afbeelding (`signature-3col.gif`, 801 × 113 px) in drie kolommen:
-je logo-animatie, dan je naam, functie en stad, dan e-mail, telefoon en website, in het
-pixellettertype van je site.
-Omdat het één afbeelding op ware grootte is, kan Mail de kolommen, grootte of het lettertype niet
-meer veranderen. Een klik erop opent jornescholiers.be. Daaronder staan Instagram en LinkedIn als
-kleine, klikbare pixeltekst.
+De handtekening is één bewegende afbeelding (`signature-columns.gif`, 801 × 113 px) in drie vaste
+kolommen: je logo-animatie | je naam, functie en stad | e-mail, telefoon, website, Instagram en
+LinkedIn, in het pixellettertype van je site. Omdat alles in één afbeelding op ware grootte staat,
+kan Mail niets verschuiven, vergroten of van lettertype veranderen. Een klik erop opent
+jornescholiers.be.
 
 ## Installeren in Apple Mail
 
