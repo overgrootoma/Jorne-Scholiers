@@ -1,8 +1,8 @@
 # E-mailhandtekening
 
 `signature.html` is je e-mailhandtekening: eerst je logo-animatie, dan je naam, functie en
-contactgegevens, in de stijl van je site. De beelden staan online op jornescholiers.be
-(`images/logo klein.gif` en de twee PNG's in deze map), maar worden nergens op de site getoond.
+contactgegevens, in de stijl van je site. De afbeelding staat online op jornescholiers.be
+(`email-signature/signature.gif`, gemaakt uit `images/logo klein.gif`), maar wordt nergens op de site getoond.
 
 ## Installeren
 
@@ -17,9 +17,10 @@ contactgegevens, in de stijl van je site. De beelden staan online op jornescholi
 
 ## Goed om te weten
 
-- Je naam en functie zijn kleine afbeeldingen in het pixellettertype (Silkscreen), zodat ze er
-  overal hetzelfde uitzien. De contactgegevens zijn gewone tekst, zodat ze klikbaar blijven: in
-  mailprogramma's die geen webfonts laden, verschijnen ze in Courier New.
-- Sommige ontvangers zien afbeeldingen pas als ze "afbeeldingen laden" aanklikken. Ze zien dan
-  eerst je naam als tekst.
-- Gegevens aanpassen? Wijzig de tekst in `signature.html`, push, en kopieer opnieuw.
+- De hele handtekening is één bewegende afbeelding (`signature.gif`, 512 × 138 px, logo-animatie
+  links en je gegevens in het pixellettertype rechts). Zo kan je mailprogramma de opmaak, grootte
+  of het lettertype niet meer veranderen.
+- Een klik op de handtekening opent jornescholiers.be. Je e-mailadres en nummer zijn niet apart
+  klikbaar (ze staan in de afbeelding); mensen kunnen je gewoon antwoorden.
+- Sommige ontvangers zien afbeeldingen pas als ze "afbeeldingen laden" aanklikken.
+- Gegevens aanpassen? Vraag het aan Claude: de afbeelding wordt dan opnieuw gemaakt.
