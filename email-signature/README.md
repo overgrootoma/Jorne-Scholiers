@@ -1,10 +1,8 @@
 # E-mailhandtekening
 
-De handtekening is één bewegende afbeelding (`signature-columns.gif`, 801 × 113 px) in drie vaste
-kolommen: je logo-animatie | je naam, functie en stad | e-mail, telefoon, website, Instagram en
-LinkedIn, in het pixellettertype van je site. Omdat alles in één afbeelding op ware grootte staat,
-kan Mail niets verschuiven, vergroten of van lettertype veranderen. Een klik erop opent
-jornescholiers.be.
+Bovenaan je logo-animatie en je naam in het pixellettertype (afbeeldingen). Daaronder je functie,
+e-mail, telefoon, website, Instagram en LinkedIn als gewone tekst in vette Helvetica, zodat elke
+link klikbaar is. Alles staat onder elkaar, zodat Mail niets kan verschuiven.
 
 ## Installeren in Apple Mail
 
@@ -12,5 +10,6 @@ jornescholiers.be.
 2. Open **https://jornescholiers.be/email-signature/signature.html** in **Safari**.
 3. Klik ergens op de pagina, druk **Cmd + A** en daarna **Cmd + C**.
 4. In Mail: kies je iCloud-account, klik **+**, klik in het rechtervak en druk **Cmd + V**.
+5. Vink **"Gebruik altijd mijn standaardlettertype"** uit.
 
-Gegevens aanpassen? Vraag het aan Claude: de afbeelding wordt dan opnieuw gemaakt.
+Gegevens aanpassen? Wijzig de tekst in `signature.html`, push, en kopieer opnieuw.
