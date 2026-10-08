@@ -1,8 +1,11 @@
 # E-mailhandtekening
 
-Bovenaan je logo-animatie en je naam in het pixellettertype (afbeeldingen). Daaronder je functie,
-e-mail, telefoon, website, Instagram en LinkedIn als gewone tekst in vette Helvetica, zodat elke
-link klikbaar is. Alles staat onder elkaar, zodat Mail niets kan verschuiven.
+Drie kolommen: je logo-animatie | je naam (pixellettertype), Visual Designer en Ghent, Belgium |
+je e-mail, telefoon, website, Instagram en LinkedIn. Behalve het logo en je naam is alles gewone
+tekst in vette Helvetica, zodat elke link klikbaar is.
+
+Komen de kolommen na het plakken toch onder elkaar te staan? Gebruik dan de methode met het
+bestand hieronder ("Exact installeren").
 
 ## Installeren in Apple Mail
 
@@ -13,3 +16,11 @@ link klikbaar is. Alles staat onder elkaar, zodat Mail niets kan verschuiven.
 5. Vink **"Gebruik altijd mijn standaardlettertype"** uit.
 
 Gegevens aanpassen? Wijzig de tekst in `signature.html`, push, en kopieer opnieuw.
+
+## Exact installeren (als plakken de kolommen breekt)
+
+1. Maak in Mail een handtekening met als tekst `TEMP` en sluit Mail (**Cmd + Q**).
+2. Finder → **Shift + Cmd + G** → `~/Library/Mail/V10/MailData/Signatures/` (of V11/V9).
+3. Open het nieuwste `.mailsignature`-bestand met TextEdit, laat de regels bovenaan staan en
+   vervang alles onder de eerste lege regel door de inhoud van `mail-signature.html`. Bewaar.
+4. Rechtsklik → **Toon info** → vink **Geblokkeerd** aan. Open Mail.
