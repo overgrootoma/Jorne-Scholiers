@@ -55,26 +55,14 @@ Per foto stel je drie dingen in:
 
 Een foto die niet meer past in de rij, schuift vanzelf door naar de volgende rij.
 
-**Volgorde wijzigen:** onder **Project images and text sections** staat elke foto of tekst
-als één dichtgeklapte rij, bv. `7.  stffbos-2  ·  6/6 wide  ·  start auto  ·  new row: true`.
-Sleep een rij aan de **puntjes links** naar boven of beneden (of klik op de puntjes en gebruik
-de pijltjestoetsen). Klik op een rij om ze open te klappen en aan te passen. Geef een nieuwe foto
-een **Short name** (bv. "bos 2"), zodat je ze in de lijst meteen herkent.
-Op een telefoon (smaller dan 700 px) staan alle foto's altijd onder elkaar op volle breedte.
+**Volgorde wijzigen:** bovenaan bij **Photo order (drag the tiles)** staan alle foto's van het
+project als kleine vakjes. Sleep een vakje naar een andere plek en klik **Save**: zo staan de
+foto's op de pagina. Tekstsecties blijven op hun plek staan. Breedte en positie van elke foto
+stel je in onder **Project images and text sections**; die instellingen verhuizen mee met de foto.
 
-**Voorbeeld:** drie foto's naast elkaar, daaronder één foto op de linkerhelft met witruimte
-ernaast.
-
-| Foto | Width | Start at column | Start a new row |
-|------|-------|-----------------|-----------------|
-| A    | 2     | auto            | uit             |
-| B    | 2     | auto            | uit             |
-| C    | 2     | auto            | uit             |
-| D    | 3     | auto            | uit             |
-| E    | 6     | auto            | **aan**         |
-
-Foto D vult kolom 1 tot 3; kolom 4 tot 6 blijft leeg omdat E een nieuwe rij begint.
-Wil je D rechts, met de witruimte links? Zet dan bij D **Start at column** op **4**.
+Een nieuwe foto? Voeg ze toe als vakje bij **Photo order** (ze komt dan op volle breedte op de
+pagina) en stel daarna eventueel haar breedte in onder **Project images and text sections**.
+Een foto weghalen doe je op beide plekken.
 
 ## 4a. Tekstsecties tussen de foto's en tags
 

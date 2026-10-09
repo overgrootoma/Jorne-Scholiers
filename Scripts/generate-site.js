@@ -1372,6 +1372,37 @@ function readCmsProjects() {
     .map((file) => ({ file: `content/projects/${file}`, data: readJsonFile(path.join(cmsProjectsDir, file), {}) }));
 }
 
+function cmsPathKey(value) {
+  if (typeof value !== 'string' || !value.trim()) return '';
+  let cleaned = value.trim().split(/[?#]/)[0];
+  try {
+    cleaned = decodeURIComponent(cleaned);
+  } catch (err) {
+    // Keep the raw value.
+  }
+  return path.posix.normalize(cleaned.replace(/\\/g, '/').replace(/^\/+/, ''));
+}
+
+// "photo_order" holds the drag-and-drop thumbnails in the CMS and sets the order of the images.
+// Text sections keep their place in the list; the images fill the other places in tile order,
+// each with its own width and position settings. A tile without an image block becomes a
+// full-width image; image blocks without a tile follow after the ordered ones.
+function orderBlocksByTiles(blocks, tiles) {
+  const order = (Array.isArray(tiles) ? tiles : []).map(cmsPathKey).filter(Boolean);
+  if (!order.length) return blocks;
+  const blockImage = (entry) => cmsPathKey(typeof entry === 'string' ? entry : entry?.image);
+  const isImageBlock = (entry) => Boolean(blockImage(entry)) && !(entry && typeof entry === 'object' && entry.type === 'text');
+  const unused = blocks.filter(isImageBlock);
+  const ordered = order.map((key) => {
+    const index = unused.findIndex((entry) => blockImage(entry) === key);
+    if (index === -1) return { type: 'image', image: `/${key}` };
+    return unused.splice(index, 1)[0];
+  });
+  const imagesInOrder = [...ordered, ...unused];
+  const result = blocks.map((entry) => (isImageBlock(entry) ? imagesInOrder.shift() : entry));
+  return [...result, ...imagesInOrder];
+}
+
 function gridLayout(entry) {
   const legacyColumns = { full: 6, half: 3, third: 2 };
   let columns = Number.parseInt(entry.columns, 10);
@@ -1411,7 +1442,7 @@ function applyCmsProject(item, data, file) {
   const imageAltsByPath = {};
   const images = [];
   const gallery = [];
-  (Array.isArray(data.images) ? data.images : []).forEach((entry) => {
+  orderBlocksByTiles(Array.isArray(data.images) ? data.images : [], data.photo_order).forEach((entry) => {
     const source = typeof entry === 'string' ? entry : entry?.image;
     const imagePath = cmsFilePath(source, `${file} images`);
     const hasImage = Boolean(imagePath && isImage(imagePath));
