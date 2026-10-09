@@ -5,18 +5,12 @@
     "photography",
     "exhibition"
   ],
-  "short_title": "",
   "year": 2025,
   "order": 4,
   "hidden": false,
   "folder": "2025 Big summer energy",
   "cover": "/Projects/2025 Big summer energy/BSE_1.jpg",
   "description": "This work was selected by Monar Antwerp and UGG to be presented during Antwerp Art Weekend. These photographs, an abstract experiment with photography, started as a study, but I recognized their potential to become more than that. Photographs layered over each other create a piece where you can keep finding new details.",
-  "keywords": [
-    "experimental photography",
-    "art direction",
-    "exhibition design"
-  ],
   "photo_order": [
     "/Projects/2025 Big summer energy/BSE_1.jpg",
     "/Projects/2025 Big summer energy/BSE_2.jpg",
@@ -31,18 +25,17 @@
     "/Projects/2025 Big summer energy/AAW5.webp",
     "/Projects/2025 Big summer energy/AAW6.webp",
     "/Projects/2025 Big summer energy/AAW7.webp",
-    "/Projects/2025 Big summer energy/AAW8.webp",
     "/Projects/2025 Big summer energy/AAW9.jpg",
     "/Projects/2025 Big summer energy/AAW10.webp",
-    "/Projects/2025 Big summer energy/BSE_MailScreenshot.jpg",
-    "/Projects/2025 Big summer energy/AAW1.webp"
+    "/Projects/2025 Big summer energy/AAW8.webp",
+    "/Projects/2025 Big summer energy/BSE_MailScreenshot.jpg"
   ],
   "images": [
     {
       "type": "image",
       "name": "BSE_1",
       "image": "/Projects/2025 Big summer energy/BSE_1.jpg",
-      "columns": "6",
+      "columns": "3",
       "start": "auto",
       "new_row": false
     },
@@ -50,7 +43,7 @@
       "type": "image",
       "name": "BSE_2",
       "image": "/Projects/2025 Big summer energy/BSE_2.jpg",
-      "columns": "6",
+      "columns": "3",
       "start": "auto",
       "new_row": false
     },
@@ -58,7 +51,7 @@
       "type": "image",
       "name": "BSE_3",
       "image": "/Projects/2025 Big summer energy/BSE_3.jpg",
-      "columns": "6",
+      "columns": "3",
       "start": "auto",
       "new_row": false
     },
@@ -66,7 +59,7 @@
       "type": "image",
       "name": "BSE_4",
       "image": "/Projects/2025 Big summer energy/BSE_4.jpg",
-      "columns": "6",
+      "columns": "3",
       "start": "auto",
       "new_row": false
     },
@@ -74,7 +67,7 @@
       "type": "image",
       "name": "BSE_5",
       "image": "/Projects/2025 Big summer energy/BSE_5.jpg",
-      "columns": "6",
+      "columns": "4",
       "start": "auto",
       "new_row": false
     },
@@ -82,7 +75,7 @@
       "type": "image",
       "name": "BSE_6",
       "image": "/Projects/2025 Big summer energy/BSE_6.jpg",
-      "columns": "6",
+      "columns": "3",
       "start": "auto",
       "new_row": false
     },
@@ -90,7 +83,7 @@
       "type": "image",
       "name": "BSE_7",
       "image": "/Projects/2025 Big summer energy/BSE_7.jpg",
-      "columns": "6",
+      "columns": "3",
       "start": "auto",
       "new_row": false
     },
@@ -98,7 +91,7 @@
       "type": "image",
       "name": "AAW2",
       "image": "/Projects/2025 Big summer energy/AAW2.webp",
-      "columns": "6",
+      "columns": "4",
       "start": "auto",
       "new_row": false
     },
@@ -106,7 +99,7 @@
       "type": "image",
       "name": "AAW3",
       "image": "/Projects/2025 Big summer energy/AAW3.webp",
-      "columns": "6",
+      "columns": "3",
       "start": "auto",
       "new_row": false
     },
@@ -114,7 +107,7 @@
       "type": "image",
       "name": "AAW4",
       "image": "/Projects/2025 Big summer energy/AAW4.webp",
-      "columns": "6",
+      "columns": "3",
       "start": "auto",
       "new_row": false
     },
@@ -122,23 +115,23 @@
       "type": "image",
       "name": "AAW5",
       "image": "/Projects/2025 Big summer energy/AAW5.webp",
-      "columns": "6",
-      "start": "auto",
+      "columns": "4",
+      "start": "2",
       "new_row": false
     },
     {
       "type": "image",
       "name": "AAW6",
       "image": "/Projects/2025 Big summer energy/AAW6.webp",
-      "columns": "6",
-      "start": "auto",
+      "columns": "4",
+      "start": "3",
       "new_row": false
     },
     {
       "type": "image",
       "name": "AAW7",
       "image": "/Projects/2025 Big summer energy/AAW7.webp",
-      "columns": "6",
+      "columns": "4",
       "start": "auto",
       "new_row": false
     },
@@ -146,15 +139,15 @@
       "type": "image",
       "name": "AAW8",
       "image": "/Projects/2025 Big summer energy/AAW8.webp",
-      "columns": "6",
-      "start": "auto",
-      "new_row": false
+      "columns": "2",
+      "start": "2",
+      "new_row": true
     },
     {
       "type": "image",
       "name": "AAW9",
       "image": "/Projects/2025 Big summer energy/AAW9.jpg",
-      "columns": "6",
+      "columns": "2",
       "start": "auto",
       "new_row": false
     },
@@ -162,23 +155,23 @@
       "type": "image",
       "name": "AAW10",
       "image": "/Projects/2025 Big summer energy/AAW10.webp",
-      "columns": "6",
-      "start": "auto",
+      "columns": "4",
+      "start": "2",
       "new_row": false
     },
     {
       "type": "image",
       "name": "BSE_MailScreenshot",
       "image": "/Projects/2025 Big summer energy/BSE_MailScreenshot.jpg",
-      "columns": "6",
-      "start": "auto",
+      "columns": "1",
+      "start": "4",
       "new_row": false
     },
     {
       "type": "image",
       "name": "AAW1",
       "image": "/Projects/2025 Big summer energy/AAW1.webp",
-      "columns": "6",
+      "columns": "1",
       "start": "auto",
       "new_row": false
     }
@@ -188,6 +181,9 @@
     "/Projects/2025 Big summer energy/Homepage BSE/BSE_2.jpg",
     "/Projects/2025 Big summer energy/Homepage BSE/BSE_3.jpg"
   ],
-  "files": [],
-  "youtube": ""
+  "keywords": [
+    "experimental photography",
+    "art direction",
+    "exhibition design"
+  ]
 }
