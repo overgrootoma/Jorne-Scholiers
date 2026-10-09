@@ -55,6 +55,21 @@ Per foto stel je drie dingen in:
 
 Een foto die niet meer past in de rij, schuift vanzelf door naar de volgende rij.
 
+**Alles in één overzicht: de layout-editor.** Ga naar **https://jornescholiers.be/editor/**.
+Je ziet de pagina van een project zoals op een computer, op het grid van 6 kolommen.
+
+- Kies bovenaan het project.
+- **Sleep** een foto naar een andere plek om de volgorde te wijzigen.
+- **Klik** op een foto: rechts pas je de breedte, de startkolom, "nieuwe rij" en de alt-tekst aan.
+  Met ← en → schuif je ze één plek op.
+- **+ Photo** voegt een foto uit de map van het project toe, **+ Text section** een tekstsectie.
+- Klik **Save**. Na 1 à 2 minuten staat het online.
+
+De eerste keer vraagt de editor een GitHub-sleutel (token). Maak die zelf aan via de link in de
+editor: kies "Only select repositories" → Jorne-Scholiers en bij Permissions → Contents
+"Read and write". De sleutel blijft alleen in je browser bewaard. Verloopt ze, dan vraagt de
+editor gewoon een nieuwe. Nieuwe foto's upload je nog altijd in Pages CMS onder **Media**.
+
 **Volgorde wijzigen:** bovenaan bij **Photo order (drag the tiles)** staan alle foto's van het
 project als kleine vakjes. Sleep een vakje naar een andere plek en klik **Save**: zo staan de
 foto's op de pagina. Tekstsecties blijven op hun plek staan. Breedte en positie van elke foto

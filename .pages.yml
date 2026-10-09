@@ -83,7 +83,7 @@ content:
         type: text
       - name: photo_order
         label: Photo order (drag the tiles)
-        description: "All photos of the page as small tiles. Drag a tile to change the order of the photos on the page. Text sections stay where they are. Adding a tile here also adds that photo to the page (full width); its width and position are set below."
+        description: "Easiest: open jornescholiers.be/editor to order and size all photos in one overview. Here: All photos of the page as small tiles. Drag a tile to change the order of the photos on the page. Text sections stay where they are. Adding a tile here also adds that photo to the page (full width); its width and position are set below."
         type: image
         options:
           media: projects

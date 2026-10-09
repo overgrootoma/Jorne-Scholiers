@@ -1,6 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /email-signature/
+Disallow: /editor/
 Disallow: /content/
 
 Sitemap: https://jornescholiers.be/sitemap.xml

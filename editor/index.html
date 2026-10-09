@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Layout editor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&family=Silkscreen&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
+<style>
+  :root {
+    --bg: #f4f4f2;
+    --panel: #ffffff;
+    --text: #202020;
+    --muted: #6b6b6b;
+    --line: #d6d6d2;
+    --blue: #1e2ede;
+    --danger: #c0262d;
+    --gap: 10px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 500 14px/1.45 "Open Sans", "Helvetica Neue", Arial, sans-serif;
+  }
+  h1, h2, .pixel { font-family: "Silkscreen", "Open Sans", sans-serif; font-weight: 400; }
+  h1 { font-size: 15px; margin: 0; letter-spacing: 0.02em; }
+  h2 { font-size: 13px; margin: 0 0 12px; }
+  button, select, input, textarea { font: inherit; color: inherit; }
+  button {
+    border: 1px solid var(--text);
+    background: var(--panel);
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+  button:hover { background: var(--blue); border-color: var(--blue); color: #fff; }
+  button.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+  button.primary:disabled { background: var(--line); border-color: var(--line); color: var(--muted); cursor: default; }
+  button.danger { border-color: var(--danger); color: var(--danger); }
+  button.danger:hover { background: var(--danger); color: #fff; }
+  select, input[type=text], input[type=password], textarea {
+    width: 100%;
+    border: 1px solid var(--line);
+    background: #fff;
+    padding: 7px 9px;
+  }
+  textarea { min-height: 90px; resize: vertical; }
+  label { display: block; margin: 14px 0 5px; color: var(--muted); font-size: 12px; }
+
+  header {
+    position: sticky; top: 0; z-index: 20;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
+    padding: 12px 20px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+  header select { width: auto; min-width: 240px; }
+  header .spacer { flex: 1; }
+  #status { color: var(--muted); font-size: 13px; }
+  #status.error { color: var(--danger); }
+  #status.ok { color: var(--blue); }
+
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; align-items: start; }
+  main { padding: 20px; min-width: 0; }
+  aside {
+    position: sticky; top: 58px;
+    max-height: calc(100vh - 58px); overflow: auto;
+    padding: 20px; background: var(--panel); border-left: 1px solid var(--line);
+    min-height: calc(100vh - 58px);
+  }
+  .hint { color: var(--muted); font-size: 13px; margin: 0 0 16px; }
+
+  /* Same 6-column grid as the project pages. */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-auto-flow: row;
+    gap: var(--gap);
+    align-items: start;
+    max-width: 760px;
+  }
+  .block {
+    position: relative;
+    grid-column: auto / span 6;
+    cursor: grab;
+    outline: 2px solid transparent;
+    outline-offset: 3px;
+    background: #e7e7e3;
+    min-height: 60px;
+  }
+  .block[data-cols="1"] { grid-column: auto / span 1; }
+  .block[data-cols="2"] { grid-column: auto / span 2; }
+  .block[data-cols="3"] { grid-column: auto / span 3; }
+  .block[data-cols="4"] { grid-column: auto / span 4; }
+  .block[data-cols="5"] { grid-column: auto / span 5; }
+  .block[data-new-row] { grid-column-start: 1; }
+  .block[data-start="1"] { grid-column-start: 1; }
+  .block[data-start="2"] { grid-column-start: 2; }
+  .block[data-start="3"] { grid-column-start: 3; }
+  .block[data-start="4"] { grid-column-start: 4; }
+  .block[data-start="5"] { grid-column-start: 5; }
+  .block[data-start="6"] { grid-column-start: 6; }
+  .block:hover { outline-color: var(--line); }
+  .block.selected { outline-color: var(--blue); }
+  .block img { display: block; width: 100%; height: auto; pointer-events: none; user-select: none; }
+  .block .badge {
+    position: absolute; left: 6px; top: 6px;
+    background: rgba(255,255,255,0.92); padding: 1px 6px;
+    font-size: 11px; font-weight: 600; pointer-events: none;
+  }
+  .block.text { background: #fff; border: 1px dashed var(--line); padding: 14px; min-height: 90px; }
+  .block.text .t-title { font-family: "Silkscreen", sans-serif; font-size: 12px; margin-bottom: 6px; }
+  .block.text .t-intro { font-size: 15px; margin-bottom: 6px; }
+  .block.text .t-body { color: var(--muted); font-size: 12px; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+  .sortable-ghost { opacity: 0.35; }
+  .sortable-chosen { cursor: grabbing; }
+  .add-row { display: flex; gap: 8px; margin-top: 22px; }
+
+  .seg { display: flex; flex-wrap: wrap; gap: 4px; }
+  .seg button { min-width: 38px; padding: 5px 8px; border-color: var(--line); }
+  .seg button.on { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .check { display: flex; align-items: center; gap: 8px; margin-top: 14px; color: var(--text); font-size: 13px; }
+  .check input { width: 16px; height: 16px; }
+  .preview-img { width: 100%; display: block; margin-bottom: 4px; background: #eee; }
+  .filename { color: var(--muted); font-size: 12px; word-break: break-all; }
+  .panel-actions { display: flex; gap: 8px; margin-top: 22px; flex-wrap: wrap; }
+
+  /* Login */
+  .login { max-width: 520px; margin: 60px auto; padding: 28px; background: var(--panel); border: 1px solid var(--line); }
+  .login ol { padding-left: 18px; color: var(--muted); }
+  .login li { margin-bottom: 6px; }
+  .login a { color: var(--blue); }
+
+  /* Image picker */
+  dialog { border: 1px solid var(--line); padding: 0; width: min(920px, 94vw); max-height: 86vh; }
+  dialog::backdrop { background: rgba(0,0,0,0.35); }
+  .picker-head { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: #fff; }
+  .picker-body { padding: 18px; overflow: auto; }
+  .picker-folder { margin: 6px 0 10px; font-size: 12px; color: var(--muted); }
+  .picker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-bottom: 18px; }
+  .pick { padding: 0; border: 2px solid transparent; background: #eee; position: relative; }
+  .pick:hover { border-color: var(--blue); background: #eee; }
+  .pick img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; }
+  .pick.used::after { content: "on page"; position: absolute; left: 4px; top: 4px; background: #fff; font-size: 10px; padding: 0 4px; }
+
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: 1fr; }
+    aside { position: static; min-height: 0; max-height: none; border-left: 0; border-top: 1px solid var(--line); }
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<dialog id="picker">
+  <div class="picker-head">
+    <h2 style="margin:0">Add a photo</h2>
+    <button type="button" id="picker-close">Close</button>
+  </div>
+  <div class="picker-body" id="picker-body"></div>
+</dialog>
+
+<script>
+(() => {
+  const OWNER = 'overgrootoma';
+  const REPO = 'Jorne-Scholiers';
+  const BRANCH = 'main';
+  const API = `https://api.github.com/repos/${OWNER}/${REPO}`;
+  const RAW = `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/`;
+  const TOKEN_KEY = 'layout-editor-token';
+  const IMAGE_RE = /\.(jpe?g|png|webp|gif|avif)$/i;
+
+  const app = document.getElementById('app');
+  const state = { token: '', projects: [], file: '', sha: '', data: null, blocks: [], selected: -1, dirty: false };
+
+  const storage = {
+    get(key) { try { return localStorage.getItem(key) || ''; } catch (err) { return ''; } },
+    set(key, value) { try { localStorage.setItem(key, value); } catch (err) { /* private mode */ } },
+    remove(key) { try { localStorage.removeItem(key); } catch (err) { /* private mode */ } },
+  };
+
+  const el = (tag, attrs = {}, ...children) => {
+    const node = document.createElement(tag);
+    Object.entries(attrs).forEach(([key, value]) => {
+      if (value === undefined || value === null || value === false) return;
+      if (key.startsWith('on')) node.addEventListener(key.slice(2), value);
+      else if (key === 'class') node.className = value;
+      else node.setAttribute(key, value === true ? '' : value);
+    });
+    children.flat().forEach((child) => {
+      if (child === null || child === undefined || child === false) return;
+      node.append(child instanceof Node ? child : document.createTextNode(String(child)));
+    });
+    return node;
+  };
+
+  const encodePath = (p) => p.split('/').map(encodeURIComponent).join('/');
+  const pathKey = (value) => {
+    if (typeof value !== 'string' || !value.trim()) return '';
+    let cleaned = value.trim().split(/[?#]/)[0];
+    try { cleaned = decodeURIComponent(cleaned); } catch (err) { /* keep */ }
+    return cleaned.replace(/\\/g, '/').replace(/^\/+/, '');
+  };
+  const imageUrl = (value) => RAW + encodePath(pathKey(value));
+  const baseName = (value) => pathKey(value).split('/').pop().replace(/\.[^.]+$/, '');
+
+  const fromBase64 = (b64) => new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\s/g, '')), (c) => c.charCodeAt(0)));
+  const toBase64 = (text) => {
+    const bytes = new TextEncoder().encode(text);
+    let binary = '';
+    bytes.forEach((b) => { binary += String.fromCharCode(b); });
+    return btoa(binary);
+  };
+
+  async function gh(pathname, options = {}) {
+    const response = await fetch(`${API}${pathname}`, {
+      ...options,
+      cache: 'no-store',
+      headers: {
+        Accept: 'application/vnd.github+json',
+        Authorization: `Bearer ${state.token}`,
+        'X-GitHub-Api-Version': '2022-11-28',
+        ...(options.headers || {}),
+      },
+    });
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({}));
+      const error = new Error(body.message || `GitHub error ${response.status}`);
+      error.status = response.status;
+      throw error;
+    }
+    return response.json();
+  }
+
+  function setStatus(text, kind = '') {
+    const node = document.getElementById('status');
+    if (!node) return;
+    node.textContent = text;
+    node.className = kind;
+  }
+
+  function markDirty() {
+    state.dirty = true;
+    const save = document.getElementById('save');
+    if (save) save.disabled = false;
+    setStatus('Unsaved changes');
+  }
+
+  window.addEventListener('beforeunload', (event) => {
+    if (state.dirty) { event.preventDefault(); event.returnValue = ''; }
+  });
+
+  /* ---------- Login ---------- */
+  function renderLogin(message) {
+    app.replaceChildren(el('div', { class: 'login' },
+      el('h1', {}, 'Layout editor'),
+      el('p', { class: 'hint', style: 'margin-top:10px' }, 'Order and size the photos of each project in one overview. Saving puts the change on GitHub, and the site updates by itself after 1–2 minutes.'),
+      message ? el('p', { style: 'color:var(--danger)' }, message) : null,
+      el('h2', { style: 'margin-top:18px' }, 'One-time setup'),
+      el('ol', {},
+        el('li', {}, 'Open ', el('a', { href: 'https://github.com/settings/personal-access-tokens/new', target: '_blank', rel: 'noopener' }, 'GitHub: new fine-grained token'), '.'),
+        el('li', {}, 'Name: "Layout editor". Expiration: the longest you like.'),
+        el('li', {}, 'Repository access: Only select repositories → Jorne-Scholiers.'),
+        el('li', {}, 'Permissions → Repository permissions → Contents: Read and write.'),
+        el('li', {}, 'Generate the token, copy it and paste it below. It is only kept in this browser.'),
+      ),
+      el('label', { for: 'token' }, 'GitHub token'),
+      el('input', { id: 'token', type: 'password', autocomplete: 'off', placeholder: 'github_pat_…' }),
+      el('div', { class: 'panel-actions' },
+        el('button', { class: 'primary', type: 'button', onclick: async () => {
+          const value = document.getElementById('token').value.trim();
+          if (!value) return;
+          state.token = value;
+          try {
+            await gh('');
+            storage.set(TOKEN_KEY, value);
+            start();
+          } catch (err) {
+            state.token = '';
+            renderLogin(`That token does not work (${err.message}).`);
+          }
+        } }, 'Continue'),
+      ),
+    ));
+  }
+
+  /* ---------- Projects ---------- */
+  async function start() {
+    app.replaceChildren(el('p', { class: 'hint', style: 'padding:20px' }, 'Loading projects…'));
+    try {
+      const files = await gh(`/contents/content/projects?ref=${BRANCH}`);
+      const jsonFiles = files.filter((f) => f.name.endsWith('.json'));
+      const loaded = await Promise.all(jsonFiles.map(async (f) => {
+        const file = await gh(`/contents/${encodePath(f.path)}?ref=${BRANCH}`);
+        const data = JSON.parse(fromBase64(file.content));
+        return { path: f.path, title: data.title || f.name, year: data.year || '', order: Number(data.order) || 999 };
+      }));
+      state.projects = loaded.sort((a, b) => a.order - b.order || String(b.year).localeCompare(String(a.year)));
+      renderShell();
+      const remembered = storage.get('layout-editor-project');
+      const first = state.projects.find((p) => p.path === remembered) || state.projects[0];
+      if (first) openProject(first.path);
+    } catch (err) {
+      if (err.status === 401) { storage.remove(TOKEN_KEY); renderLogin('Your token has expired or was removed. Make a new one.'); return; }
+      app.replaceChildren(el('p', { style: 'padding:20px;color:var(--danger)' }, `Could not load the projects: ${err.message}`));
+    }
+  }
+
+  function renderShell() {
+    const select = el('select', { id: 'project', onchange: (e) => {
+      if (state.dirty && !confirm('You have unsaved changes. Switch project anyway?')) { e.target.value = state.file; return; }
+      openProject(e.target.value);
+    } }, state.projects.map((p) => el('option', { value: p.path }, `${p.title}${p.year ? ` (${p.year})` : ''}`)));
+
+    app.replaceChildren(
+      el('header', {},
+        el('h1', {}, 'Layout editor'),
+        select,
+        el('span', { id: 'status' }),
+        el('span', { class: 'spacer' }),
+        el('a', { href: '/projects.html', target: '_blank', rel: 'noopener', style: 'color:var(--blue);font-size:13px' }, 'View site'),
+        el('button', { id: 'save', class: 'primary', type: 'button', disabled: true, onclick: save }, 'Save'),
+      ),
+      el('div', { class: 'layout' },
+        el('main', {},
+          el('p', { class: 'hint' }, 'Drag the photos to change the order. Click a photo to change its width and position. This is the desktop layout; on phones everything is full width, one under the other.'),
+          el('div', { class: 'grid', id: 'grid' }),
+          el('div', { class: 'add-row' },
+            el('button', { type: 'button', onclick: openPicker }, '+ Photo'),
+            el('button', { type: 'button', onclick: addText }, '+ Text section'),
+          ),
+        ),
+        el('aside', { id: 'panel' }),
+      ),
+    );
+
+    Sortable.create(document.getElementById('grid'), {
+      animation: 160,
+      forceFallback: true,
+      fallbackTolerance: 4,
+      ghostClass: 'sortable-ghost',
+      chosenClass: 'sortable-chosen',
+      onEnd: (event) => {
+        if (event.oldIndex === event.newIndex) return;
+        const selectedBlock = state.blocks[state.selected];
+        const [moved] = state.blocks.splice(event.oldIndex, 1);
+        state.blocks.splice(event.newIndex, 0, moved);
+        state.selected = state.blocks.indexOf(selectedBlock);
+        markDirty();
+        renderGrid();
+      },
+    });
+  }
+
+  // Same rule as the site build: the "photo_order" tiles from Pages CMS decide the image order,
+  // text sections keep their place.
+  function orderBlocksByTiles(blocks, tiles) {
+    const order = (Array.isArray(tiles) ? tiles : []).map(pathKey).filter(Boolean);
+    if (!order.length) return blocks;
+    const blockImage = (entry) => pathKey(typeof entry === 'string' ? entry : entry?.image);
+    const isImageBlock = (entry) => Boolean(blockImage(entry)) && !(entry && typeof entry === 'object' && entry.type === 'text');
+    const unused = blocks.filter(isImageBlock);
+    const ordered = order.map((key) => {
+      const index = unused.findIndex((entry) => blockImage(entry) === key);
+      if (index === -1) return { type: 'image', image: `/${key}` };
+      return unused.splice(index, 1)[0];
+    });
+    const imagesInOrder = [...ordered, ...unused];
+    const result = blocks.map((entry) => (isImageBlock(entry) ? imagesInOrder.shift() : entry));
+    return [...result, ...imagesInOrder];
+  }
+
+  function normalizeBlock(entry) {
+    if (typeof entry === 'string') return { type: 'image', image: entry, columns: '6', start: 'auto', new_row: false };
+    const block = { ...entry };
+    if (!block.type) block.type = block.image ? 'image' : 'text';
+    if (!block.columns) block.columns = '6';
+    if (!block.start) block.start = 'auto';
+    block.new_row = block.new_row === true;
+    return block;
+  }
+
+  async function openProject(path) {
+    setStatus('Loading…');
+    try {
+      const file = await gh(`/contents/${encodePath(path)}?ref=${BRANCH}`);
+      state.file = path;
+      state.sha = file.sha;
+      state.data = JSON.parse(fromBase64(file.content));
+      const blocks = Array.isArray(state.data.images) ? state.data.images : [];
+      state.blocks = orderBlocksByTiles(blocks, state.data.photo_order).map(normalizeBlock);
+      state.selected = -1;
+      state.dirty = false;
+      storage.set('layout-editor-project', path);
+      document.getElementById('project').value = path;
+      document.getElementById('save').disabled = true;
+      renderGrid();
+      renderPanel();
+      setStatus('');
+    } catch (err) {
+      setStatus(`Could not open: ${err.message}`, 'error');
+    }
+  }
+
+  /* ---------- Grid ---------- */
+  function renderGrid() {
+    const grid = document.getElementById('grid');
+    grid.replaceChildren(...state.blocks.map((block, index) => {
+      const attrs = {
+        class: `block ${block.type === 'text' ? 'text' : 'image'}${index === state.selected ? ' selected' : ''}`,
+        'data-cols': block.columns !== '6' ? block.columns : null,
+        'data-start': block.start !== 'auto' ? block.start : null,
+        'data-new-row': block.new_row || null,
+        onclick: () => { state.selected = index; renderGrid(); renderPanel(); },
+      };
+      if (block.type === 'text') {
+        return el('div', attrs,
+          el('span', { class: 'badge' }, `${index + 1} · text`),
+          el('div', { style: 'margin-top:18px' },
+            block.title ? el('div', { class: 't-title' }, block.title) : null,
+            block.intro ? el('div', { class: 't-intro' }, block.intro) : null,
+            block.body ? el('div', { class: 't-body' }, block.body) : null,
+            !block.title && !block.intro && !block.body ? el('div', { class: 't-body' }, 'Empty text section') : null,
+          ),
+        );
+      }
+      return el('div', attrs,
+        el('img', { src: imageUrl(block.image), alt: '', loading: 'lazy', draggable: 'false' }),
+        el('span', { class: 'badge' }, `${index + 1}`),
+      );
+    }));
+  }
+
+  /* ---------- Panel ---------- */
+  function segmented(values, current, labelFor, onPick) {
+    return el('div', { class: 'seg' }, values.map((value) => el('button', {
+      type: 'button',
+      class: String(value) === String(current) ? 'on' : '',
+      onclick: () => onPick(String(value)),
+    }, labelFor ? labelFor(value) : value)));
+  }
+
+  function update(changes) {
+    Object.assign(state.blocks[state.selected], changes);
+    markDirty();
+    renderGrid();
+    renderPanel();
+  }
+
+  function renderPanel() {
+    const panel = document.getElementById('panel');
+    const block = state.blocks[state.selected];
+    if (!block) {
+      panel.replaceChildren(
+        el('h2', {}, 'Photo settings'),
+        el('p', { class: 'hint' }, 'Click a photo or text section to change it.'),
+        el('p', { class: 'hint' }, `${state.blocks.filter((b) => b.type !== 'text').length} photos, ${state.blocks.filter((b) => b.type === 'text').length} text sections.`),
+      );
+      return;
+    }
+
+    const layoutFields = [
+      el('label', {}, 'Width (columns of 6)'),
+      segmented(['6', '5', '4', '3', '2', '1'], block.columns, (v) => (v === '6' ? 'Full' : v), (v) => {
+        const changes = { columns: v };
+        const start = Number(block.start);
+        if (start && start + Number(v) - 1 > 6) changes.start = String(7 - Number(v));
+        update(changes);
+      }),
+      el('label', {}, 'Start at column'),
+      segmented(['auto', '1', '2', '3', '4', '5', '6'].filter((v) => v === 'auto' || Number(v) + Number(block.columns) - 1 <= 6),
+        block.start, null, (v) => update({ start: v })),
+      el('label', { class: 'check' },
+        el('input', { type: 'checkbox', checked: block.new_row || null, onchange: (e) => update({ new_row: e.target.checked }) }),
+        'Start a new row'),
+    ];
+
+    const move = (delta) => {
+      const to = state.selected + delta;
+      if (to < 0 || to >= state.blocks.length) return;
+      const [moved] = state.blocks.splice(state.selected, 1);
+      state.blocks.splice(to, 0, moved);
+      state.selected = to;
+      markDirty();
+      renderGrid();
+      renderPanel();
+    };
+
+    const actions = el('div', { class: 'panel-actions' },
+      el('button', { type: 'button', onclick: () => move(-1), title: 'Move one place earlier' }, '←'),
+      el('button', { type: 'button', onclick: () => move(1), title: 'Move one place later' }, '→'),
+      el('button', { type: 'button', class: 'danger', onclick: () => {
+        if (!confirm('Remove this from the page? The file itself stays in the media library.')) return;
+        state.blocks.splice(state.selected, 1);
+        state.selected = -1;
+        markDirty();
+        renderGrid();
+        renderPanel();
+      } }, 'Remove from page'),
+    );
+
+    if (block.type === 'text') {
+      const textInput = (key, label, multiline) => [
+        el('label', {}, label),
+        el(multiline ? 'textarea' : 'input', {
+          type: multiline ? null : 'text',
+          oninput: (e) => { block[key] = e.target.value; markDirty(); renderGrid(); },
+        }),
+      ];
+      const fields = [
+        ...textInput('title', 'Title (optional)'),
+        ...textInput('intro', 'Introduction (optional, shown larger)', true),
+        ...textInput('body', 'Body text (optional). Empty line between paragraphs.', true),
+      ];
+      panel.replaceChildren(el('h2', {}, `Text section · ${state.selected + 1}`), ...fields, ...layoutFields, actions);
+      panel.querySelectorAll('input[type=text], textarea').forEach((input, i) => { input.value = block[['title', 'intro', 'body'][i]] || ''; });
+      return;
+    }
+
+    const alt = el('input', { type: 'text', placeholder: 'Empty = automatic', oninput: (e) => { block.alt = e.target.value; markDirty(); } });
+    alt.value = block.alt || '';
+    panel.replaceChildren(
+      el('h2', {}, `Photo · ${state.selected + 1}`),
+      el('img', { class: 'preview-img', src: imageUrl(block.image), alt: '' }),
+      el('div', { class: 'filename' }, pathKey(block.image).replace(/^Projects\//, '')),
+      ...layoutFields,
+      el('label', {}, 'Description for Google and screen readers (alt text)'),
+      alt,
+      actions,
+    );
+  }
+
+  /* ---------- Adding ---------- */
+  function addText() {
+    state.blocks.push({ type: 'text', title: '', intro: '', body: '', columns: '6', start: 'auto', new_row: true });
+    state.selected = state.blocks.length - 1;
+    markDirty();
+    renderGrid();
+    renderPanel();
+  }
+
+  function projectFolder() {
+    if (state.data.folder) return `Projects/${state.data.folder}`;
+    const first = state.blocks.find((b) => b.type !== 'text' && b.image) || { image: state.data.cover };
+    const key = pathKey(first.image || '');
+    if (!key.startsWith('Projects/')) return 'Projects';
+    return key.split('/').slice(0, 2).join('/');
+  }
+
+  async function listImages(folder, depth = 0) {
+    const entries = await gh(`/contents/${encodePath(folder)}?ref=${BRANCH}`);
+    const groups = [{ folder, images: entries.filter((e) => e.type === 'file' && IMAGE_RE.test(e.name)).map((e) => e.path) }];
+    if (depth < 2) {
+      for (const dir of entries.filter((e) => e.type === 'dir')) groups.push(...await listImages(dir.path, depth + 1));
+    }
+    return groups;
+  }
+
+  async function openPicker() {
+    const dialog = document.getElementById('picker');
+    const body = document.getElementById('picker-body');
+    body.replaceChildren(el('p', { class: 'hint' }, 'Loading the photos of this project…'));
+    dialog.showModal();
+    try {
+      const used = new Set(state.blocks.filter((b) => b.type !== 'text').map((b) => pathKey(b.image)));
+      const groups = (await listImages(projectFolder())).filter((g) => g.images.length);
+      body.replaceChildren(
+        el('p', { class: 'hint' }, 'Click a photo to add it at the end of the page. New photos are uploaded in Pages CMS under Media → Project images.'),
+        ...groups.flatMap((group) => [
+          el('div', { class: 'picker-folder pixel' }, group.folder.replace(/^Projects\/?/, '') || 'Projects'),
+          el('div', { class: 'picker-grid' }, group.images.map((image) => el('button', {
+            type: 'button',
+            class: `pick${used.has(image) ? ' used' : ''}`,
+            title: image.split('/').pop(),
+            onclick: () => {
+              state.blocks.push({ type: 'image', name: baseName(image), image: `/${image}`, columns: '6', start: 'auto', new_row: false });
+              state.selected = state.blocks.length - 1;
+              markDirty();
+              renderGrid();
+              renderPanel();
+              dialog.close();
+              document.getElementById('grid').lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            },
+          }, el('img', { src: imageUrl(image), alt: '', loading: 'lazy' })))),
+        ]),
+      );
+    } catch (err) {
+      body.replaceChildren(el('p', { style: 'color:var(--danger)' }, `Could not load the photos: ${err.message}`));
+    }
+  }
+  document.getElementById('picker-close').addEventListener('click', () => document.getElementById('picker').close());
+
+  /* ---------- Saving ---------- */
+  function cleanBlock(block) {
+    if (block.type === 'text') {
+      const out = { type: 'text' };
+      ['title', 'intro', 'body'].forEach((key) => { if (block[key]) out[key] = block[key]; });
+      Object.assign(out, { columns: block.columns, start: block.start, new_row: block.new_row });
+      Object.keys(block).forEach((key) => { if (!(key in out) && !['title', 'intro', 'body'].includes(key)) out[key] = block[key]; });
+      return out;
+    }
+    const out = { type: 'image', name: block.name || baseName(block.image), image: block.image };
+    if (block.alt) out.alt = block.alt;
+    Object.assign(out, { columns: block.columns, start: block.start, new_row: block.new_row });
+    Object.keys(block).forEach((key) => { if (!(key in out) && key !== 'alt') out[key] = block[key]; });
+    return out;
+  }
+
+  async function save() {
+    const button = document.getElementById('save');
+    button.disabled = true;
+    setStatus('Saving…');
+    const images = state.blocks.map(cleanBlock);
+    // Same keys in the same place as before; photo_order (the Pages CMS tiles) follows the new order.
+    const ordered = {};
+    const place = () => {
+      ordered.photo_order = images.filter((b) => b.type !== 'text').map((b) => b.image);
+      ordered.images = images;
+    };
+    Object.entries(state.data).forEach(([key, value]) => {
+      if (key === 'photo_order' || key === 'images') { if (!('images' in ordered)) place(); return; }
+      ordered[key] = value;
+    });
+    if (!('images' in ordered)) place();
+    try {
+      const result = await gh(`/contents/${encodePath(state.file)}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          message: `Update ${state.data.title || 'project'} layout (via layout editor)`,
+          content: toBase64(`${JSON.stringify(ordered, null, 2)}\n`),
+          sha: state.sha,
+          branch: BRANCH,
+        }),
+      });
+      state.sha = result.content.sha;
+      state.data = ordered;
+      state.dirty = false;
+      setStatus('Saved. The site updates in 1–2 minutes.', 'ok');
+    } catch (err) {
+      button.disabled = false;
+      if (err.status === 409) setStatus('This project was changed somewhere else (e.g. in Pages CMS). Reload the page and try again.', 'error');
+      else setStatus(`Not saved: ${err.message}`, 'error');
+    }
+  }
+
+  state.token = storage.get(TOKEN_KEY);
+  if (state.token) start(); else renderLogin();
+})();
+</script>
+</body>
+</html>
