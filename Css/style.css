@@ -6257,3 +6257,20 @@ body.page-detail .project-information-toggle__title {
 .site-logo-slot.has-3d-logo .site-logo-canvas {
   opacity: 1;
 }
+
+/* Footer a bit smaller on every page. */
+.site-footer,
+.site-footer *,
+body.page-home .site-footer,
+body.page-home .site-footer * {
+  font-size: 0.74rem !important;
+  line-height: 1.45;
+}
+
+.site-footer,
+.site-footer.is-visible,
+body.page-detail .site-footer,
+body.page-detail .site-footer.is-visible {
+  padding-top: 8px;
+  padding-bottom: 10px;
+}
