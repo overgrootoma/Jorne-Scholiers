@@ -1649,7 +1649,93 @@
     window.addEventListener('pagehide', stopRotation);
   };
 
+  // The portrait "forms" itself: a threshold of the photo is used as its mask and goes from
+  // 0 to 100%, lightest parts first. At 100% the photo is shown as it is.
+  const thresholdReveal = (img, duration = 800) => {
+    const noop = () => {};
+    if (!img || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return noop;
+    const steps = 32;
+    let masks = null;
+    let frame = 0;
+
+    const buildMasks = () => {
+      if (masks) return masks;
+      const width = 320;
+      const height = Math.max(1, Math.round(width * (img.naturalHeight / img.naturalWidth)));
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const context = canvas.getContext('2d', { willReadFrequently: true });
+      context.drawImage(img, 0, 0, width, height);
+      let pixels;
+      try {
+        pixels = context.getImageData(0, 0, width, height).data;
+      } catch (err) {
+        return null;
+      }
+      const luminance = new Uint8ClampedArray(width * height);
+      for (let i = 0; i < luminance.length; i += 1) {
+        luminance[i] = 0.2126 * pixels[i * 4] + 0.7152 * pixels[i * 4 + 1] + 0.0722 * pixels[i * 4 + 2];
+      }
+      const mask = context.createImageData(width, height);
+      masks = [];
+      for (let step = 1; step < steps; step += 1) {
+        const limit = 255 - (255 * step) / steps;
+        for (let i = 0; i < luminance.length; i += 1) mask.data[i * 4 + 3] = luminance[i] >= limit ? 255 : 0;
+        context.putImageData(mask, 0, 0);
+        masks.push(`url("${canvas.toDataURL('image/png')}")`);
+      }
+      return masks;
+    };
+
+    const setMask = (value) => {
+      img.style.webkitMaskImage = value;
+      img.style.maskImage = value;
+    };
+
+    // Prepare the masks while the browser is idle, so the first hover starts right away.
+    const prepare = () => {
+      const idle = window.requestIdleCallback || ((callback) => window.setTimeout(callback, 200));
+      idle(() => { if (img.naturalWidth) buildMasks(); });
+    };
+    if (img.complete) prepare();
+    else img.addEventListener('load', prepare, { once: true });
+
+    return () => {
+      if (!img.complete || !img.naturalWidth) return;
+      const list = buildMasks();
+      if (!list) return;
+      window.cancelAnimationFrame(frame);
+      img.style.webkitMaskSize = 'contain';
+      img.style.maskSize = 'contain';
+      img.style.webkitMaskRepeat = 'no-repeat';
+      img.style.maskRepeat = 'no-repeat';
+      img.style.webkitMaskPosition = getComputedStyle(img).objectPosition || 'center';
+      img.style.maskPosition = img.style.webkitMaskPosition;
+      setMask(list[0]);
+      const start = performance.now();
+      const tick = (now) => {
+        const progress = Math.min(1, (now - start) / duration);
+        const eased = 1 - (1 - progress) ** 3;
+        if (progress >= 1) {
+          setMask('');
+          return;
+        }
+        setMask(list[Math.min(list.length - 1, Math.floor(eased * list.length))]);
+        frame = window.requestAnimationFrame(tick);
+      };
+      frame = window.requestAnimationFrame(tick);
+    };
+  };
+
   const setupHomePortraitPreview = () => {
+    const smallPortrait = document.querySelector('.page-home .home-about-portrait');
+    if (smallPortrait && smallPortrait.offsetWidth) {
+      const playSmall = thresholdReveal(smallPortrait);
+      if (smallPortrait.complete) playSmall();
+      else smallPortrait.addEventListener('load', playSmall, { once: true });
+    }
+
     const trigger = document.querySelector('.home-about-primary') || document.querySelector('[data-home-portrait-trigger]');
     const preview = document.querySelector('[data-home-portrait]');
     if (!trigger || !preview) return;
@@ -1659,7 +1745,11 @@
       return;
     }
 
-    const show = () => preview.classList.add('is-visible');
+    const play = thresholdReveal(preview.querySelector('img'));
+    const show = () => {
+      if (!preview.classList.contains('is-visible')) play();
+      preview.classList.add('is-visible');
+    };
     const hide = () => preview.classList.remove('is-visible');
 
     trigger.addEventListener('pointerenter', show);
