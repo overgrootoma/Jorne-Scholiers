@@ -5,41 +5,35 @@
     "book",
     "editorial"
   ],
-  "short_title": "",
   "year": 2025,
   "order": 3,
   "hidden": false,
   "folder": "2025 BrilliantBooks",
   "cover": "/images/cover photo's/Brilliant_Books.webp",
   "description": "For Brilliant Books, we designed a book inspired by the work of Ghent-based artist Eddy De Buf.\n\nBecause Eddy's practice is very diverse, we created a series of books, each dedicated to a different project. The keyword \"connecting\" guided the concept, leading to a map that links all the projects together and allows the reader to explore the books in different orders. This network of connections inspired the title Interlinked.\n\nMateriality plays an important role in the design. A wooden base forms the foundation of the book, symbolizing Eddy as the base of his work, with his biography printed directly onto the wood. The books are wrapped in cotton fabric, which contains the printed map connecting the projects. The book measures 40 x 50 cm, reflecting the frame size Eddy often works within when painting.",
-  "keywords": [
-    "book design",
-    "editorial design",
-    "typography"
-  ],
   "photo_order": [
+    "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_10.jpg",
     "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_1.webp",
+    "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_6.webp",
     "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_2.webp",
     "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_3.webp",
-    "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_4.webp",
-    "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_5.webp",
-    "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_6.webp",
+    "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_21.webp",
     "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_7.webp",
-    "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_8.webp",
-    "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_9.webp",
-    "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_10.jpg",
-    "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_11.webp",
+    "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_20.webp",
     "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_12.webp",
     "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_13.webp",
-    "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_14.webp",
+    "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_8.webp",
+    "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_11.webp",
+    "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_5.webp",
+    "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_17.webp",
+    "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_9.webp",
+    "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_18.webp",
     "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_15.webp",
     "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_16.webp",
-    "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_17.webp",
-    "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_18.webp",
     "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_19.webp",
-    "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_20.webp",
-    "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_21.webp",
-    "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_22.webp"
+    "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_4.webp",
+    "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_22.webp",
+    "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_14.webp"
   ],
   "images": [
     {
@@ -224,6 +218,9 @@
     "/Projects/2025 BrilliantBooks/Homepage Brilliant books/Team6_PortfolipPhoto_10.jpg",
     "/Projects/2025 BrilliantBooks/Homepage Brilliant books/Team6_PortfolipPhoto_16.webp"
   ],
-  "files": [],
-  "youtube": ""
+  "keywords": [
+    "book design",
+    "editorial design",
+    "typography"
+  ]
 }
