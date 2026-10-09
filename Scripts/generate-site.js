@@ -564,7 +564,7 @@ function renderIntroCopy() {
     Hello,<br>
     My name is Jorne Scholiers, a Visual Design student at LUCA School of Arts Ghent.<br><br>
     I have some <a href="index.html#project-grid">projects</a> you can look at, along with other work in my <a href="archive.html">archive</a> that shows what I've been experimenting with.<br>
-    Or maybe you will like some of my <a href="photography.html">Photography</a>. Some of my projects appear on my <a href="https://www.instagram.com/byjorne/" target="_blank" rel="noopener">Instagram</a>.<br><br>
+    Some of my projects appear on my <a href="https://www.instagram.com/byjorne/" target="_blank" rel="noopener">Instagram</a>.<br><br>
     Don't hesitate to <a href="mailto:jorne.scholiers@icloud.com">contact me</a>, I'd love to hear from you.<br>
     Oh and I am working on a little experimental <a href="https://overgrootoma.github.io/Accidental-Graphics/index.html" target="_blank" rel="noopener">site</a> as well :)
   </p>`;
@@ -875,12 +875,6 @@ function renderCollectionIndex(items, {
   </div>
   <section class="archive-intro${heading ? '' : ' archive-intro--without-heading'}">
     ${headingMarkup}
-    <div class="archive-intro-meta">
-      <nav class="projects-view-toggle archive-view-toggle" aria-label="Archive view">
-        <a class="projects-view-toggle__button${activeCollection === 'designs' ? ' is-active' : ''}" href="archive.html"${activeCollection === 'designs' ? ' aria-current="page"' : ''}>Design</a>
-        <a class="projects-view-toggle__button${activeCollection === 'photography' ? ' is-active' : ''}" href="photography.html"${activeCollection === 'photography' ? ' aria-current="page"' : ''}>Photography</a>
-      </nav>
-    </div>
   </section>
   <section class="archive-list">
     ${sections || `<div class="empty-state">${escapeHtml(emptyState)}</div>`}
@@ -1589,6 +1583,8 @@ function buildSite() {
     fileName: 'photography.html',
     image: photography[0]?.images[0] ? toUrlPath('photography', photography[0].dirName, photography[0].images[0]) : defaultSocialImage,
     schema: { '@type': 'CollectionPage', name: 'Photography by Jorne Scholiers', url: absoluteUrl('photography.html') },
+    // Photography is kept on the site but hidden: no links to it, not in Google.
+    noIndex: true,
     bodyClass: 'page-archive page-photography',
     main: renderPhotographyIndex(photography),
   });
@@ -1682,7 +1678,6 @@ function buildSite() {
     'projects.html',
     'about.html',
     'archive.html',
-    'photography.html',
     ...projects.map((project) => `project-${project.slug}.html`),
   ]);
 }
