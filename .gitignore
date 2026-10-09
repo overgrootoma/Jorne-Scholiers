@@ -7,3 +7,6 @@ node_modules/
 
 # Original 3D export (161 MB, too large for GitHub); the site uses images/3d-logo.glb
 images/3D logo site.glb
+
+# Original full-size photo selections (optimized copies live next to them)
+Projects/**/*packshots selectie/

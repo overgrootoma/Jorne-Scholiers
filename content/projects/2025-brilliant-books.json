@@ -20,6 +20,7 @@
   "images": [
     {
       "type": "image",
+      "name": "Team6_PortfolipPhoto_1",
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_1.webp",
       "columns": "6",
       "start": "auto",
@@ -27,6 +28,7 @@
     },
     {
       "type": "image",
+      "name": "Team6_PortfolipPhoto_2",
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_2.webp",
       "columns": "6",
       "start": "auto",
@@ -34,6 +36,7 @@
     },
     {
       "type": "image",
+      "name": "Team6_PortfolipPhoto_3",
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_3.webp",
       "columns": "6",
       "start": "auto",
@@ -41,6 +44,7 @@
     },
     {
       "type": "image",
+      "name": "Team6_PortfolipPhoto_4",
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_4.webp",
       "columns": "6",
       "start": "auto",
@@ -48,6 +52,7 @@
     },
     {
       "type": "image",
+      "name": "Team6_PortfolipPhoto_5",
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_5.webp",
       "columns": "6",
       "start": "auto",
@@ -55,6 +60,7 @@
     },
     {
       "type": "image",
+      "name": "Team6_PortfolipPhoto_6",
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_6.webp",
       "columns": "6",
       "start": "auto",
@@ -62,6 +68,7 @@
     },
     {
       "type": "image",
+      "name": "Team6_PortfolipPhoto_7",
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_7.webp",
       "columns": "6",
       "start": "auto",
@@ -69,6 +76,7 @@
     },
     {
       "type": "image",
+      "name": "Team6_PortfolipPhoto_8",
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_8.webp",
       "columns": "6",
       "start": "auto",
@@ -76,6 +84,7 @@
     },
     {
       "type": "image",
+      "name": "Team6_PortfolipPhoto_9",
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_9.webp",
       "columns": "6",
       "start": "auto",
@@ -83,6 +92,7 @@
     },
     {
       "type": "image",
+      "name": "Team6_PortfolipPhoto_10",
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_10.jpg",
       "columns": "6",
       "start": "auto",
@@ -90,6 +100,7 @@
     },
     {
       "type": "image",
+      "name": "Team6_PortfolipPhoto_11",
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_11.webp",
       "columns": "6",
       "start": "auto",
@@ -97,6 +108,7 @@
     },
     {
       "type": "image",
+      "name": "Team6_PortfolipPhoto_12",
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_12.webp",
       "columns": "6",
       "start": "auto",
@@ -104,6 +116,7 @@
     },
     {
       "type": "image",
+      "name": "Team6_PortfolipPhoto_13",
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_13.webp",
       "columns": "6",
       "start": "auto",
@@ -111,6 +124,7 @@
     },
     {
       "type": "image",
+      "name": "Team6_PortfolipPhoto_14",
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_14.webp",
       "columns": "6",
       "start": "auto",
@@ -118,6 +132,7 @@
     },
     {
       "type": "image",
+      "name": "Team6_PortfolipPhoto_15",
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_15.webp",
       "columns": "6",
       "start": "auto",
@@ -125,6 +140,7 @@
     },
     {
       "type": "image",
+      "name": "Team6_PortfolipPhoto_16",
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_16.webp",
       "columns": "6",
       "start": "auto",
@@ -132,6 +148,7 @@
     },
     {
       "type": "image",
+      "name": "Team6_PortfolipPhoto_17",
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_17.webp",
       "columns": "6",
       "start": "auto",
@@ -139,6 +156,7 @@
     },
     {
       "type": "image",
+      "name": "Team6_PortfolipPhoto_18",
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_18.webp",
       "columns": "6",
       "start": "auto",
@@ -146,6 +164,7 @@
     },
     {
       "type": "image",
+      "name": "Team6_PortfolipPhoto_19",
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_19.webp",
       "columns": "6",
       "start": "auto",
@@ -153,6 +172,7 @@
     },
     {
       "type": "image",
+      "name": "Team6_PortfolipPhoto_20",
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_20.webp",
       "columns": "6",
       "start": "auto",
@@ -160,6 +180,7 @@
     },
     {
       "type": "image",
+      "name": "Team6_PortfolipPhoto_21",
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_21.webp",
       "columns": "6",
       "start": "auto",
@@ -167,6 +188,7 @@
     },
     {
       "type": "image",
+      "name": "Team6_PortfolipPhoto_22",
       "image": "/Projects/2025 BrilliantBooks/Team6_PortfolipPhoto_22.webp",
       "columns": "6",
       "start": "auto",

@@ -54,6 +54,12 @@ Per foto stel je drie dingen in:
 - **Start a new row**: begint een nieuwe rij, zodat de rest van de vorige rij leeg blijft.
 
 Een foto die niet meer past in de rij, schuift vanzelf door naar de volgende rij.
+
+**Volgorde wijzigen:** onder **Project images and text sections** staat elke foto of tekst
+als één dichtgeklapte rij, bv. `7.  stffbos-2  ·  6/6 wide  ·  start auto  ·  new row: true`.
+Sleep een rij aan de **puntjes links** naar boven of beneden (of klik op de puntjes en gebruik
+de pijltjestoetsen). Klik op een rij om ze open te klappen en aan te passen. Geef een nieuwe foto
+een **Short name** (bv. "bos 2"), zodat je ze in de lijst meteen herkent.
 Op een telefoon (smaller dan 700 px) staan alle foto's altijd onder elkaar op volle breedte.
 
 **Voorbeeld:** drie foto's naast elkaar, daaronder één foto op de linkerhelft met witruimte

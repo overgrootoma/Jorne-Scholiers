@@ -83,19 +83,23 @@ content:
         type: text
       - name: images
         label: Project images and text sections
-        description: The content of the project page, in this order (drag to reorder). Add an Image or a Text section. On desktop and tablet the page is a grid of 6 columns; on phones everything is full width, one under the other. Upload new images into a folder for this project, e.g. "2027 Project name".
+        description: "The content of the project page, top to bottom. To change the order, drag a row up or down by the dots on its left (or click the dots and use the arrow keys). Each row shows: number · short name · width of 6 · new row. Click a row to open it. On desktop and tablet the page is a grid of 6 columns; on phones everything is full width, one under the other. Upload new images into a folder for this project, e.g. \"2027 Project name\"."
         type: block
-        # Collapsed rows show their number, type, width and the image file (or the text title);
-        # Pages CMS can only show text here, not a thumbnail.
+        # Collapsed rows show a short name instead of the long image path, so the order is easy
+        # to scan. Pages CMS can only show text here, not a thumbnail.
         list:
           collapsible:
             collapsed: true
-            summary: "{index}. {type} · {columns} col · {image}{title}"
+            summary: "{index}.  {name}{title}  ·  {columns}/6 wide  ·  start {start}  ·  new row: {new_row}"
         blockKey: type
         blocks:
           - name: image
             label: Image
             fields:
+            - name: name
+              label: Short name (shown in the list)
+              description: Only for you, so you recognise the image in the list when you reorder, e.g. "bos 2" or "book spread". Not shown on the site.
+              type: string
             - name: image
               label: Image
               type: image
