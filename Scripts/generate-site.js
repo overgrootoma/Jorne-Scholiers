@@ -528,7 +528,10 @@ function renderHead({
   <meta name="twitter:description" content="${escapeHtml(safeDescription)}">
   <meta name="twitter:image" content="${escapeHtml(socialImage)}">
   <meta name="theme-color" content="#ebebeb">
-  <link rel="icon" type="image/jpeg" href="images/blue%20favicon.jpg">
+  <link rel="icon" href="/favicon.ico?v=2" sizes="48x48">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-dot-32.png?v=2">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2">
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RELMELQ5K1"></script>
   <script>
