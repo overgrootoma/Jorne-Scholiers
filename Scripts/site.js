@@ -1651,10 +1651,11 @@
 
   // The portrait "forms" itself: a threshold of the photo is used as its mask and goes from
   // 0 to 100%, lightest parts first. At 100% the photo is shown as it is.
-  const thresholdReveal = (img, duration = 800) => {
+  const thresholdReveal = (img, duration = 450) => {
     const noop = () => {};
     if (!img || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return noop;
-    const steps = 32;
+    const steps = 30;
+    const softness = 48; // width of the soft edge, in brightness levels (0-255)
     let masks = null;
     let frame = 0;
 
@@ -1680,8 +1681,13 @@
       const mask = context.createImageData(width, height);
       masks = [];
       for (let step = 1; step < steps; step += 1) {
-        const limit = 255 - (255 * step) / steps;
-        for (let i = 0; i < luminance.length; i += 1) mask.data[i * 4 + 3] = luminance[i] >= limit ? 255 : 0;
+        // The edge runs from fully hidden to fully visible over "softness" levels, so the shape
+        // grows smoothly instead of with a hard cut.
+        const limit = (255 + softness) * (1 - step / steps) - softness / 2;
+        for (let i = 0; i < luminance.length; i += 1) {
+          const t = Math.min(1, Math.max(0, (luminance[i] - limit) / softness + 0.5));
+          mask.data[i * 4 + 3] = Math.round(255 * t * t * (3 - 2 * t));
+        }
         context.putImageData(mask, 0, 0);
         masks.push(`url("${canvas.toDataURL('image/png')}")`);
       }
@@ -1716,7 +1722,7 @@
       const start = performance.now();
       const tick = (now) => {
         const progress = Math.min(1, (now - start) / duration);
-        const eased = 1 - (1 - progress) ** 3;
+        const eased = 0.5 - Math.cos(Math.PI * progress) / 2;
         if (progress >= 1) {
           setMask('');
           return;

@@ -17,8 +17,10 @@ permissions:
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+# (Own group name: an old run from 2026-10-05 got stuck in the "pages" queue and blocked every
+# deploy after it.)
 concurrency:
-  group: "pages"
+  group: "site-deploy"
   cancel-in-progress: false
 
 jobs:
