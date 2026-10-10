@@ -38,6 +38,12 @@ content:
         sort: order
         order: asc
     fields:
+      - name: showreel
+        label: Showreel (optional, fullscreen video at the top)
+        description: A short video (mp4 or webm, without sound) that fills the whole screen when the project opens. Visitors scroll down to see the rest of the project. Leave empty for a normal project page. Keep it small, e.g. 1920 px wide and under ~15 MB.
+        type: file
+        options:
+          media: projects
       - name: title
         label: Title
         type: string

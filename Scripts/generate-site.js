@@ -1156,8 +1156,20 @@ function renderProjectPage(item, type, nav = null) {
     ? '<a class="back-link" href="index.html">&lt; Back to home</a>'
     : '';
 
+  const showreelExt = pageConfig.showreel ? path.extname(decodeURIComponent(pageConfig.showreel)).toLowerCase() : '';
+  const showreelType = { '.mov': 'video/quicktime', '.m4v': 'video/mp4', '.ogv': 'video/ogg' }[showreelExt] || `video/${showreelExt.slice(1)}`;
+  const showreelBlock = type === 'projects' && pageConfig.showreel
+    ? `<section class="project-showreel" aria-label="${title} showreel">
+    <video autoplay muted loop playsinline preload="auto"${pageConfig.index_image ? ` poster="${pageConfig.index_image}"` : ''}>
+      <source src="${pageConfig.showreel}" type="${showreelType}">
+    </video>
+    <a class="project-showreel__scroll" href="#project-visuals" aria-label="Scroll to the project">&darr;</a>
+  </section>`
+    : '';
+
   return `
-<main class="page-detail">
+<main class="page-detail${showreelBlock ? ' page-detail--showreel' : ''}">
+  ${showreelBlock}
   ${type === 'projects' && nav?.projects ? renderProjectRail(nav.projects, { currentSlug: item.slug }) : ''}
   <div class="project-detail-layout">
     <div class="project-visual-zone" id="project-visuals">
@@ -1437,6 +1449,12 @@ function applyCmsProject(item, data, file) {
 
   const pageConfig = { ...item.pageConfig };
   if (typeof data.short_title === 'string' && data.short_title.trim()) pageConfig.index_title = data.short_title.trim();
+
+  // Optional fullscreen showreel video that opens the project page.
+  const showreel = cmsFilePath(data.showreel, `${file} showreel`);
+  if (showreel && videoExts.has(path.extname(showreel).toLowerCase())) {
+    pageConfig.showreel = toUrlPath(...showreel.slice(1).split('/'));
+  }
 
   const cover = cmsFilePath(data.cover, `${file} cover`);
   if (cover) {

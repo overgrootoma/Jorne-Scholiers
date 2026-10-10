@@ -79,6 +79,13 @@ Een nieuwe foto? Voeg ze toe als vakje bij **Photo order** (ze komt dan op volle
 pagina) en stel daarna eventueel haar breedte in onder **Project images and text sections**.
 Een foto weghalen doe je op beide plekken.
 
+## 4b. Showreel (optioneel)
+
+Helemaal bovenaan elk project staat **Showreel**. Kies daar een korte video (mp4 of webm, zonder
+geluid). Het project opent dan met die video over het hele scherm; pas als je scrolt, zie je de
+rest van het project. Leeg = gewone projectpagina. Hou de video klein (± 1920 px breed, onder
+15 MB), dan laadt ze snel.
+
 ## 4a. Tekstsecties tussen de foto's en tags
 
 **Tekstsectie tussen foto's** (voor een case study): klik onder **Project images and text
