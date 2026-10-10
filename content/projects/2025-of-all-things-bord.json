@@ -20,23 +20,22 @@
     "/Projects/2025 Off all things bord /Packshots ZINE-10.webp",
     "/Projects/2025 Off all things bord /zine-2.webp",
     "/Projects/2025 Off all things bord /zine-3.webp",
-    "/Projects/2025 Off all things bord /zine-4.webp",
-    "/Projects/2025 Off all things bord /zine-bewerkt.webp"
+    "/Projects/2025 Off all things bord /zine-4.webp"
   ],
   "images": [
     {
       "type": "image",
       "name": "RubenDejonge_JorneScholiers_magazine_Packshot_4",
       "image": "/Projects/2025 Off all things bord /RubenDejonge_JorneScholiers_magazine_Packshot_4.webp",
-      "columns": "6",
-      "start": "auto",
+      "columns": "4",
+      "start": "3",
       "new_row": false
     },
     {
       "type": "image",
       "name": "RubenDejonge_JorneScholiers_magazine_Packshot_1",
       "image": "/Projects/2025 Off all things bord /RubenDejonge_JorneScholiers_magazine_Packshot_1.webp",
-      "columns": "6",
+      "columns": "3",
       "start": "auto",
       "new_row": false
     },
@@ -44,7 +43,7 @@
       "type": "image",
       "name": "RubenDejonge_JorneScholiers_magazine_Packshot_2",
       "image": "/Projects/2025 Off all things bord /RubenDejonge_JorneScholiers_magazine_Packshot_2.webp",
-      "columns": "6",
+      "columns": "3",
       "start": "auto",
       "new_row": false
     },
@@ -52,7 +51,7 @@
       "type": "image",
       "name": "RubenDejonge_JorneScholiers_magazine_Packshot_3",
       "image": "/Projects/2025 Off all things bord /RubenDejonge_JorneScholiers_magazine_Packshot_3.webp",
-      "columns": "6",
+      "columns": "3",
       "start": "auto",
       "new_row": false
     },
@@ -60,7 +59,7 @@
       "type": "image",
       "name": "RubenDejonge_JorneScholiers_magazine_Packshot_5",
       "image": "/Projects/2025 Off all things bord /RubenDejonge_JorneScholiers_magazine_Packshot_5.webp",
-      "columns": "6",
+      "columns": "3",
       "start": "auto",
       "new_row": false
     },
@@ -68,7 +67,7 @@
       "type": "image",
       "name": "Packshots ZINE-10",
       "image": "/Projects/2025 Off all things bord /Packshots ZINE-10.webp",
-      "columns": "6",
+      "columns": "3",
       "start": "auto",
       "new_row": false
     },
@@ -76,7 +75,7 @@
       "type": "image",
       "name": "zine-2",
       "image": "/Projects/2025 Off all things bord /zine-2.webp",
-      "columns": "6",
+      "columns": "3",
       "start": "auto",
       "new_row": false
     },
@@ -84,7 +83,7 @@
       "type": "image",
       "name": "zine-3",
       "image": "/Projects/2025 Off all things bord /zine-3.webp",
-      "columns": "6",
+      "columns": "3",
       "start": "auto",
       "new_row": false
     },
@@ -92,16 +91,8 @@
       "type": "image",
       "name": "zine-4",
       "image": "/Projects/2025 Off all things bord /zine-4.webp",
-      "columns": "6",
-      "start": "auto",
-      "new_row": false
-    },
-    {
-      "type": "image",
-      "name": "zine-bewerkt",
-      "image": "/Projects/2025 Off all things bord /zine-bewerkt.webp",
-      "columns": "6",
-      "start": "auto",
+      "columns": "4",
+      "start": "3",
       "new_row": false
     }
   ],
