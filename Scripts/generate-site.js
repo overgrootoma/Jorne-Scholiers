@@ -1634,6 +1634,8 @@ function buildSite() {
     image: profileImage,
     imageAlt: 'Portrait of visual designer Jorne Scholiers',
     schema: personSchema(),
+    // Old About page: nothing links to it any more (the homepage has About), so keep it out of Google.
+    noIndex: true,
     bodyClass: 'page-simple page-about',
     main: renderAboutPage(),
   });
@@ -1737,7 +1739,6 @@ function buildSite() {
   writeSearchFiles([
     '',
     'projects.html',
-    'about.html',
     'archive.html',
     ...projects.map((project) => `project-${project.slug}.html`),
   ]);

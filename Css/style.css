@@ -6364,3 +6364,41 @@ body.page-home .home-info-list .home-dated-item + .home-dated-item {
     margin-top: 8px !important;
   }
 }
+
+/* ---------- Final polish ---------- */
+
+/* Footer in the pixel font, small like the years. */
+.site-footer,
+.site-footer *,
+body.page-home .site-footer,
+body.page-home .site-footer * {
+  font-family: var(--title-font) !important;
+  font-size: 0.63rem !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.04em;
+  line-height: 1.6;
+}
+
+/* Dates column wide enough for "2023 — 2026", so every text starts on the same line. */
+.page-home .home-exhibition .home-information .home-dated-item small {
+  flex: 0 0 8.4em;
+  letter-spacing: 0.04em;
+}
+
+/* Small labels on project pages share one size and spacing. */
+.project-information-content .back-link,
+.project-step-label,
+.project-information .detail-files .media-link {
+  font-size: 0.65rem !important;
+  letter-spacing: 0.1em !important;
+}
+
+/* Year and project name share one baseline. */
+body.page-home .home-project-link {
+  align-items: baseline !important;
+}
+
+body.page-home .home-project-link > small,
+body.page-home .home-project-link > span {
+  align-self: baseline !important;
+}

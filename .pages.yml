@@ -73,8 +73,9 @@ content:
         label: Hide this project
         description: Keeps the project off the site without deleting it.
         type: boolean
+        default: false
       - name: folder
-        label: Project folder
+        label: Old project folder (leave empty for new projects)
         description: Only for projects that were set up before the CMS (extra settings such as the Isolation image grid live in Projects/<folder>/page.json). Leave empty for new projects.
         type: string
       - name: cover
@@ -89,14 +90,14 @@ content:
         type: text
       - name: photo_order
         label: Photo order (drag the tiles)
-        description: "Easiest: open jornescholiers.be/editor to order and size all photos in one overview. Here: All photos of the page as small tiles. Drag a tile to change the order of the photos on the page. Text sections stay where they are. Adding a tile here also adds that photo to the page (full width); its width and position are set below."
+        description: "All photos of the page as small tiles: drag a tile to change the order. A new tile adds that photo to the page (full width). Easiest for order and width together: the layout editor at jornescholiers.be/editor"
         type: image
         options:
           media: projects
           multiple: true
       - name: images
         label: Project images and text sections
-        description: "Width and position of each photo, and the text sections. The order of the photos is set by the tiles in Photo order above; text sections stay at their place in this list. Each row shows: number · short name · width of 6 · new row. Click a row to open it. On desktop and tablet the page is a grid of 6 columns; on phones everything is full width, one under the other. Upload new images into a folder for this project, e.g. \"2027 Project name\"."
+        description: "Width and position of each photo (desktop grid of 6 columns; on phones everything is full width), plus the text sections. The photo order comes from the tiles above. Click a row to open it."
         type: block
         # Collapsed rows show a short name instead of the long image path, so the order is easy
         # to scan. Pages CMS can only show text here, not a thumbnail.
@@ -126,18 +127,21 @@ content:
               label: Width (columns of 6)
               description: 6 = full width, 3 = half, 2 = a third, 1 = a sixth.
               type: select
+              default: "6"
               options:
                 values: ["6", "5", "4", "3", "2", "1"]
             - name: start
               label: Start at column
               description: auto = right after the previous block. Pick a later column to leave empty space before it.
               type: select
+              default: "auto"
               options:
                 values: ["auto", "1", "2", "3", "4", "5", "6"]
             - name: new_row
               label: Start a new row
               description: Leaves the rest of the previous row empty.
               type: boolean
+              default: false
           - name: text
             label: Text section
             fields:
@@ -155,18 +159,21 @@ content:
               label: Width (columns of 6)
               description: 6 = full width, 3 = half, 2 = a third, 1 = a sixth.
               type: select
+              default: "6"
               options:
                 values: ["6", "5", "4", "3", "2", "1"]
             - name: start
               label: Start at column
               description: auto = right after the previous block. Pick a later column to leave empty space before it.
               type: select
+              default: "auto"
               options:
                 values: ["auto", "1", "2", "3", "4", "5", "6"]
             - name: new_row
               label: Start a new row
               description: Leaves the rest of the previous row empty.
               type: boolean
+              default: false
       - name: homepage_images
         label: Homepage hover images
         description: Up to 4 images shown when hovering the project on the homepage. Empty = the first project images.
