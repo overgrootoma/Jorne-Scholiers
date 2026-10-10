@@ -662,6 +662,7 @@ function renderHome(projects, homepageProfile) {
     return `<li>${escapeHtml(item)}</li>`;
   }).join('');
   const renderLinkList = (items) => items.map((item) => {
+    if (!item.label) return '<li class="home-link-spacer" aria-hidden="true">&nbsp;</li>';
     if (!item.href) return `<li><span>${escapeHtml(item.label)}</span></li>`;
     const external = /^https?:/i.test(item.href) ? ' target="_blank" rel="noopener"' : '';
     return `<li><a href="${escapeHtml(item.href)}"${external}>${escapeHtml(item.label)}</a></li>`;
@@ -1333,8 +1334,10 @@ function stringList(value) {
 function linkList(value) {
   return Array.isArray(value)
     ? value
-      .filter((entry) => entry && typeof entry.label === 'string' && entry.label.trim())
-      .map((entry) => ({ label: entry.label.trim(), href: typeof entry.href === 'string' ? entry.href.trim() : '' }))
+      // A row without text (and without link) is kept as an empty line between groups of links.
+      .filter((entry) => entry && typeof entry === 'object')
+      .map((entry) => ({ label: typeof entry.label === 'string' ? entry.label.trim() : '', href: typeof entry.href === 'string' ? entry.href.trim() : '' }))
+      .filter((entry) => entry.label || !entry.href)
     : [];
 }
 

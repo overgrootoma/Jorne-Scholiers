@@ -266,13 +266,14 @@ content:
             type: string
       - name: links
         label: Links
+        description: Add a row with an empty Text to put an empty line between groups, e.g. between your contact details and your socials.
         type: object
         list: true
         fields:
           - name: label
             label: Text
+            description: Leave empty (and no link) for an empty line.
             type: string
-            required: true
           - name: href
             label: Link
             type: string
