@@ -6353,3 +6353,14 @@ body.page-detail .project-showreel__scroll {
     max-height: calc(100dvh - 140px);
   }
 }
+
+/* Exhibitions, Experience and Education: space between entries, a little less than between projects. */
+body.page-home .home-info-list .home-dated-item + .home-dated-item {
+  margin-top: 14px !important;
+}
+
+@media (max-width: 900px), (hover: none), (pointer: coarse) {
+  body.page-home .home-info-list .home-dated-item + .home-dated-item {
+    margin-top: 8px !important;
+  }
+}
