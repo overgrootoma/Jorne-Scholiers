@@ -6321,3 +6321,35 @@ body.page-detail .project-showreel__scroll {
   text-decoration: none;
   mix-blend-mode: difference;
 }
+
+/* Mobile image viewer: previous/next arrows at the bottom instead of halfway up the sides. */
+@media (max-width: 650px), (hover: none) and (pointer: coarse) and (max-width: 900px) {
+  .image-lightbox .lightbox-control,
+  .image-lightbox .lightbox-control:hover,
+  .image-lightbox .lightbox-control:focus-visible {
+    top: auto !important;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+    transform: none !important;
+    width: 44px;
+    height: 44px;
+  }
+
+  .image-lightbox .lightbox-control--prev {
+    left: calc(50% - 52px) !important;
+    right: auto !important;
+  }
+
+  .image-lightbox .lightbox-control--next {
+    left: calc(50% + 8px) !important;
+    right: auto !important;
+  }
+
+  .image-lightbox .lightbox-stage {
+    padding: 48px 12px calc(84px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .image-lightbox img {
+    max-width: calc(100vw - 24px);
+    max-height: calc(100dvh - 140px);
+  }
+}
