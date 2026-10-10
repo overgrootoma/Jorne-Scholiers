@@ -378,9 +378,14 @@ function homepageImages(project) {
 function textToHtml(text) {
   if (!text) return '';
   const escaped = escapeHtml(text);
-  const paragraphs = escaped.split(/\n\s*\n/);
+  // Empty lines separate paragraphs (each extra empty line adds a line of space); a single
+  // enter is a line break.
+  const paragraphs = escaped.replace(/\r\n?/g, '\n').trim().split(/\n[ \t]*\n/);
   return paragraphs
-    .map((para) => `<p>${para.replace(/\n/g, '<br>')}</p>`)
+    .map((para) => {
+      const extra = para.match(/^(\s*\n)*/)[0].split('\n').length - 1;
+      return `<p>${'<br>'.repeat(extra)}${para.replace(/^\s*\n/, '').replace(/\n/g, '<br>')}</p>`;
+    })
     .join('\n');
 }
 

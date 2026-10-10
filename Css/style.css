@@ -6274,3 +6274,10 @@ body.page-detail .site-footer.is-visible {
   padding-top: 8px;
   padding-bottom: 10px;
 }
+
+/* An empty line in a text (CMS) shows as an empty line on the site; a single enter is a line break. */
+body.page-detail .detail-description p + p,
+body.page-detail .detail-gallery-text__intro p + p,
+body.page-detail .detail-gallery-text__body p + p {
+  margin-top: 1.4em !important;
+}
