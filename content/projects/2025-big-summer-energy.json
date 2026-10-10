@@ -166,14 +166,6 @@
       "columns": "1",
       "start": "4",
       "new_row": false
-    },
-    {
-      "type": "image",
-      "name": "AAW1",
-      "image": "/Projects/2025 Big summer energy/AAW1.webp",
-      "columns": "1",
-      "start": "auto",
-      "new_row": false
     }
   ],
   "homepage_images": [
