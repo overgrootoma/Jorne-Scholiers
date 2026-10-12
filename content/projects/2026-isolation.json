@@ -1,6 +1,6 @@
 {
   "title": "Isolation",
-  "one_liner": "Book of generative images made with a self-coded tool",
+  "one_liner": "Book of generative images made with my own AI-coded tool",
   "tags": [
     "book",
     "creative coding"
@@ -11,7 +11,7 @@
   "hidden": false,
   "folder": "2026 Isolation",
   "cover": "/images/cover photo's/Isolation.png",
-  "description": "This book explores isolation both as a visual theme and as a design method. Moving away from traditional design software, I developed a custom tool to generate and transform images. Using 100 photographs sourced from Unsplash through the keyword “isolation,” the tool reconstructs each image into a line-based grid and introduces a force field around the isolated subject, distorting its surroundings while keeping the subject intact. The result is a series of experimental images in which isolation is not only represented, but embedded in the structure of the image itself.",
+  "description": "This book is made with an AI-coded tool: the idea and the concept are mine, and I built the tool together with AI, since I don't write code myself. The book explores isolation both as a visual theme and as a design method. Moving away from traditional design software, I used this tool to generate and transform images. Using 100 photographs sourced from Unsplash through the keyword “isolation,” the tool reconstructs each image into a line-based grid and introduces a force field around the isolated subject, distorting its surroundings while keeping the subject intact. The result is a series of experimental images in which isolation is not only represented, but embedded in the structure of the image itself.",
   "keywords": [
     "creative coding",
     "generative design",
