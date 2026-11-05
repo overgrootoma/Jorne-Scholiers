@@ -6402,3 +6402,21 @@ body.page-home .home-project-link > small,
 body.page-home .home-project-link > span {
   align-self: baseline !important;
 }
+
+/* Smooth scrolling (Lenis): the page scrolls itself, so the browser's own smooth scroll is off. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}

@@ -1279,6 +1279,8 @@ function renderLayout({ title, description, fileName, canonicalFile, image, imag
   ${renderLogoSlot()}
   ${accessibleMain}
   ${renderFooter()}
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
+  <script src="Scripts/smooth-scroll.js" defer></script>
   <script src="Scripts/site.js" defer></script>
 </body>
 </html>`;
