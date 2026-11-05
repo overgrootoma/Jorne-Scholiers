@@ -6409,6 +6409,8 @@ html.lenis body {
   height: auto;
 }
 
+/* The browser's own smooth scroll (set on html above) would fight Lenis and stutter. */
+html.lenis,
 .lenis.lenis-smooth {
   scroll-behavior: auto !important;
 }

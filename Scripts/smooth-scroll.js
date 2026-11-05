@@ -5,7 +5,7 @@
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   const lenis = new window.Lenis({
-    lerp: 0.075, // lower = longer glide
+    lerp: 0.12, // lower = longer glide; 0.12 is a short, subtle glide
     wheelMultiplier: 1,
     smoothWheel: true,
     syncTouch: false,
