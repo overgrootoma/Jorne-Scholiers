@@ -548,7 +548,7 @@ function renderHead({
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Silkscreen&amp;family=Open+Sans:ital,wght@0,300..800;1,300..800&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Silkscreen&amp;family=Open+Sans:wght@300..800&amp;display=swap" rel="stylesheet">
   <script>
     // Arriving through a link click: keep the blue page transition covering the page until site.js opens it.
     try {
@@ -567,31 +567,8 @@ function renderHead({
 </head>`;
 }
 
-function renderIntroCopy() {
-  return `<p>
-    Hello,<br>
-    My name is Jorne Scholiers, a Visual Design student at LUCA School of Arts Ghent.<br><br>
-    I have some <a href="index.html#project-grid">projects</a> you can look at, along with other work in my <a href="archive.html">archive</a> that shows what I've been experimenting with.<br>
-    Some of my projects appear on my <a href="https://www.instagram.com/byjorne/" target="_blank" rel="noopener">Instagram</a>.<br><br>
-    Don't hesitate to <a href="mailto:jorne.scholiers@icloud.com">contact me</a>, I'd love to hear from you.<br>
-    Oh and I am working on a little experimental <a href="https://overgrootoma.github.io/Accidental-Graphics/index.html" target="_blank" rel="noopener">site</a> as well :)
-  </p>`;
-}
 
-function renderIntro() {
-  return `
-<section class="intro" id="intro">
-  <h1 class="visually-hidden">Jorne Scholiers — Visual and Graphic Designer in Ghent</h1>
-  ${renderIntroCopy()}
-</section>`;
-}
 
-function renderMobileIntro() {
-  return `<details class="mobile-intro">
-    <summary>Introduction</summary>
-    <div class="mobile-intro-copy">${renderIntroCopy()}</div>
-  </details>`;
-}
 
 function renderProjectRows(projects, { compact = false } = {}) {
   return projects.map((project, index) => {
@@ -637,22 +614,6 @@ function renderProjectRail(projects, { linkToSections = false, currentSlug = nul
     </div>`;
 }
 
-function renderHomeProjectGrid(projects) {
-  const cards = projects.map((project, index) => {
-    const title = project.pageConfig?.index_title || project.title;
-    const image = projectIndexImagePath(project);
-    const dimensions = rootImageDimensionAttributes(image);
-    const loading = index < 3 ? ' loading="eager"' : ' loading="lazy"';
-    return `<a class="home-grid-card" href="project-${project.slug}.html" style="--grid-card-color: ${project.accent}; --grid-card-text: ${railTextColor(project.accent)}">
-      <span class="home-grid-card-image"><img src="${escapeHtml(image)}" alt="Preview of ${escapeHtml(title)}"${dimensions}${loading} decoding="async"></span>
-      <span class="home-grid-card-info"><strong>${escapeHtml(title)}</strong></span>
-    </a>`;
-  }).join('\n');
-
-  return `<section class="home-project-grid" id="project-grid" aria-label="All projects" hidden>
-    <div class="home-project-grid-cards" style="--home-project-columns: ${Math.max(Math.ceil(projects.length / 3), 1)}">${cards}</div>
-  </section>`;
-}
 
 function renderHome(projects, homepageProfile) {
   const renderTextList = (items, { interactiveFirst = false } = {}) => items.map((item, index) => {
@@ -919,22 +880,6 @@ function renderPhotographyIndex(items) {
   });
 }
 
-function renderProjectsIndex(projects) {
-  return `
-<main class="page-projects">
-  <section class="projects-overview">
-    ${renderMobileIntro()}
-    <h1 class="visually-hidden">Graphic design projects</h1>
-    <div class="projects-view-toggle" role="group" aria-label="Project index view">
-      <button class="projects-view-toggle__button is-active" type="button" data-projects-view="list" aria-pressed="true">List</button>
-      <button class="projects-view-toggle__button" type="button" data-projects-view="grid" aria-pressed="false">Grid</button>
-    </div>
-    <div class="projects-list" data-projects-list data-view="list">
-      ${renderProjectRows(projects) || '<div class="empty-state">Projects will be added here.</div>'}
-    </div>
-  </section>
-</main>`;
-}
 
 function renderProjectOverview(projects) {
   const items = projects.map((project, index) => {
@@ -1200,15 +1145,6 @@ function renderProjectPage(item, type, nav = null) {
 </main>`;
 }
 
-function renderSimplePage({ title, heading, content }) {
-  return `
-<main class="page-simple">
-  <section class="simple-block">
-    <h1 class="title-font">${escapeHtml(heading)}</h1>
-    ${content}
-  </section>
-</main>`;
-}
 
 function renderAboutPage() {
   return `
