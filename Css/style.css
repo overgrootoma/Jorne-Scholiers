@@ -6422,3 +6422,33 @@ html.lenis,
 .lenis.lenis-stopped {
   overflow: hidden;
 }
+
+/* Homepage: no footer, and on desktop the page itself never scrolls (everything fits one screen).
+   Lenis sets body height to auto (above), which brought the page scroll back, so this comes last. */
+body.page-home .site-footer {
+  display: none !important;
+}
+
+@media (min-width: 901px) and (hover: hover) and (pointer: fine) {
+  html:has(> body.page-home),
+  html.lenis body.page-home,
+  body.page-home {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+}
+
+/* Lower desktop windows (e.g. a 13" laptop): a bit less space between the info blocks,
+   so Education still fits now that the homepage no longer scrolls. */
+@media (min-width: 901px) and (max-height: 820px) and (hover: hover) and (pointer: fine) {
+  .page-home .home-exhibition .home-information h2 {
+    margin-bottom: 12px !important;
+  }
+
+  .page-home .home-exhibition .home-experience,
+  .page-home .home-exhibition .home-education {
+    margin-top: 28px !important;
+  }
+}
