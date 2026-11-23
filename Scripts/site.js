@@ -1758,7 +1758,16 @@
     };
     const hide = () => preview.classList.remove('is-visible');
 
-    trigger.addEventListener('pointerenter', show);
+    // Only the part from "About" down to the end of the info list (…Belgium) shows the portrait;
+    // the links below it (e-mail, phone, socials) do not.
+    const infoList = trigger.querySelector('.home-info-list');
+    const update = (event) => {
+      const limit = infoList ? infoList.getBoundingClientRect().bottom : Infinity;
+      if (event.clientY <= limit) show();
+      else hide();
+    };
+    trigger.addEventListener('pointerenter', update);
+    trigger.addEventListener('pointermove', update);
     trigger.addEventListener('pointerleave', hide);
     trigger.addEventListener('focus', show);
     trigger.addEventListener('blur', hide);
