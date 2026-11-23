@@ -6478,16 +6478,18 @@ body.page-detail .project-rail {
 }
 
 .rail-current-label {
+  /* Placed in the middle of the current block (all blocks share the rail height equally);
+     site.js fine-tunes it. Same left edge as "Back to home". */
+  --rail-top: calc(var(--site-logo-offset-y) + var(--site-logo-height) + 44px);
   position: fixed;
   z-index: 13;
-  top: -100px;
-  left: var(--sidebar-width);
-  padding: 0 12px;
+  top: calc(var(--rail-top) + (100dvh - var(--rail-top)) * (var(--rail-index, 0) + 0.5) / var(--rail-count, 1));
+  left: calc(var(--sidebar-width) + 12px);
   color: #fff;
   mix-blend-mode: difference;
   pointer-events: none;
   font-family: var(--title-font);
-  font-size: clamp(0.68rem, 0.8vw, 0.82rem);
+  font-size: 0.68rem;
   letter-spacing: 0.1em;
   line-height: 1.2;
   text-transform: uppercase;
@@ -6500,8 +6502,9 @@ body.page-detail .project-rail {
   position: fixed;
   z-index: 17;
   top: calc(var(--site-logo-offset-y) + var(--site-logo-height) + 14px);
-  left: var(--site-logo-offset-x, 20px);
-  padding: 2px 0;
+  left: calc(var(--sidebar-width) + 12px);
+  margin-left: -4px;
+  padding: 2px 4px;
   color: #fff;
   mix-blend-mode: difference;
   font-family: var(--title-font);
@@ -6513,7 +6516,9 @@ body.page-detail .project-rail {
 
 .project-back-link:hover,
 .project-back-link:focus-visible {
-  text-decoration: underline;
+  color: var(--white);
+  background: var(--accent-blue);
+  mix-blend-mode: normal;
 }
 
 @media (max-width: 900px), (hover: none), (pointer: coarse) {

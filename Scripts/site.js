@@ -1875,8 +1875,7 @@
     if (!label || !current) return;
     const place = () => {
       const rect = current.getBoundingClientRect();
-      label.style.top = `${rect.top + rect.height / 2}px`;
-      label.style.left = `${rect.right}px`;
+      if (rect.height) label.style.top = `${rect.top + rect.height / 2}px`;
     };
     place();
     window.addEventListener('resize', place);

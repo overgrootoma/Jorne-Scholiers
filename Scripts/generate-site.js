@@ -1135,7 +1135,7 @@ function renderProjectPage(item, type, nav = null) {
 <main class="page-detail${showreelBlock ? ' page-detail--showreel' : ''}">
   ${showreelBlock}
   ${type === 'projects' && nav?.projects ? renderProjectRail(nav.projects, { currentSlug: item.slug }) : ''}
-  ${type === 'projects' && nav?.projects ? `<div class="rail-current-label" aria-hidden="true">${title}</div>` : ''}
+  ${type === 'projects' && nav?.projects ? `<div class="rail-current-label" aria-hidden="true" style="--rail-index: ${Math.max(0, nav.projects.findIndex((project) => project.slug === item.slug))}; --rail-count: ${nav.projects.length}">${title}</div>` : ''}
   ${backLink}
   <div class="project-detail-layout">
     <div class="project-visual-zone" id="project-visuals">
