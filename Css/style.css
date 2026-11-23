@@ -6453,63 +6453,73 @@ body.page-home .site-footer {
   }
 }
 
-/* Project pages: subtle current-project marker in the left navigation.
-   The rail blends with "difference" like the logo, so it inverts over dark images.
-   Colours are therefore the inverse of what you see on the light page:
-   white lines show as black, yellow shows as blue (#f1f1ef − #ffff00 ≈ blue). */
+/* Project pages, left navigation: the current project is a blue block that stays in line
+   (not stretched out). Its title sits next to it as a separate layer (.rail-current-label) that
+   inverts over the images, like the logo. Hovering another project works as before. */
 main.page-detail {
-  z-index: auto; /* no own stacking context, so the rail can blend with the page behind it */
+  z-index: auto; /* no own stacking context, so the label can blend with the page behind it */
 }
 
-.page-detail .project-rail {
-  mix-blend-mode: difference;
-  background: transparent !important;
-}
-
-.page-detail .project-rail .rail-block {
-  background: transparent !important;
-  border-color: #fff !important;
-}
-
-.page-detail .project-rail .rail-block span {
-  color: #000;
-}
-
-.page-detail .project-rail .rail-block:hover,
-.page-detail .project-rail .rail-block:focus-visible {
-  background: #ffff00 !important;
+body.page-detail .project-rail {
+  top: calc(var(--site-logo-offset-y) + var(--site-logo-height) + 44px);
+  height: calc(100dvh - var(--site-logo-offset-y) - var(--site-logo-height) - 44px);
 }
 
 .page-detail .project-rail .rail-block.is-current,
 .page-detail .project-rail .rail-block.is-current:hover,
 .page-detail .project-rail .rail-block.is-current:focus-visible {
   width: var(--sidebar-width);
-  overflow: visible;
-  background: transparent !important;
-  border-right: 1px solid #fff;
+  background: var(--accent-blue) !important;
+  border-right: 1px solid var(--black);
 }
 
-.page-detail .project-rail .rail-block.is-current::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 10px;
-  height: 10px;
-  background: #ffff00;
-  transform: translate(-50%, -50%);
+.page-detail .project-rail .rail-block.is-current span {
+  opacity: 0 !important;
 }
 
-.page-detail .project-rail .rail-block.is-current span,
-.page-detail .project-rail .rail-block.is-current:hover span,
-.page-detail .project-rail .rail-block.is-current:focus-visible span {
-  position: absolute;
-  top: 50%;
-  left: 100%;
-  padding: 0 10px;
-  color: #ffff00;
-  opacity: 1;
+.rail-current-label {
+  position: fixed;
+  z-index: 13;
+  top: -100px;
+  left: var(--sidebar-width);
+  padding: 0 12px;
+  color: #fff;
+  mix-blend-mode: difference;
+  pointer-events: none;
+  font-family: var(--title-font);
+  font-size: clamp(0.68rem, 0.8vw, 0.82rem);
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
   transform: translateY(-50%);
+}
+
+/* "Back to home": always visible, under the logo on the left. */
+.project-back-link {
+  position: fixed;
+  z-index: 17;
+  top: calc(var(--site-logo-offset-y) + var(--site-logo-height) + 14px);
+  left: var(--site-logo-offset-x, 20px);
+  padding: 2px 0;
+  color: #fff;
+  mix-blend-mode: difference;
+  font-family: var(--title-font);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.project-back-link:hover,
+.project-back-link:focus-visible {
+  text-decoration: underline;
+}
+
+@media (max-width: 900px), (hover: none), (pointer: coarse) {
+  .rail-current-label {
+    display: none;
+  }
 }
 
 /* Project information at the top of the project page (replaces the right-hand panel).
@@ -6538,21 +6548,10 @@ body.page-detail .project-intro__text {
   max-width: 62ch;
 }
 
-body.page-detail .project-intro .back-link {
-  display: inline-block;
-  margin: 0 0 28px -4px;
-  padding: 2px 4px;
-  font-family: var(--title-font);
-  font-size: 0.68rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--black);
-}
-
 body.page-detail .project-intro h1 {
-  margin: 0 0 8px;
+  margin: 0 0 10px;
   font-family: var(--title-font);
-  font-size: clamp(1.1rem, 1.4vw, 1.4rem);
+  font-size: clamp(1.5rem, 2.3vw, 2.4rem);
   font-weight: 400;
   line-height: 1.3;
   letter-spacing: 0.05em;
@@ -6607,4 +6606,11 @@ body.page-detail main.page-detail--showreel .project-intro {
 .page-project-overview .project-overview-image img {
   object-fit: contain;
   object-position: center bottom;
+}
+
+/* Projects overview: 4 per row on desktop, so every project is shown a bit larger. */
+@media (min-width: 901px) {
+  .page-project-overview .project-overview-list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }

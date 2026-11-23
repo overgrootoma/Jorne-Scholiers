@@ -1866,6 +1866,23 @@
     revealTargets.forEach((target) => observer.observe(target));
   };
 
+  // Project pages: the title of the current project sits next to its (blue) rail block, as its
+  // own layer so it can invert over the images like the logo.
+  const setupRailCurrentLabel = () => {
+    const label = document.querySelector('.rail-current-label');
+    const rail = document.querySelector('.page-detail .project-rail');
+    const current = rail?.querySelector('.rail-block.is-current');
+    if (!label || !current) return;
+    const place = () => {
+      const rect = current.getBoundingClientRect();
+      label.style.top = `${rect.top + rect.height / 2}px`;
+      label.style.left = `${rect.right}px`;
+    };
+    place();
+    window.addEventListener('resize', place);
+    rail.addEventListener('scroll', place, { passive: true });
+  };
+
   const setupProjectInformation = () => {
     const panel = document.querySelector('[data-project-information]');
     const toggle = panel?.querySelector('.project-information-toggle');
@@ -1889,5 +1906,6 @@
   setupHomeProjectPreviews();
   setupHomePortraitPreview();
   setupProjectInformation();
+  setupRailCurrentLabel();
   setupMotion();
 })();

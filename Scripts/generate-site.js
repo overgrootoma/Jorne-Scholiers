@@ -1101,7 +1101,7 @@ function renderProjectPage(item, type, nav = null) {
   const informationFilesBlock = type === 'projects' && filesBlock ? `\n        ${filesBlock}` : '';
 
   const backLink = type === 'projects'
-    ? '<a class="back-link" href="index.html">&lt; Back to home</a>'
+    ? '<a class="project-back-link" href="index.html">&lt; Back to home</a>'
     : '';
 
   const showreelExt = pageConfig.showreel ? path.extname(decodeURIComponent(pageConfig.showreel)).toLowerCase() : '';
@@ -1120,7 +1120,6 @@ function renderProjectPage(item, type, nav = null) {
   const projectIntro = type === 'projects'
     ? `<header class="project-intro">
         <div class="project-intro__heading">
-          ${backLink}
           <h1 class="title-font">${title}</h1>
           ${item.tags?.length
     ? `<ul class="project-tags" aria-label="Type of project">${item.tags.map((tag) => `<li>${escapeHtml(tag)}</li>`).join('')}</ul>`
@@ -1136,6 +1135,8 @@ function renderProjectPage(item, type, nav = null) {
 <main class="page-detail${showreelBlock ? ' page-detail--showreel' : ''}">
   ${showreelBlock}
   ${type === 'projects' && nav?.projects ? renderProjectRail(nav.projects, { currentSlug: item.slug }) : ''}
+  ${type === 'projects' && nav?.projects ? `<div class="rail-current-label" aria-hidden="true">${title}</div>` : ''}
+  ${backLink}
   <div class="project-detail-layout">
     <div class="project-visual-zone" id="project-visuals">
       ${projectIntro}
