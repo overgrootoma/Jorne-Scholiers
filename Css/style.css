@@ -6739,3 +6739,14 @@ body.page-detail .detail-gallery-video .detail-showcase {
 .lightbox-zoom .lightbox-tool[data-zoom="out"] {
   display: none !important;
 }
+
+/* Titles of text sections between the images: same size as the project title at the top. */
+body.page-detail .detail-gallery-text__title {
+  margin: 0 0 14px;
+  font-family: var(--title-font);
+  font-size: clamp(1.5rem, 2.3vw, 2.4rem);
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
