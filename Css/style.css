@@ -6688,3 +6688,36 @@ body.page-detail .detail-gallery-video .detail-showcase {
 .rail-current-label--archive {
   top: -100px;
 }
+
+/* Homepage (desktop): About, Exhibitions, Projects and Archive as four evenly spaced columns. */
+@media (min-width: 901px) and (hover: hover) and (pointer: fine) {
+  body.page-home main.page-home {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 57.6px;
+  }
+
+  body.page-home .home-information {
+    grid-column: 1 / span 2;
+    grid-row: 1;
+    width: auto;
+    max-width: none;
+  }
+
+  body.page-home .home-about-columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 57.6px;
+  }
+
+  body.page-home .home-project-index {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  body.page-home .home-exhibition > .home-archive-link {
+    position: static;
+    grid-column: 4;
+    grid-row: 1;
+    align-self: start;
+    justify-self: start;
+  }
+}
