@@ -6671,3 +6671,20 @@ body.page-detail .detail-gallery > .detail-gallery-video {
 body.page-detail .detail-gallery-video .detail-showcase {
   margin: 0;
 }
+
+/* Archive: the active year is a blue block that stays in line (not stretched out); the year sits
+   next to it, inverting over the images, like the current project on project pages.
+   Hovering another year works as before. */
+.archive-rail-block.is-active,
+.archive-rail-block.is-active:hover,
+.archive-rail-block.is-active:focus-visible {
+  width: var(--sidebar-width);
+}
+
+.archive-rail-block.is-active span {
+  opacity: 0 !important;
+}
+
+.rail-current-label--archive {
+  top: -100px;
+}

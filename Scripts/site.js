@@ -1878,6 +1878,26 @@
   // Project pages: the title of the current project sits next to its (blue) rail block, as its
   // own layer so it can invert over the images like the logo.
   const setupRailCurrentLabel = () => {
+    // Archive: the year of the active block, next to it (follows the scroll position).
+    const archiveRail = document.querySelector('.archive-rail');
+    if (archiveRail) {
+      const yearLabel = document.createElement('div');
+      yearLabel.className = 'rail-current-label rail-current-label--archive';
+      yearLabel.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(yearLabel);
+      const placeYear = () => {
+        const active = archiveRail.querySelector('.archive-rail-block.is-active') || archiveRail.querySelector('.archive-rail-block');
+        if (!active) return;
+        const rect = active.getBoundingClientRect();
+        yearLabel.textContent = active.textContent.trim();
+        yearLabel.style.top = `${rect.top + rect.height / 2}px`;
+      };
+      placeYear();
+      new MutationObserver(placeYear).observe(archiveRail, { subtree: true, attributes: true, attributeFilter: ['class'] });
+      window.addEventListener('resize', placeYear);
+      return;
+    }
+
     const label = document.querySelector('.rail-current-label');
     const rail = document.querySelector('.page-detail .project-rail');
     const current = rail?.querySelector('.rail-block.is-current');
