@@ -2,6 +2,16 @@ const fs = require('fs');
 const path = require('path');
 
 const root = path.resolve(__dirname, '..');
+
+// "?v=<hash>" behind the stylesheet and scripts, so browsers load the new version after a change.
+const assetUrl = (file) => {
+  try {
+    const hash = require('crypto').createHash('md5').update(fs.readFileSync(path.join(root, file))).digest('hex').slice(0, 8);
+    return `${file}?v=${hash}`;
+  } catch (err) {
+    return file;
+  }
+};
 const projectsDir = path.join(root, 'Projects');
 const archiveDir = path.join(root, 'Archive');
 const photographyDir = path.join(root, 'photography');
@@ -570,8 +580,8 @@ function renderHead({
     } catch (err) {}
   </script>
   <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
-  <script type="module" src="Scripts/logo3d.js"></script>
-  <link rel="stylesheet" href="Css/style.css">${structuredData}
+  <script type="module" src="${assetUrl('Scripts/logo3d.js')}"></script>
+  <link rel="stylesheet" href="${assetUrl('Css/style.css')}">${structuredData}
 </head>`;
 }
 
@@ -1241,8 +1251,8 @@ function renderLayout({ title, description, fileName, canonicalFile, image, imag
   ${accessibleMain}
   ${renderFooter()}
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
-  <script src="Scripts/smooth-scroll.js" defer></script>
-  <script src="Scripts/site.js" defer></script>
+  <script src="${assetUrl('Scripts/smooth-scroll.js')}" defer></script>
+  <script src="${assetUrl('Scripts/site.js')}" defer></script>
 </body>
 </html>`;
 }
