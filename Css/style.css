@@ -6452,3 +6452,159 @@ body.page-home .site-footer {
     margin-top: 28px !important;
   }
 }
+
+/* Project pages: subtle current-project marker in the left navigation.
+   The rail blends with "difference" like the logo, so it inverts over dark images.
+   Colours are therefore the inverse of what you see on the light page:
+   white lines show as black, yellow shows as blue (#f1f1ef − #ffff00 ≈ blue). */
+main.page-detail {
+  z-index: auto; /* no own stacking context, so the rail can blend with the page behind it */
+}
+
+.page-detail .project-rail {
+  mix-blend-mode: difference;
+  background: transparent !important;
+}
+
+.page-detail .project-rail .rail-block {
+  background: transparent !important;
+  border-color: #fff !important;
+}
+
+.page-detail .project-rail .rail-block span {
+  color: #000;
+}
+
+.page-detail .project-rail .rail-block:hover,
+.page-detail .project-rail .rail-block:focus-visible {
+  background: #ffff00 !important;
+}
+
+.page-detail .project-rail .rail-block.is-current,
+.page-detail .project-rail .rail-block.is-current:hover,
+.page-detail .project-rail .rail-block.is-current:focus-visible {
+  width: var(--sidebar-width);
+  overflow: visible;
+  background: transparent !important;
+  border-right: 1px solid #fff;
+}
+
+.page-detail .project-rail .rail-block.is-current::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  background: #ffff00;
+  transform: translate(-50%, -50%);
+}
+
+.page-detail .project-rail .rail-block.is-current span,
+.page-detail .project-rail .rail-block.is-current:hover span,
+.page-detail .project-rail .rail-block.is-current:focus-visible span {
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  padding: 0 10px;
+  color: #ffff00;
+  opacity: 1;
+  transform: translateY(-50%);
+}
+
+/* Project information at the top of the project page (replaces the right-hand panel).
+   Same 6-column grid as the images. It starts at column 3, so the current-project label of the
+   left navigation never runs into the title; title and tags in columns 3-4, the text in 5-6. */
+body.page-detail .project-detail-layout {
+  display: block;
+}
+
+body.page-detail .project-intro {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  column-gap: 28px;
+  row-gap: 24px;
+  align-items: start;
+  margin: 0 0 clamp(56px, 9vh, 110px);
+  padding-top: calc(var(--site-logo-height, 110px) + 24px);
+}
+
+body.page-detail .project-intro__heading {
+  grid-column: 3 / span 2;
+}
+
+body.page-detail .project-intro__text {
+  grid-column: 5 / span 2;
+  max-width: 62ch;
+}
+
+body.page-detail .project-intro .back-link {
+  display: inline-block;
+  margin: 0 0 28px -4px;
+  padding: 2px 4px;
+  font-family: var(--title-font);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--black);
+}
+
+body.page-detail .project-intro h1 {
+  margin: 0 0 8px;
+  font-family: var(--title-font);
+  font-size: clamp(1.1rem, 1.4vw, 1.4rem);
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+body.page-detail .project-intro .project-tags {
+  margin: 8px 0 0;
+}
+
+body.page-detail .project-intro .project-one-liner {
+  margin: 8px 0 0;
+}
+
+body.page-detail .project-intro .detail-description p {
+  margin: 0 0 0.9em;
+  font-family: var(--body-font);
+  font-size: 0.92rem;
+  font-weight: 500;
+  line-height: 1.55;
+}
+
+body.page-detail .project-intro .detail-description p:last-child {
+  margin-bottom: 0;
+}
+
+body.page-detail .project-intro .detail-files {
+  margin-top: 20px;
+}
+
+/* Showreel projects: the video already fills the first screen, so less space above. */
+body.page-detail .page-detail--showreel .project-intro,
+body.page-detail main.page-detail--showreel .project-intro {
+  padding-top: 48px;
+}
+
+@media (max-width: 899px) {
+  body.page-detail .project-intro {
+    grid-template-columns: minmax(0, 1fr);
+    padding-top: calc(var(--site-logo-height, 110px) + 12px);
+    margin-bottom: 48px;
+    padding-inline: 8px;
+  }
+
+  body.page-detail .project-intro__heading,
+  body.page-detail .project-intro__text {
+    grid-column: 1;
+  }
+}
+
+/* Projects overview: cut-out images are always shown whole (never cropped), on the page background. */
+.page-project-overview .project-overview-image img {
+  object-fit: contain;
+  object-position: center bottom;
+}

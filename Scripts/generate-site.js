@@ -884,7 +884,10 @@ function renderPhotographyIndex(items) {
 function renderProjectOverview(projects) {
   const items = projects.map((project, index) => {
     const title = project.pageConfig?.index_title || project.title;
-    const image = projectIndexImagePath(project);
+    const overviewImage = project.pageConfig?.overview_image;
+    const image = overviewImage && rootImageDimensionAttributes(overviewImage)
+      ? overviewImage
+      : projectIndexImagePath(project);
     const dimensions = rootImageDimensionAttributes(image);
     const loading = index < 5 ? ' loading="eager"' : ' loading="lazy"';
     return `<li>
@@ -1096,7 +1099,6 @@ function renderProjectPage(item, type, nav = null) {
     : '';
   const visualFilesBlock = type === 'projects' || !filesBlock ? '' : `\n      ${filesBlock}`;
   const informationFilesBlock = type === 'projects' && filesBlock ? `\n        ${filesBlock}` : '';
-  const projectInformationClass = type === 'projects' && filesBlock ? ' project-information--has-files' : '';
 
   const backLink = type === 'projects'
     ? '<a class="back-link" href="index.html">&lt; Back to home</a>'
@@ -1113,12 +1115,30 @@ function renderProjectPage(item, type, nav = null) {
   </section>`
     : '';
 
+  // Project information sits at the top of the page (no side panel any more): title and tags
+  // on the left, the text next to it. More text can go between the images as text sections.
+  const projectIntro = type === 'projects'
+    ? `<header class="project-intro">
+        <div class="project-intro__heading">
+          ${backLink}
+          <h1 class="title-font">${title}</h1>
+          ${item.tags?.length
+    ? `<ul class="project-tags" aria-label="Type of project">${item.tags.map((tag) => `<li>${escapeHtml(tag)}</li>`).join('')}</ul>`
+    : (item.oneLiner ? `<p class="project-one-liner">${escapeHtml(item.oneLiner)}</p>` : '')}
+        </div>
+        <div class="project-intro__text">
+          ${descriptionBlock}${informationFilesBlock}
+        </div>
+      </header>`
+    : '';
+
   return `
 <main class="page-detail${showreelBlock ? ' page-detail--showreel' : ''}">
   ${showreelBlock}
   ${type === 'projects' && nav?.projects ? renderProjectRail(nav.projects, { currentSlug: item.slug }) : ''}
   <div class="project-detail-layout">
     <div class="project-visual-zone" id="project-visuals">
+      ${projectIntro}
       <section class="${galleryClass}">
         ${images || '<div class="empty-state">No images yet.</div>'}
       </section>
@@ -1127,20 +1147,6 @@ function renderProjectPage(item, type, nav = null) {
       ${thumbnailBlock}${visualFilesBlock}
       ${type === 'projects' ? renderProjectStepNav(nav) : ''}
     </div>
-    <aside class="project-information${projectInformationClass}" data-project-information>
-      <button class="project-information-toggle" type="button" aria-expanded="true" aria-label="Toggle project information">
-        <span class="project-information-toggle__title">${title}</span>
-        <span class="project-information-toggle__mark" aria-hidden="true">−</span>
-      </button>
-      <div class="project-information-content">
-        ${backLink}
-        <h1 class="title-font">${title}</h1>
-        ${item.tags?.length
-    ? `<ul class="project-tags" aria-label="Type of project">${item.tags.map((tag) => `<li>${escapeHtml(tag)}</li>`).join('')}</ul>`
-    : (item.oneLiner ? `<p class="project-one-liner">${escapeHtml(item.oneLiner)}</p>` : '')}
-        ${descriptionBlock}${informationFilesBlock}
-      </div>
-    </aside>
   </div>
 </main>`;
 }
@@ -1402,6 +1408,10 @@ function applyCmsProject(item, data, file) {
     pageConfig.index_image = toUrlPath(...cover.slice(1).split('/'));
     if (!pageConfig.preview_image) pageConfig.preview_image = pageConfig.index_image;
   }
+
+  // Cut-out image (PNG/WebP without background) for the Projects overview page only.
+  const overviewImage = cmsFilePath(data.overview_image, `${file} overview image`);
+  if (overviewImage) pageConfig.overview_image = toUrlPath(...overviewImage.slice(1).split('/'));
 
   // Each entry is a block: { type: "image", image, alt, columns, start, new_row } or
   // { type: "text", title, intro, body, columns, start, new_row }. Text sections sit between

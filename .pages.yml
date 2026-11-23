@@ -84,6 +84,12 @@ content:
         type: image
         options:
           media: projects
+      - name: overview_image
+        label: Overview image (cut-out, without background)
+        description: A PNG or WebP with a transparent background, shown on the Projects overview page (like the Brilliant Books book). It is shown whole, never cropped. Empty = the cover image.
+        type: image
+        options:
+          media: projects
       - name: description
         label: Text
         description: Leave an empty line between paragraphs.
