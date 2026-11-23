@@ -6662,3 +6662,14 @@ body.page-detail .site-footer.is-visible {
     object-fit: contain;
   }
 }
+
+/* YouTube video placed between the project images (CMS block "YouTube video"): full width. */
+body.page-detail .detail-gallery > .detail-gallery-video {
+  grid-column: 1 / -1;
+  width: 100%;
+  margin: clamp(28px, 6vh, 72px) 0;
+}
+
+body.page-detail .detail-gallery-video .detail-showcase {
+  margin: 0;
+}

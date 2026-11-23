@@ -1000,7 +1000,10 @@ function renderProjectPage(item, type, nav = null) {
   let imageIndex = 0;
   const images = item.gallery?.length
     ? item.gallery
-      .map((block) => (block.image ? renderFigure(block.image, imageIndex++) : renderTextBlock(block)))
+      .map((block) => {
+        if (block.video) return '<!--project-video-->';
+        return block.image ? renderFigure(block.image, imageIndex++) : renderTextBlock(block);
+      })
       .join('\n')
     : orderedImages.map(renderFigure).join('\n');
 
@@ -1079,6 +1082,13 @@ function renderProjectPage(item, type, nav = null) {
     </div>
   </section>`
     : '';
+  // A "YouTube video" block in the CMS puts the video between the images (full width);
+  // otherwise it follows after the images.
+  const videoInGallery = images.includes('<!--project-video-->');
+  const galleryHtml = images.replace('<!--project-video-->', showcaseBlock
+    ? `<div class="detail-gallery-video">${showcaseBlock}</div>`
+    : '');
+  const showcaseAfter = videoInGallery ? '' : showcaseBlock;
 
   const thumbnailTitle = escapeHtml(pageConfig.thumbnail_gallery?.title || 'All images');
   const thumbnailItems = (item.thumbnailImages || []).map((file, idx) => {
@@ -1149,10 +1159,10 @@ function renderProjectPage(item, type, nav = null) {
     <div class="project-visual-zone" id="project-visuals">
       ${projectIntro}
       <section class="${galleryClass}">
-        ${images || '<div class="empty-state">No images yet.</div>'}
+        ${galleryHtml || '<div class="empty-state">No images yet.</div>'}
       </section>
       ${mediaSection}
-      ${showcaseBlock}
+      ${showcaseAfter}
       ${thumbnailBlock}${visualFilesBlock}
       ${type === 'projects' ? renderProjectStepNav(nav) : ''}
     </div>
@@ -1430,6 +1440,11 @@ function applyCmsProject(item, data, file) {
   const images = [];
   const gallery = [];
   orderBlocksByTiles(Array.isArray(data.images) ? data.images : [], data.photo_order).forEach((entry) => {
+    // "YouTube video" block: the project's YouTube video is shown at this place in the images.
+    if (entry && typeof entry === 'object' && entry.type === 'video') {
+      gallery.push({ video: true });
+      return;
+    }
     const source = typeof entry === 'string' ? entry : entry?.image;
     const imagePath = cmsFilePath(source, `${file} images`);
     const hasImage = Boolean(imagePath && isImage(imagePath));
@@ -1452,7 +1467,7 @@ function applyCmsProject(item, data, file) {
     item.images = images;
     item.imageLayouts = imageLayoutsByPath;
     item.imageAlts = imageAltsByPath;
-    if (gallery.some((block) => block.text)) item.gallery = gallery;
+    if (gallery.some((block) => block.text || block.video)) item.gallery = gallery;
   }
   const tags = stringList(data.tags);
   if (tags.length) item.tags = tags;

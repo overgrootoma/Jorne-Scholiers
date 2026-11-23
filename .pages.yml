@@ -148,6 +148,13 @@ content:
               description: Leaves the rest of the previous row empty.
               type: boolean
               default: false
+          - name: video
+            label: YouTube video (place)
+            fields:
+            - name: name
+              label: Note (optional)
+              description: Puts the project's YouTube video (the "YouTube link" field below) at this place between the images, full width. Without this block the video comes after all images.
+              type: string
           - name: text
             label: Text section
             fields:
