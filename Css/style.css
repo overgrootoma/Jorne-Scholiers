@@ -6761,3 +6761,7 @@ body.page-detail .detail-gallery-text .detail-gallery-text__body p {
   line-height: 1.55;
   letter-spacing: 0.01em;
 }
+
+.image-lightbox:focus {
+  outline: none;
+}

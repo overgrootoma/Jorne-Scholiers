@@ -1015,13 +1015,25 @@
     };
 
     // Switching images with the arrows: the old image dissolves away with the threshold effect
-    // (dark parts first) while the new one grows in from its brightest parts.
-    const reveals = new Map();
-    const revealFor = (el, key) => {
-      if (!reveals.has(key)) reveals.set(key, thresholdReveal(el, 520));
-      return reveals.get(key);
+    // (dark parts first) while the new one grows in from its brightest parts. The two images
+    // before and after the current one are always loaded (and their masks prepared), so the
+    // transition runs smoothly.
+    const loaded = new Map();
+    const entryFor = (src) => {
+      if (!loaded.has(src)) {
+        const image = new Image();
+        image.decoding = 'async';
+        image.src = src;
+        loaded.set(src, { image, reveal: thresholdReveal(image, 520) });
+      }
+      return loaded.get(src);
     };
-    const thresholdSwap = (nextSrc) => {
+    const preloadAround = (index) => {
+      [0, 1, -1, 2, -2].forEach((offset) => {
+        entryFor(images[(index + offset + images.length) % images.length].src);
+      });
+    };
+    const thresholdSwap = (oldSrc, nextSrc) => {
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       const rect = lightboxImg.getBoundingClientRect();
       const stageRect = stage.getBoundingClientRect();
@@ -1043,30 +1055,31 @@
         transform: 'none',
       });
       stage.appendChild(ghost);
-      const hideOld = thresholdReveal(ghost, 520);
-      const startOld = () => hideOld({ reverse: true, onDone: () => ghost.remove() });
-      if (ghost.complete) startOld();
-      else ghost.addEventListener('load', startOld, { once: true });
+      entryFor(oldSrc).reveal({ reverse: true, target: ghost, onDone: () => ghost.remove() });
 
-      // Hide the new image until it has loaded, then let it grow in.
-      lightboxImg.style.webkitMaskImage = 'linear-gradient(transparent, transparent)';
-      lightboxImg.style.maskImage = 'linear-gradient(transparent, transparent)';
+      const next = entryFor(nextSrc);
+      const hidden = 'linear-gradient(transparent, transparent)';
+      lightboxImg.style.webkitMaskImage = hidden;
+      lightboxImg.style.maskImage = hidden;
       const startNew = () => {
-        if (!lightboxImg.src.endsWith(nextSrc.split('/').pop())) return;
-        const play = revealFor(lightboxImg, nextSrc);
-        play();
+        if (lightboxImg.src !== next.image.src) return;
+        next.reveal({ target: lightboxImg });
         // The reveal skips itself when it cannot run; never leave the image hidden.
         window.setTimeout(() => {
-          if (lightboxImg.style.maskImage.startsWith('linear-gradient')) {
+          if (lightboxImg.style.maskImage === hidden) {
             lightboxImg.style.webkitMaskImage = '';
             lightboxImg.style.maskImage = '';
           }
-        }, 80);
+        }, 60);
       };
-      window.requestAnimationFrame(() => {
-        if (lightboxImg.complete && lightboxImg.naturalWidth) startNew();
-        else lightboxImg.addEventListener('load', startNew, { once: true });
-      });
+      if (next.image.complete && next.image.naturalWidth) window.requestAnimationFrame(startNew);
+      else {
+        next.image.addEventListener('load', startNew, { once: true });
+        next.image.addEventListener('error', () => {
+          lightboxImg.style.webkitMaskImage = '';
+          lightboxImg.style.maskImage = '';
+        }, { once: true });
+      }
     };
 
     const showAt = (index) => {
@@ -1077,7 +1090,9 @@
       }
       currentIndex = (index + images.length) % images.length;
       const img = images[currentIndex];
-      if (wasOpen && lightboxImg.src && lightboxImg.src !== img.src) thresholdSwap(img.src);
+      const previousSrc = lightboxImg.src;
+      preloadAround(currentIndex);
+      if (wasOpen && previousSrc && previousSrc !== img.src) thresholdSwap(previousSrc, img.src);
       resetImageTransform();
       lightboxImg.src = img.src;
       lightboxImg.alt = img.alt || (isArchivePage ? 'Archive image' : 'Project image');
@@ -1086,7 +1101,10 @@
       lightbox.inert = false;
       document.body.classList.add('overlay-open');
       if (!wasOpen) {
-        window.requestAnimationFrame(() => closeButton.focus());
+        // Focus the viewer itself (not the close button), so using the arrow keys never
+        // shows the keyboard focus ring on the ×.
+        lightbox.tabIndex = -1;
+        window.requestAnimationFrame(() => lightbox.focus({ preventScroll: true }));
       }
     };
 
@@ -1113,11 +1131,13 @@
     prevButton.addEventListener('click', (event) => {
       event.stopPropagation();
       showAt(currentIndex - 1);
+      lightbox.focus({ preventScroll: true });
     });
 
     nextButton.addEventListener('click', (event) => {
       event.stopPropagation();
       showAt(currentIndex + 1);
+      lightbox.focus({ preventScroll: true });
     });
 
     stage.addEventListener('pointerdown', (event) => {
@@ -1776,9 +1796,17 @@
       return masks;
     };
 
-    const setMask = (value) => {
-      img.style.webkitMaskImage = value;
-      img.style.maskImage = value;
+    const setMask = (el, value) => {
+      el.style.webkitMaskImage = value;
+      el.style.maskImage = value;
+    };
+    const prepareMaskStyle = (el) => {
+      el.style.webkitMaskSize = 'contain';
+      el.style.maskSize = 'contain';
+      el.style.webkitMaskRepeat = 'no-repeat';
+      el.style.maskRepeat = 'no-repeat';
+      el.style.webkitMaskPosition = getComputedStyle(el).objectPosition || 'center';
+      el.style.maskPosition = el.style.webkitMaskPosition;
     };
 
     // Prepare the masks while the browser is idle, so the first hover starts right away.
@@ -1790,50 +1818,40 @@
     else img.addEventListener('load', prepare, { once: true });
 
     // play() reveals the image; play({ reverse: true, onDone }) hides it the same way, backwards.
-    return ({ reverse = false, onDone = null } = {}) => {
+    // "target" applies the masks (made from this image) to another element showing the same picture.
+    return ({ reverse = false, onDone = null, target = img } = {}) => {
       const finish = () => { if (onDone) onDone(); };
       if (!img.complete || !img.naturalWidth) { finish(); return; }
       const list = buildMasks();
       if (!list) { finish(); return; }
       window.cancelAnimationFrame(frame);
+      prepareMaskStyle(target);
+      const start = performance.now();
       if (reverse) {
-        img.style.webkitMaskSize = 'contain';
-        img.style.maskSize = 'contain';
-        img.style.webkitMaskRepeat = 'no-repeat';
-        img.style.maskRepeat = 'no-repeat';
-        img.style.webkitMaskPosition = getComputedStyle(img).objectPosition || 'center';
-        img.style.maskPosition = img.style.webkitMaskPosition;
-        const startHide = performance.now();
         const tickHide = (now) => {
-          const progress = Math.min(1, (now - startHide) / duration);
+          const progress = Math.min(1, (now - start) / duration);
           const eased = 0.5 - Math.cos(Math.PI * progress) / 2;
           if (progress >= 1) {
-            setMask('linear-gradient(transparent, transparent)');
+            setMask(target, 'linear-gradient(transparent, transparent)');
             finish();
             return;
           }
-          setMask(list[Math.max(0, list.length - 1 - Math.floor(eased * list.length))]);
+          setMask(target, list[Math.max(0, list.length - 1 - Math.floor(eased * list.length))]);
           frame = window.requestAnimationFrame(tickHide);
         };
         frame = window.requestAnimationFrame(tickHide);
         return;
       }
-      img.style.webkitMaskSize = 'contain';
-      img.style.maskSize = 'contain';
-      img.style.webkitMaskRepeat = 'no-repeat';
-      img.style.maskRepeat = 'no-repeat';
-      img.style.webkitMaskPosition = getComputedStyle(img).objectPosition || 'center';
-      img.style.maskPosition = img.style.webkitMaskPosition;
-      setMask(list[0]);
-      const start = performance.now();
+      setMask(target, list[0]);
       const tick = (now) => {
         const progress = Math.min(1, (now - start) / duration);
         const eased = 0.5 - Math.cos(Math.PI * progress) / 2;
         if (progress >= 1) {
-          setMask('');
+          setMask(target, '');
+          finish();
           return;
         }
-        setMask(list[Math.min(list.length - 1, Math.floor(eased * list.length))]);
+        setMask(target, list[Math.min(list.length - 1, Math.floor(eased * list.length))]);
         frame = window.requestAnimationFrame(tick);
       };
       frame = window.requestAnimationFrame(tick);
