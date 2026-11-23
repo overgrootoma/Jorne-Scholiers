@@ -6689,10 +6689,12 @@ body.page-detail .detail-gallery-video .detail-showcase {
   top: -100px;
 }
 
-/* Homepage (desktop): About, Exhibitions, Projects and Archive as four evenly spaced columns. */
+/* Homepage (desktop): About, Exhibitions, Projects and Archive as evenly spaced columns. */
 @media (min-width: 901px) and (hover: hover) and (pointer: fine) {
   body.page-home main.page-home {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    /* Three equal columns plus Archive at its own width, so Archive ends as far from the right
+       edge as About starts from the left, with the same space between all columns. */
+    grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
     column-gap: 57.6px;
   }
 
@@ -6718,6 +6720,7 @@ body.page-detail .detail-gallery-video .detail-showcase {
     grid-column: 4;
     grid-row: 1;
     align-self: start;
-    justify-self: start;
+    justify-self: end;
+    margin-right: -4px;
   }
 }
