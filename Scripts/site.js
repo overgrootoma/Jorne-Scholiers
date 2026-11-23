@@ -1014,6 +1014,61 @@
       lastFocusedElement = null;
     };
 
+    // Switching images with the arrows: the old image dissolves away with the threshold effect
+    // (dark parts first) while the new one grows in from its brightest parts.
+    const reveals = new Map();
+    const revealFor = (el, key) => {
+      if (!reveals.has(key)) reveals.set(key, thresholdReveal(el, 520));
+      return reveals.get(key);
+    };
+    const thresholdSwap = (nextSrc) => {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const rect = lightboxImg.getBoundingClientRect();
+      const stageRect = stage.getBoundingClientRect();
+      stage.querySelectorAll('.lightbox-ghost').forEach((old) => old.remove());
+      const ghost = lightboxImg.cloneNode();
+      ghost.className = 'lightbox-ghost';
+      ghost.removeAttribute('style');
+      ghost.alt = '';
+      Object.assign(ghost.style, {
+        position: 'absolute',
+        left: `${rect.left - stageRect.left}px`,
+        top: `${rect.top - stageRect.top}px`,
+        width: `${rect.width}px`,
+        height: `${rect.height}px`,
+        maxWidth: 'none',
+        maxHeight: 'none',
+        margin: '0',
+        pointerEvents: 'none',
+        transform: 'none',
+      });
+      stage.appendChild(ghost);
+      const hideOld = thresholdReveal(ghost, 520);
+      const startOld = () => hideOld({ reverse: true, onDone: () => ghost.remove() });
+      if (ghost.complete) startOld();
+      else ghost.addEventListener('load', startOld, { once: true });
+
+      // Hide the new image until it has loaded, then let it grow in.
+      lightboxImg.style.webkitMaskImage = 'linear-gradient(transparent, transparent)';
+      lightboxImg.style.maskImage = 'linear-gradient(transparent, transparent)';
+      const startNew = () => {
+        if (!lightboxImg.src.endsWith(nextSrc.split('/').pop())) return;
+        const play = revealFor(lightboxImg, nextSrc);
+        play();
+        // The reveal skips itself when it cannot run; never leave the image hidden.
+        window.setTimeout(() => {
+          if (lightboxImg.style.maskImage.startsWith('linear-gradient')) {
+            lightboxImg.style.webkitMaskImage = '';
+            lightboxImg.style.maskImage = '';
+          }
+        }, 80);
+      };
+      window.requestAnimationFrame(() => {
+        if (lightboxImg.complete && lightboxImg.naturalWidth) startNew();
+        else lightboxImg.addEventListener('load', startNew, { once: true });
+      });
+    };
+
     const showAt = (index) => {
       if (!images.length) return;
       const wasOpen = isOpen();
@@ -1022,6 +1077,7 @@
       }
       currentIndex = (index + images.length) % images.length;
       const img = images[currentIndex];
+      if (wasOpen && lightboxImg.src && lightboxImg.src !== img.src) thresholdSwap(img.src);
       resetImageTransform();
       lightboxImg.src = img.src;
       lightboxImg.alt = img.alt || (isArchivePage ? 'Archive image' : 'Project image');
