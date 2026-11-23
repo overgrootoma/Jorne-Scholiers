@@ -1733,11 +1733,35 @@
     if (img.complete) prepare();
     else img.addEventListener('load', prepare, { once: true });
 
-    return () => {
-      if (!img.complete || !img.naturalWidth) return;
+    // play() reveals the image; play({ reverse: true, onDone }) hides it the same way, backwards.
+    return ({ reverse = false, onDone = null } = {}) => {
+      const finish = () => { if (onDone) onDone(); };
+      if (!img.complete || !img.naturalWidth) { finish(); return; }
       const list = buildMasks();
-      if (!list) return;
+      if (!list) { finish(); return; }
       window.cancelAnimationFrame(frame);
+      if (reverse) {
+        img.style.webkitMaskSize = 'contain';
+        img.style.maskSize = 'contain';
+        img.style.webkitMaskRepeat = 'no-repeat';
+        img.style.maskRepeat = 'no-repeat';
+        img.style.webkitMaskPosition = getComputedStyle(img).objectPosition || 'center';
+        img.style.maskPosition = img.style.webkitMaskPosition;
+        const startHide = performance.now();
+        const tickHide = (now) => {
+          const progress = Math.min(1, (now - startHide) / duration);
+          const eased = 0.5 - Math.cos(Math.PI * progress) / 2;
+          if (progress >= 1) {
+            setMask('linear-gradient(transparent, transparent)');
+            finish();
+            return;
+          }
+          setMask(list[Math.max(0, list.length - 1 - Math.floor(eased * list.length))]);
+          frame = window.requestAnimationFrame(tickHide);
+        };
+        frame = window.requestAnimationFrame(tickHide);
+        return;
+      }
       img.style.webkitMaskSize = 'contain';
       img.style.maskSize = 'contain';
       img.style.webkitMaskRepeat = 'no-repeat';
@@ -1778,11 +1802,25 @@
     }
 
     const play = thresholdReveal(preview.querySelector('img'));
+    // Appears and disappears with the same threshold effect (no slide).
+    let hiding = false;
     const show = () => {
-      if (!preview.classList.contains('is-visible')) play();
+      if (!preview.classList.contains('is-visible') || hiding) play();
+      hiding = false;
       preview.classList.add('is-visible');
     };
-    const hide = () => preview.classList.remove('is-visible');
+    const hide = () => {
+      if (!preview.classList.contains('is-visible') || hiding) return;
+      hiding = true;
+      play({
+        reverse: true,
+        onDone: () => {
+          if (!hiding) return;
+          hiding = false;
+          preview.classList.remove('is-visible');
+        },
+      });
+    };
 
     // Only the part from "About" down to the end of the info list (…Belgium) shows the portrait;
     // the links below it (e-mail, phone, socials) do not.
