@@ -6620,10 +6620,8 @@ body.page-detail main.page-detail--showreel .project-intro {
   }
 }
 
-/* Footer: only on project pages, right under the previous/next arrows, without its own background. */
-body:not(.page-detail) .site-footer {
-  display: none !important;
-}
+/* Footer: on every page except the homepage (hidden there above); on project pages right under
+   the previous/next arrows, without its own background. */
 
 body.page-detail main.page-detail {
   padding-bottom: 0 !important;
