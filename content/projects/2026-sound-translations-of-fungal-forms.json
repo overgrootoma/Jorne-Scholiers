@@ -27,17 +27,20 @@
     "/Projects/2026 Sound Translations of Fungal Forms/Bos/stffbos-12.jpg",
     "/Projects/2026 Sound Translations of Fungal Forms/Bos/stffbos-10.jpg",
     "/Projects/2026 Sound Translations of Fungal Forms/Bos/stffbos-11.jpg",
-    "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_12.webp",
-    "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_10.webp",
-    "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_12.jpg",
-    "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_1.webp",
+    "/Projects/2026 Sound Translations of Fungal Forms/STFF insta-6.webp",
+    "/Projects/2026 Sound Translations of Fungal Forms/STFF insta-3.webp",
+    "/Projects/2026 Sound Translations of Fungal Forms/STFF insta.webp",
+    "/Projects/2026 Sound Translations of Fungal Forms/STFF insta-2.webp",
+    "/Projects/2026 Sound Translations of Fungal Forms/STFF insta-10.webp",
     "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_13.jpg",
-    "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_16.jpg",
-    "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_2.jpg",
-    "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_5.webp",
-    "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_4.jpg",
+    "/Projects/2026 Sound Translations of Fungal Forms/STFF insta-11.webp",
+    "/Projects/2026 Sound Translations of Fungal Forms/STFF insta-7.webp",
+    "/Projects/2026 Sound Translations of Fungal Forms/STFF insta-9.webp",
+    "/Projects/2026 Sound Translations of Fungal Forms/STFF insta-4.webp",
+    "/Projects/2026 Sound Translations of Fungal Forms/STFF insta-12.webp",
     "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_17.jpg",
-    "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_7.jpg"
+    "/Projects/2026 Sound Translations of Fungal Forms/STFF insta-8.webp",
+    "/Projects/2026 Sound Translations of Fungal Forms/STFF insta-5.webp"
   ],
   "images": [
     {
@@ -150,32 +153,40 @@
     },
     {
       "type": "image",
-      "name": "STFF_Portfolio_12",
-      "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_12.webp",
+      "name": "STFF insta-6",
+      "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF insta-6.webp",
       "columns": "6",
       "start": "auto",
       "new_row": true
     },
     {
       "type": "image",
-      "name": "STFF_Portfolio_10",
-      "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_10.webp",
+      "name": "STFF insta-3",
+      "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF insta-3.webp",
       "columns": "2",
       "start": "2",
       "new_row": true
     },
     {
       "type": "image",
-      "name": "STFF_Portfolio_12",
-      "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_12.jpg",
+      "name": "STFF insta",
+      "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF insta.webp",
       "columns": "3",
       "start": "auto",
       "new_row": false
     },
     {
       "type": "image",
-      "name": "STFF_Portfolio_1",
-      "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_1.webp",
+      "name": "STFF insta-2",
+      "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF insta-2.webp",
+      "columns": "3",
+      "start": "4",
+      "new_row": true
+    },
+    {
+      "type": "image",
+      "name": "STFF insta-10",
+      "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF insta-10.webp",
       "columns": "6",
       "start": "auto",
       "new_row": true
@@ -190,32 +201,40 @@
     },
     {
       "type": "image",
-      "name": "STFF_Portfolio_16",
-      "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_16.jpg",
+      "name": "STFF insta-11",
+      "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF insta-11.webp",
       "columns": "3",
       "start": "auto",
       "new_row": false
     },
     {
       "type": "image",
-      "name": "STFF_Portfolio_2",
-      "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_2.jpg",
+      "name": "STFF insta-7",
+      "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF insta-7.webp",
       "columns": "4",
       "start": "auto",
       "new_row": true
     },
     {
       "type": "image",
-      "name": "STFF_Portfolio_5",
-      "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_5.webp",
+      "name": "STFF insta-9",
+      "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF insta-9.webp",
       "columns": "2",
       "start": "auto",
       "new_row": false
     },
     {
       "type": "image",
-      "name": "STFF_Portfolio_4",
-      "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_4.jpg",
+      "name": "STFF insta-4",
+      "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF insta-4.webp",
+      "columns": "3",
+      "start": "4",
+      "new_row": true
+    },
+    {
+      "type": "image",
+      "name": "STFF insta-12",
+      "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF insta-12.webp",
       "columns": "4",
       "start": "2",
       "new_row": true
@@ -230,11 +249,19 @@
     },
     {
       "type": "image",
-      "name": "STFF_Portfolio_7",
-      "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_7.jpg",
+      "name": "STFF insta-8",
+      "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF insta-8.webp",
       "columns": "2",
       "start": "auto",
       "new_row": false
+    },
+    {
+      "type": "image",
+      "name": "STFF insta-5",
+      "image": "/Projects/2026 Sound Translations of Fungal Forms/STFF insta-5.webp",
+      "columns": "3",
+      "start": "auto",
+      "new_row": true
     }
   ],
   "homepage_images": [
