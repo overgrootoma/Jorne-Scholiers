@@ -1002,6 +1002,7 @@
     };
 
     const close = () => {
+      if (typeof endSwap === 'function') endSwap();
       lightbox.classList.remove('is-visible');
       lightbox.setAttribute('aria-hidden', 'true');
       lightbox.inert = true;
@@ -1015,16 +1016,37 @@
     };
 
     // Switching images with the arrows: the old image dissolves away with the threshold effect
-    // (dark parts first) while the new one grows in from its brightest parts. The two images
-    // before and after the current one are always loaded (and their masks prepared), so the
-    // transition runs smoothly.
+    // (dark parts first) while the new one grows in from its brightest parts. It is drawn by the
+    // graphics card (WebGL) in one layer, so nothing flickers. The two images before and after the
+    // current one are always loaded and decoded, with a texture-sized copy ready, so the
+    // transition starts straight away.
+    const TEXTURE_MAX = 1600;
+    const SWAP_DURATION = 620;
     const loaded = new Map();
+    const makeSmall = (entry) => {
+      if (entry.small || !entry.image.naturalWidth) return entry.small;
+      const scale = Math.min(1, TEXTURE_MAX / Math.max(entry.image.naturalWidth, entry.image.naturalHeight));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.round(entry.image.naturalWidth * scale));
+      canvas.height = Math.max(1, Math.round(entry.image.naturalHeight * scale));
+      canvas.getContext('2d').drawImage(entry.image, 0, 0, canvas.width, canvas.height);
+      entry.small = canvas;
+      return canvas;
+    };
     const entryFor = (src) => {
       if (!loaded.has(src)) {
         const image = new Image();
         image.decoding = 'async';
         image.src = src;
-        loaded.set(src, { image, reveal: thresholdReveal(image, 520) });
+        const entry = { image, small: null };
+        entry.ready = image.decode()
+          .catch(() => new Promise((resolve) => { if (image.complete) resolve(); else image.addEventListener('load', resolve, { once: true }); }))
+          .then(() => {
+            const idle = window.requestIdleCallback || ((callback) => window.setTimeout(callback, 30));
+            idle(() => makeSmall(entry));
+          })
+          .catch(() => {});
+        loaded.set(src, entry);
       }
       return loaded.get(src);
     };
@@ -1033,53 +1055,132 @@
         entryFor(images[(index + offset + images.length) % images.length].src);
       });
     };
-    const thresholdSwap = (oldSrc, nextSrc) => {
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      const rect = lightboxImg.getBoundingClientRect();
-      const stageRect = stage.getBoundingClientRect();
-      stage.querySelectorAll('.lightbox-ghost').forEach((old) => old.remove());
-      const ghost = lightboxImg.cloneNode();
-      ghost.className = 'lightbox-ghost';
-      ghost.removeAttribute('style');
-      ghost.alt = '';
-      Object.assign(ghost.style, {
-        position: 'absolute',
-        left: `${rect.left - stageRect.left}px`,
-        top: `${rect.top - stageRect.top}px`,
-        width: `${rect.width}px`,
-        height: `${rect.height}px`,
-        maxWidth: 'none',
-        maxHeight: 'none',
-        margin: '0',
-        pointerEvents: 'none',
-        transform: 'none',
-      });
-      stage.appendChild(ghost);
-      entryFor(oldSrc).reveal({ reverse: true, target: ghost, onDone: () => ghost.remove() });
 
-      const next = entryFor(nextSrc);
-      const hidden = 'linear-gradient(transparent, transparent)';
-      lightboxImg.style.webkitMaskImage = hidden;
-      lightboxImg.style.maskImage = hidden;
-      const startNew = () => {
-        if (lightboxImg.src !== next.image.src) return;
-        next.reveal({ target: lightboxImg });
-        // The reveal skips itself when it cannot run; never leave the image hidden.
-        window.setTimeout(() => {
-          if (lightboxImg.style.maskImage === hidden) {
-            lightboxImg.style.webkitMaskImage = '';
-            lightboxImg.style.maskImage = '';
-          }
-        }, 60);
+    let swapGl = null;
+    const setupSwapGl = () => {
+      if (swapGl !== null) return swapGl;
+      swapGl = false;
+      const canvas = document.createElement('canvas');
+      canvas.className = 'lightbox-swap-canvas';
+      const gl = canvas.getContext('webgl', { premultipliedAlpha: false, alpha: true });
+      if (!gl) return swapGl;
+      const compile = (type, source) => {
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        return shader;
       };
-      if (next.image.complete && next.image.naturalWidth) window.requestAnimationFrame(startNew);
-      else {
-        next.image.addEventListener('load', startNew, { once: true });
-        next.image.addEventListener('error', () => {
-          lightboxImg.style.webkitMaskImage = '';
-          lightboxImg.style.maskImage = '';
-        }, { once: true });
-      }
+      const program = gl.createProgram();
+      gl.attachShader(program, compile(gl.VERTEX_SHADER, 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }'));
+      gl.attachShader(program, compile(gl.FRAGMENT_SHADER, `
+        precision mediump float;
+        uniform sampler2D uOld; uniform sampler2D uNew;
+        uniform vec4 rOld; uniform vec4 rNew; uniform vec2 res; uniform float t;
+        const float soft = 0.14;
+        float inside(vec2 uv) { return step(0.0, uv.x) * step(0.0, uv.y) * step(uv.x, 1.0) * step(uv.y, 1.0); }
+        void main() {
+          vec2 f = vec2(gl_FragCoord.x, res.y - gl_FragCoord.y);
+          vec2 uo = (f - rOld.xy) / rOld.zw;
+          vec2 un = (f - rNew.xy) / rNew.zw;
+          vec4 co = texture2D(uOld, clamp(uo, 0.0, 1.0));
+          vec4 cn = texture2D(uNew, clamp(un, 0.0, 1.0));
+          vec3 w = vec3(0.2126, 0.7152, 0.0722);
+          float lo = dot(co.rgb, w);
+          float ln = dot(cn.rgb, w);
+          float to = t * (1.0 + 2.0 * soft) - soft;
+          float tn = (1.0 - t) * (1.0 + 2.0 * soft) - soft;
+          float ao = inside(uo) * smoothstep(to - soft, to + soft, lo);
+          float an = inside(un) * smoothstep(tn - soft, tn + soft, ln);
+          float a = an + ao * (1.0 - an);
+          vec3 c = a > 0.0 ? (cn.rgb * an + co.rgb * ao * (1.0 - an)) / a : vec3(0.0);
+          gl_FragColor = vec4(c, a);
+        }`));
+      gl.linkProgram(program);
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return swapGl;
+      gl.useProgram(program);
+      const buffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+      const loc = gl.getAttribLocation(program, 'p');
+      gl.enableVertexAttribArray(loc);
+      gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+      const texture = (unit) => {
+        const tex = gl.createTexture();
+        gl.activeTexture(gl.TEXTURE0 + unit);
+        gl.bindTexture(gl.TEXTURE_2D, tex);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        return tex;
+      };
+      const textures = [texture(0), texture(1)];
+      gl.uniform1i(gl.getUniformLocation(program, 'uOld'), 0);
+      gl.uniform1i(gl.getUniformLocation(program, 'uNew'), 1);
+      const u = (name) => gl.getUniformLocation(program, name);
+      swapGl = { canvas, gl, textures, uOldRect: u('rOld'), uNewRect: u('rNew'), uRes: u('res'), uT: u('t') };
+      lightbox.appendChild(canvas);
+      return swapGl;
+    };
+
+    let swapFrame = 0;
+    let swapToken = 0;
+    const endSwap = () => {
+      window.cancelAnimationFrame(swapFrame);
+      lightboxImg.style.visibility = '';
+      if (swapGl) swapGl.canvas.classList.remove('is-active');
+    };
+    const thresholdSwap = (oldRect, oldEntry, nextEntry) => {
+      const token = ++swapToken;
+      endSwap();
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const swap = setupSwapGl();
+      if (!swap || !oldRect.width) return;
+      lightboxImg.style.visibility = 'hidden';
+      const start = () => {
+        if (token !== swapToken) return;
+        const oldSource = makeSmall(oldEntry);
+        const newSource = makeSmall(nextEntry);
+        const newRect = lightboxImg.getBoundingClientRect();
+        if (!oldSource || !newSource || !newRect.width) { endSwap(); return; }
+        const { gl, canvas } = swap;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.round(window.innerWidth * dpr);
+        canvas.height = Math.round(window.innerHeight * dpr);
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        [oldSource, newSource].forEach((source, unit) => {
+          gl.activeTexture(gl.TEXTURE0 + unit);
+          gl.bindTexture(gl.TEXTURE_2D, swap.textures[unit]);
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
+        });
+        const rect = (r) => [r.left * dpr, r.top * dpr, r.width * dpr, r.height * dpr];
+        gl.uniform4fv(swap.uOldRect, rect(oldRect));
+        gl.uniform4fv(swap.uNewRect, rect(newRect));
+        gl.uniform2f(swap.uRes, canvas.width, canvas.height);
+        const draw = (t) => {
+          gl.uniform1f(swap.uT, t);
+          gl.clearColor(0, 0, 0, 0);
+          gl.clear(gl.COLOR_BUFFER_BIT);
+          gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        };
+        draw(0);
+        canvas.classList.add('is-active');
+        const startTime = performance.now();
+        const tick = (now) => {
+          if (token !== swapToken) return;
+          const progress = Math.min(1, (now - startTime) / SWAP_DURATION);
+          draw(0.5 - Math.cos(Math.PI * progress) / 2);
+          if (progress >= 1) { endSwap(); return; }
+          swapFrame = window.requestAnimationFrame(tick);
+        };
+        swapFrame = window.requestAnimationFrame(tick);
+      };
+      Promise.all([oldEntry.ready, nextEntry.ready]).then(() => {
+        if (lightboxImg.complete && lightboxImg.naturalWidth) window.requestAnimationFrame(start);
+        else lightboxImg.addEventListener('load', () => window.requestAnimationFrame(start), { once: true });
+      });
+      // Never leave the image hidden for long if something goes wrong.
+      window.setTimeout(() => { if (token === swapToken && !swap.canvas.classList.contains('is-active')) endSwap(); }, 1500);
     };
 
     const showAt = (index) => {
@@ -1091,8 +1192,11 @@
       currentIndex = (index + images.length) % images.length;
       const img = images[currentIndex];
       const previousSrc = lightboxImg.src;
+      const previousRect = lightboxImg.getBoundingClientRect();
       preloadAround(currentIndex);
-      if (wasOpen && previousSrc && previousSrc !== img.src) thresholdSwap(previousSrc, img.src);
+      if (wasOpen && previousSrc && previousSrc !== img.src) {
+        thresholdSwap(previousRect, entryFor(previousSrc), entryFor(img.src));
+      }
       resetImageTransform();
       lightboxImg.src = img.src;
       lightboxImg.alt = img.alt || (isArchivePage ? 'Archive image' : 'Project image');

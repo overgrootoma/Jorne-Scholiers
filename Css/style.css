@@ -6797,3 +6797,18 @@ body.page-detail .detail-gallery-text .detail-gallery-text__body p {
     margin-top: 0.9em;
   }
 }
+
+/* Lightbox transition layer (Scripts/site.js, WebGL). */
+.lightbox-swap-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 3;
+  pointer-events: none;
+  display: none;
+}
+
+.lightbox-swap-canvas.is-active {
+  display: block;
+}
