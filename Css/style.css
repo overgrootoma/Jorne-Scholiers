@@ -6733,3 +6733,9 @@ body.page-detail .detail-gallery-video .detail-showcase {
 :where(.home-project-link span, .project-overview-label, .project-tags li, .project-step-label, .detail-gallery-text__title) {
   text-wrap: balance;
 }
+
+/* Lightbox: keep only the zoom percentage (click to reset); no + and − buttons. */
+.lightbox-zoom .lightbox-tool[data-zoom="in"],
+.lightbox-zoom .lightbox-tool[data-zoom="out"] {
+  display: none !important;
+}
