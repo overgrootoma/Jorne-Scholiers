@@ -6765,3 +6765,35 @@ body.page-detail .detail-gallery-text .detail-gallery-text__body p {
 .image-lightbox:focus {
   outline: none;
 }
+
+/* Text sections between the images are laid out like the project information at the top:
+   title in columns 3-4, text in columns 5-6, on a row of their own. */
+@media (min-width: 700px) {
+  body.page-detail .detail-gallery > .detail-gallery-text,
+  body.page-detail .detail-gallery.detail-gallery--grid > .detail-gallery-text {
+    grid-column: 1 / -1 !important;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    column-gap: 28px;
+    align-items: start;
+    width: auto;
+    max-width: none !important;
+    margin: clamp(28px, 6vh, 72px) 0;
+    padding: 0;
+  }
+
+  body.page-detail .detail-gallery-text > .detail-gallery-text__title {
+    grid-column: 3 / span 2;
+    grid-row: 1 / span 2;
+  }
+
+  body.page-detail .detail-gallery-text > .detail-gallery-text__intro,
+  body.page-detail .detail-gallery-text > .detail-gallery-text__body {
+    grid-column: 5 / span 2;
+    max-width: 62ch;
+  }
+
+  body.page-detail .detail-gallery-text > .detail-gallery-text__intro + .detail-gallery-text__body {
+    margin-top: 0.9em;
+  }
+}
