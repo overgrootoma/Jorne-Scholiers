@@ -6724,3 +6724,12 @@ body.page-detail .detail-gallery-video .detail-showcase {
     margin-right: -4px;
   }
 }
+
+/* Tidy line breaks everywhere: no lone last words, balanced short labels (see also site.js). */
+:where(.project-overview-summary, .detail-gallery-text, .detail-description, .project-intro__text) {
+  text-wrap: pretty;
+}
+
+:where(.home-project-link span, .project-overview-label, .project-tags li, .project-step-label, .detail-gallery-text__title) {
+  text-wrap: balance;
+}

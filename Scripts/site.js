@@ -1447,7 +1447,33 @@
   };
 
   const setupWidowPrevention = () => {
-    const textBlocks = document.querySelectorAll('p, .project-summary, .site-footer-copy > div');
+    // Short labels (homepage lists, overview, tags, titles): keep each phrase together, so a line
+    // only breaks at a comma or a dash, e.g. "Antwerp Art Weekend —" / "Monar x UGG" and
+    // "LUCA, Visual Design," / "Graphic Design". Phrases longer than 4 words may still break.
+    const keepPhrases = (text) => text
+      .split(/(,\s+|\s+[—–-]\s+)/u)
+      .map((part, index) => {
+        if (index % 2 === 1) return part.replace(/^\s+/u, ' ').replace(/\s+$/u, ' ');
+        const words = part.trim().split(/\s+/u);
+        return words.length <= 4 ? part.replace(/\s+/gu, ' ') : part;
+      })
+      .join('');
+    document.querySelectorAll([
+      '.home-information li',
+      '.home-information li span',
+      '.home-information li a',
+      '.home-project-link span',
+      '.project-overview-label > span',
+      '.project-tags li',
+      '.rail-current-label',
+      '.project-step-label',
+    ].join(', ')).forEach((label) => {
+      label.childNodes.forEach((node) => {
+        if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim()) node.nodeValue = keepPhrases(node.nodeValue);
+      });
+    });
+
+    const textBlocks = document.querySelectorAll('p, .project-summary, .project-overview-summary, .site-footer-copy > div');
     textBlocks.forEach((block) => {
       const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT);
       const textNodes = [];
