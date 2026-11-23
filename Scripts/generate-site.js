@@ -2,6 +2,16 @@ const fs = require('fs');
 const path = require('path');
 
 const root = path.resolve(__dirname, '..');
+
+// "?v=<hash>" behind the stylesheet and scripts, so browsers load the new version after a change.
+const assetUrl = (file) => {
+  try {
+    const hash = require('crypto').createHash('md5').update(fs.readFileSync(path.join(root, file))).digest('hex').slice(0, 8);
+    return `${file}?v=${hash}`;
+  } catch (err) {
+    return file;
+  }
+};
 const projectsDir = path.join(root, 'Projects');
 const archiveDir = path.join(root, 'Archive');
 const photographyDir = path.join(root, 'photography');
@@ -338,6 +348,14 @@ function projectIndexImagePath(project) {
   return previewImagePath(project);
 }
 
+// Image on the Projects overview (and the mobile homepage): the cut-out "overview image" from the
+// CMS, or the cover when there is none.
+function overviewImagePath(project) {
+  const overviewImage = project.pageConfig?.overview_image;
+  if (overviewImage && rootImageDimensionAttributes(overviewImage)) return overviewImage;
+  return projectIndexImagePath(project);
+}
+
 function rootImageDimensionAttributes(urlPath) {
   try {
     return imageDimensionAttributes(path.join(root, decodeURIComponent(urlPath)));
@@ -562,8 +580,8 @@ function renderHead({
     } catch (err) {}
   </script>
   <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
-  <script type="module" src="Scripts/logo3d.js"></script>
-  <link rel="stylesheet" href="Css/style.css">${structuredData}
+  <script type="module" src="${assetUrl('Scripts/logo3d.js')}"></script>
+  <link rel="stylesheet" href="${assetUrl('Css/style.css')}">${structuredData}
 </head>`;
 }
 
@@ -661,6 +679,9 @@ function renderHome(projects, homepageProfile) {
       <div class="home-project-preview" data-home-preview="${escapeHtml(project.slug)}" aria-hidden="true">
         ${images}
       </div>
+      <a class="home-project-mobile-image" href="${page}" tabindex="-1" aria-hidden="true">
+        <img src="${escapeHtml(overviewImagePath(project))}" alt=""${rootImageDimensionAttributes(overviewImagePath(project))} loading="lazy" decoding="async">
+      </a>
     </li>`;
   }).join('\n');
 
@@ -884,7 +905,7 @@ function renderPhotographyIndex(items) {
 function renderProjectOverview(projects) {
   const items = projects.map((project, index) => {
     const title = project.pageConfig?.index_title || project.title;
-    const image = projectIndexImagePath(project);
+    const image = overviewImagePath(project);
     const dimensions = rootImageDimensionAttributes(image);
     const loading = index < 5 ? ' loading="eager"' : ' loading="lazy"';
     return `<li>
@@ -989,7 +1010,10 @@ function renderProjectPage(item, type, nav = null) {
   let imageIndex = 0;
   const images = item.gallery?.length
     ? item.gallery
-      .map((block) => (block.image ? renderFigure(block.image, imageIndex++) : renderTextBlock(block)))
+      .map((block) => {
+        if (block.video) return '<!--project-video-->';
+        return block.image ? renderFigure(block.image, imageIndex++) : renderTextBlock(block);
+      })
       .join('\n')
     : orderedImages.map(renderFigure).join('\n');
 
@@ -1068,6 +1092,13 @@ function renderProjectPage(item, type, nav = null) {
     </div>
   </section>`
     : '';
+  // A "YouTube video" block in the CMS puts the video between the images (full width);
+  // otherwise it follows after the images.
+  const videoInGallery = images.includes('<!--project-video-->');
+  const galleryHtml = images.replace('<!--project-video-->', showcaseBlock
+    ? `<div class="detail-gallery-video">${showcaseBlock}</div>`
+    : '');
+  const showcaseAfter = videoInGallery ? '' : showcaseBlock;
 
   const thumbnailTitle = escapeHtml(pageConfig.thumbnail_gallery?.title || 'All images');
   const thumbnailItems = (item.thumbnailImages || []).map((file, idx) => {
@@ -1096,10 +1127,9 @@ function renderProjectPage(item, type, nav = null) {
     : '';
   const visualFilesBlock = type === 'projects' || !filesBlock ? '' : `\n      ${filesBlock}`;
   const informationFilesBlock = type === 'projects' && filesBlock ? `\n        ${filesBlock}` : '';
-  const projectInformationClass = type === 'projects' && filesBlock ? ' project-information--has-files' : '';
 
   const backLink = type === 'projects'
-    ? '<a class="back-link" href="index.html">&lt; Back to home</a>'
+    ? '<a class="project-back-link" href="index.html">&lt; Back to home</a>'
     : '';
 
   const showreelExt = pageConfig.showreel ? path.extname(decodeURIComponent(pageConfig.showreel)).toLowerCase() : '';
@@ -1113,34 +1143,39 @@ function renderProjectPage(item, type, nav = null) {
   </section>`
     : '';
 
+  // Project information sits at the top of the page (no side panel any more): title and tags
+  // on the left, the text next to it. More text can go between the images as text sections.
+  const projectIntro = type === 'projects'
+    ? `<header class="project-intro">
+        <div class="project-intro__heading">
+          <h1 class="title-font">${title}</h1>
+          ${item.tags?.length
+    ? `<ul class="project-tags" aria-label="Type of project">${item.tags.map((tag) => `<li>${escapeHtml(tag)}</li>`).join('')}</ul>`
+    : (item.oneLiner ? `<p class="project-one-liner">${escapeHtml(item.oneLiner)}</p>` : '')}
+        </div>
+        <div class="project-intro__text">
+          ${descriptionBlock}${informationFilesBlock}
+        </div>
+      </header>`
+    : '';
+
   return `
 <main class="page-detail${showreelBlock ? ' page-detail--showreel' : ''}">
   ${showreelBlock}
   ${type === 'projects' && nav?.projects ? renderProjectRail(nav.projects, { currentSlug: item.slug }) : ''}
+  ${type === 'projects' && nav?.projects ? `<div class="rail-current-label" aria-hidden="true" style="--rail-index: ${Math.max(0, nav.projects.findIndex((project) => project.slug === item.slug))}; --rail-count: ${nav.projects.length}">${title}</div>` : ''}
+  ${backLink}
   <div class="project-detail-layout">
     <div class="project-visual-zone" id="project-visuals">
+      ${projectIntro}
       <section class="${galleryClass}">
-        ${images || '<div class="empty-state">No images yet.</div>'}
+        ${galleryHtml || '<div class="empty-state">No images yet.</div>'}
       </section>
       ${mediaSection}
-      ${showcaseBlock}
+      ${showcaseAfter}
       ${thumbnailBlock}${visualFilesBlock}
       ${type === 'projects' ? renderProjectStepNav(nav) : ''}
     </div>
-    <aside class="project-information${projectInformationClass}" data-project-information>
-      <button class="project-information-toggle" type="button" aria-expanded="true" aria-label="Toggle project information">
-        <span class="project-information-toggle__title">${title}</span>
-        <span class="project-information-toggle__mark" aria-hidden="true">−</span>
-      </button>
-      <div class="project-information-content">
-        ${backLink}
-        <h1 class="title-font">${title}</h1>
-        ${item.tags?.length
-    ? `<ul class="project-tags" aria-label="Type of project">${item.tags.map((tag) => `<li>${escapeHtml(tag)}</li>`).join('')}</ul>`
-    : (item.oneLiner ? `<p class="project-one-liner">${escapeHtml(item.oneLiner)}</p>` : '')}
-        ${descriptionBlock}${informationFilesBlock}
-      </div>
-    </aside>
   </div>
 </main>`;
 }
@@ -1216,8 +1251,8 @@ function renderLayout({ title, description, fileName, canonicalFile, image, imag
   ${accessibleMain}
   ${renderFooter()}
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
-  <script src="Scripts/smooth-scroll.js" defer></script>
-  <script src="Scripts/site.js" defer></script>
+  <script src="${assetUrl('Scripts/smooth-scroll.js')}" defer></script>
+  <script src="${assetUrl('Scripts/site.js')}" defer></script>
 </body>
 </html>`;
 }
@@ -1403,6 +1438,10 @@ function applyCmsProject(item, data, file) {
     if (!pageConfig.preview_image) pageConfig.preview_image = pageConfig.index_image;
   }
 
+  // Cut-out image (PNG/WebP without background) for the Projects overview page only.
+  const overviewImage = cmsFilePath(data.overview_image, `${file} overview image`);
+  if (overviewImage) pageConfig.overview_image = toUrlPath(...overviewImage.slice(1).split('/'));
+
   // Each entry is a block: { type: "image", image, alt, columns, start, new_row } or
   // { type: "text", title, intro, body, columns, start, new_row }. Text sections sit between
   // the images on the same grid. (Rows without a type, or an image row with "text", still work.)
@@ -1411,6 +1450,11 @@ function applyCmsProject(item, data, file) {
   const images = [];
   const gallery = [];
   orderBlocksByTiles(Array.isArray(data.images) ? data.images : [], data.photo_order).forEach((entry) => {
+    // "YouTube video" block: the project's YouTube video is shown at this place in the images.
+    if (entry && typeof entry === 'object' && entry.type === 'video') {
+      gallery.push({ video: true });
+      return;
+    }
     const source = typeof entry === 'string' ? entry : entry?.image;
     const imagePath = cmsFilePath(source, `${file} images`);
     const hasImage = Boolean(imagePath && isImage(imagePath));
@@ -1433,7 +1477,7 @@ function applyCmsProject(item, data, file) {
     item.images = images;
     item.imageLayouts = imageLayoutsByPath;
     item.imageAlts = imageAltsByPath;
-    if (gallery.some((block) => block.text)) item.gallery = gallery;
+    if (gallery.some((block) => block.text || block.video)) item.gallery = gallery;
   }
   const tags = stringList(data.tags);
   if (tags.length) item.tags = tags;

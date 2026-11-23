@@ -9,40 +9,41 @@
   "order": 4,
   "hidden": false,
   "folder": "2025 Big summer energy",
-  "cover": "/Projects/2025 Big summer energy/BSE_1.jpg",
+  "cover": "/Projects/2025 Big summer energy/bse edited-3.webp",
+  "overview_image": "/Projects/2025 Big summer energy/BSE_3.jpg",
   "description": "Big Summer Energy is a series of abstract photographs. I photographed different things and layered the photographs over each other, creating abstract compositions where you can keep finding new details. The series started as a study, but I recognized its potential to become more than that.\n\nThe work was selected by Monar Antwerp and UGG and shown during Antwerp Art Weekend.",
   "photo_order": [
-    "/Projects/2025 Big summer energy/BSE_1.jpg",
-    "/Projects/2025 Big summer energy/BSE_2.jpg",
+    "/Projects/2025 Big summer energy/bse edited-3.webp",
+    "/Projects/2025 Big summer energy/bse edited-2.webp",
     "/Projects/2025 Big summer energy/BSE_3.jpg",
     "/Projects/2025 Big summer energy/BSE_4.jpg",
     "/Projects/2025 Big summer energy/BSE_5.jpg",
     "/Projects/2025 Big summer energy/BSE_6.jpg",
     "/Projects/2025 Big summer energy/BSE_7.jpg",
-    "/Projects/2025 Big summer energy/AAW2.webp",
-    "/Projects/2025 Big summer energy/AAW3.webp",
-    "/Projects/2025 Big summer energy/AAW4.webp",
+    "/Projects/2025 Big summer energy/bse edited-5.webp",
+    "/Projects/2025 Big summer energy/bse edited-6.webp",
+    "/Projects/2025 Big summer energy/bse edited-7.webp",
     "/Projects/2025 Big summer energy/AAW5.webp",
     "/Projects/2025 Big summer energy/AAW6.webp",
-    "/Projects/2025 Big summer energy/AAW7.webp",
+    "/Projects/2025 Big summer energy/bse edited-8.webp",
     "/Projects/2025 Big summer energy/AAW9.jpg",
-    "/Projects/2025 Big summer energy/AAW10.webp",
-    "/Projects/2025 Big summer energy/AAW8.webp",
+    "/Projects/2025 Big summer energy/bse edited.webp",
+    "/Projects/2025 Big summer energy/bse edited-4.webp",
     "/Projects/2025 Big summer energy/BSE_MailScreenshot.jpg"
   ],
   "images": [
     {
       "type": "image",
-      "name": "BSE_1",
-      "image": "/Projects/2025 Big summer energy/BSE_1.jpg",
+      "name": "bse edited-3",
+      "image": "/Projects/2025 Big summer energy/bse edited-3.webp",
       "columns": "3",
       "start": "auto",
       "new_row": false
     },
     {
       "type": "image",
-      "name": "BSE_2",
-      "image": "/Projects/2025 Big summer energy/BSE_2.jpg",
+      "name": "bse edited-2",
+      "image": "/Projects/2025 Big summer energy/bse edited-2.webp",
       "columns": "3",
       "start": "auto",
       "new_row": false
@@ -89,24 +90,24 @@
     },
     {
       "type": "image",
-      "name": "AAW2",
-      "image": "/Projects/2025 Big summer energy/AAW2.webp",
+      "name": "bse edited-5",
+      "image": "/Projects/2025 Big summer energy/bse edited-5.webp",
       "columns": "4",
       "start": "auto",
       "new_row": false
     },
     {
       "type": "image",
-      "name": "AAW3",
-      "image": "/Projects/2025 Big summer energy/AAW3.webp",
+      "name": "bse edited-6",
+      "image": "/Projects/2025 Big summer energy/bse edited-6.webp",
       "columns": "3",
       "start": "auto",
       "new_row": false
     },
     {
       "type": "image",
-      "name": "AAW4",
-      "image": "/Projects/2025 Big summer energy/AAW4.webp",
+      "name": "bse edited-7",
+      "image": "/Projects/2025 Big summer energy/bse edited-7.webp",
       "columns": "3",
       "start": "auto",
       "new_row": false
@@ -129,16 +130,16 @@
     },
     {
       "type": "image",
-      "name": "AAW7",
-      "image": "/Projects/2025 Big summer energy/AAW7.webp",
+      "name": "bse edited-8",
+      "image": "/Projects/2025 Big summer energy/bse edited-8.webp",
       "columns": "4",
       "start": "auto",
       "new_row": false
     },
     {
       "type": "image",
-      "name": "AAW8",
-      "image": "/Projects/2025 Big summer energy/AAW8.webp",
+      "name": "bse edited-4",
+      "image": "/Projects/2025 Big summer energy/bse edited-4.webp",
       "columns": "2",
       "start": "2",
       "new_row": true
@@ -153,8 +154,8 @@
     },
     {
       "type": "image",
-      "name": "AAW10",
-      "image": "/Projects/2025 Big summer energy/AAW10.webp",
+      "name": "bse edited",
+      "image": "/Projects/2025 Big summer energy/bse edited.webp",
       "columns": "4",
       "start": "2",
       "new_row": false

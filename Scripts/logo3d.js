@@ -1,4 +1,5 @@
-// 3D version of the corner logo (images/3d-logo.glb). It turns slightly toward the mouse.
+// 3D version of the corner logo (images/3d-logo.glb). It turns slightly toward the mouse;
+// on phones and tablets it tilts with the device (gyroscope).
 // The flat logo stays visible until the model has loaded, and remains if WebGL or loading fails.
 const MODEL_URL = 'images/3d-logo.glb';
 const DRACO_URL = 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/libs/draco/gltf/';
@@ -17,11 +18,10 @@ const webglAvailable = () => {
   }
 };
 
-// Phones and tablets keep the flat logo image, so nothing heavy is loaded there.
-const smallOrTouchScreen = window.matchMedia('(max-width: 900px), (hover: none), (pointer: coarse)').matches;
+const touchScreen = window.matchMedia('(hover: none), (pointer: coarse)').matches;
 
 const start = async () => {
-  if (!slot || !canvas || smallOrTouchScreen || !webglAvailable()) return;
+  if (!slot || !canvas || !webglAvailable()) return;
   const THREE = await import('three');
   const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js');
   const { DRACOLoader } = await import('three/addons/loaders/DRACOLoader.js');
@@ -110,6 +110,39 @@ const start = async () => {
       target.x = THREE.MathUtils.clamp(dy * 1.4, -1, 1) * MAX_TILT;
       requestRender();
     }, { passive: true });
+  }
+
+  // Phones and tablets: tilt with the device. "Neutral" is however the phone is held,
+  // and slowly follows when the person changes how they hold it.
+  if (!reduceMotion && touchScreen && 'DeviceOrientationEvent' in window) {
+    let neutralBeta = null;
+    let neutralGamma = null;
+    const onOrientation = (event) => {
+      if (event.beta === null || event.gamma === null) return;
+      if (neutralBeta === null) {
+        neutralBeta = event.beta;
+        neutralGamma = event.gamma;
+      }
+      neutralBeta += (event.beta - neutralBeta) * 0.01;
+      neutralGamma += (event.gamma - neutralGamma) * 0.01;
+      const turn = (event.gamma - neutralGamma) / 25;
+      const tilt = (event.beta - neutralBeta) / 25;
+      target.y = THREE.MathUtils.clamp(turn, -1, 1) * MAX_TURN;
+      target.x = THREE.MathUtils.clamp(tilt, -1, 1) * MAX_TILT;
+      requestRender();
+    };
+    const listen = () => window.addEventListener('deviceorientation', onOrientation, { passive: true });
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+      // iPhone/iPad only allow motion data after a tap, so ask on the first tap anywhere.
+      const ask = () => {
+        DeviceOrientationEvent.requestPermission()
+          .then((state) => { if (state === 'granted') listen(); })
+          .catch(() => {});
+      };
+      document.addEventListener('touchend', ask, { once: true, passive: true });
+    } else {
+      listen();
+    }
   }
 
   window.addEventListener('resize', () => {

@@ -6452,3 +6452,363 @@ body.page-home .site-footer {
     margin-top: 28px !important;
   }
 }
+
+/* Project pages, left navigation: the current project is a blue block that stays in line
+   (not stretched out). Its title sits next to it as a separate layer (.rail-current-label) that
+   inverts over the images, like the logo. Hovering another project works as before. */
+main.page-detail {
+  z-index: auto; /* no own stacking context, so the label can blend with the page behind it */
+}
+
+body.page-detail .project-rail {
+  top: calc(var(--site-logo-offset-y) + var(--site-logo-height) + 44px);
+  height: calc(100dvh - var(--site-logo-offset-y) - var(--site-logo-height) - 44px);
+}
+
+.page-detail .project-rail .rail-block.is-current,
+.page-detail .project-rail .rail-block.is-current:hover,
+.page-detail .project-rail .rail-block.is-current:focus-visible {
+  width: var(--sidebar-width);
+  background: var(--accent-blue) !important;
+  border-right: 1px solid var(--black);
+}
+
+.page-detail .project-rail .rail-block.is-current span {
+  opacity: 0 !important;
+}
+
+.rail-current-label {
+  /* Placed in the middle of the current block (all blocks share the rail height equally);
+     site.js fine-tunes it. Same left edge as "Back to home". */
+  --rail-top: calc(var(--site-logo-offset-y) + var(--site-logo-height) + 44px);
+  position: fixed;
+  z-index: 13;
+  top: calc(var(--rail-top) + (100dvh - var(--rail-top)) * (var(--rail-index, 0) + 0.5) / var(--rail-count, 1));
+  left: calc(var(--sidebar-width) + 12px);
+  color: #fff;
+  mix-blend-mode: difference;
+  pointer-events: none;
+  font-family: var(--title-font);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: translateY(-50%);
+}
+
+/* "Back to home": always visible, under the logo on the left. */
+.project-back-link {
+  position: fixed;
+  z-index: 17;
+  top: calc(var(--site-logo-offset-y) + var(--site-logo-height) + 14px);
+  left: calc(var(--sidebar-width) + 12px);
+  margin-left: -4px;
+  padding: 2px 4px;
+  color: #fff;
+  mix-blend-mode: difference;
+  font-family: var(--title-font);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.project-back-link:hover,
+.project-back-link:focus-visible {
+  color: var(--white);
+  background: var(--accent-blue);
+  mix-blend-mode: normal;
+}
+
+@media (max-width: 900px), (hover: none), (pointer: coarse) {
+  .rail-current-label {
+    display: none;
+  }
+}
+
+/* Project information at the top of the project page (replaces the right-hand panel).
+   Same 6-column grid as the images. It starts at column 3, so the current-project label of the
+   left navigation never runs into the title; title and tags in columns 3-4, the text in 5-6. */
+body.page-detail .project-detail-layout {
+  display: block;
+}
+
+body.page-detail .project-intro {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  column-gap: 28px;
+  row-gap: 24px;
+  align-items: start;
+  margin: 0 0 clamp(56px, 9vh, 110px);
+  padding-top: calc(var(--site-logo-height, 110px) + 24px);
+}
+
+body.page-detail .project-intro__heading {
+  grid-column: 3 / span 2;
+}
+
+body.page-detail .project-intro__text {
+  grid-column: 5 / span 2;
+  max-width: 62ch;
+}
+
+body.page-detail .project-intro h1 {
+  margin: 0 0 10px;
+  font-family: var(--title-font);
+  font-size: clamp(1.5rem, 2.3vw, 2.4rem);
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+body.page-detail .project-intro .project-tags {
+  margin: 8px 0 0;
+}
+
+body.page-detail .project-intro .project-one-liner {
+  margin: 8px 0 0;
+}
+
+body.page-detail .project-intro .detail-description p {
+  margin: 0 0 0.9em;
+  font-family: var(--body-font);
+  font-size: 0.92rem;
+  font-weight: 500;
+  line-height: 1.55;
+}
+
+body.page-detail .project-intro .detail-description p:last-child {
+  margin-bottom: 0;
+}
+
+body.page-detail .project-intro .detail-files {
+  margin-top: 20px;
+}
+
+/* Showreel projects: the video already fills the first screen, so less space above. */
+body.page-detail .page-detail--showreel .project-intro,
+body.page-detail main.page-detail--showreel .project-intro {
+  padding-top: 48px;
+}
+
+@media (max-width: 899px) {
+  body.page-detail .project-intro {
+    grid-template-columns: minmax(0, 1fr);
+    padding-top: calc(var(--site-logo-height, 110px) + 12px);
+    margin-bottom: 48px;
+    padding-inline: 8px;
+  }
+
+  body.page-detail .project-intro__heading,
+  body.page-detail .project-intro__text {
+    grid-column: 1;
+  }
+}
+
+/* Projects overview: cut-out images are always shown whole (never cropped), on the page background. */
+.page-project-overview .project-overview-image img {
+  object-fit: contain;
+  object-position: center bottom;
+}
+
+/* Projects overview: 4 per row on desktop, so every project is shown a bit larger. */
+@media (min-width: 901px) {
+  .page-project-overview .project-overview-list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Footer: on every page except the homepage (hidden there above); on project pages right under
+   the previous/next arrows, without its own background. */
+
+body.page-detail main.page-detail {
+  padding-bottom: 0 !important;
+}
+
+body.page-detail .site-footer,
+body.page-detail .site-footer.is-visible {
+  margin-top: 0 !important;
+  background: transparent !important;
+}
+
+/* Homepage on phones: the same (cut-out) images as the Projects overview, shown whole.
+   On desktop the hover previews stay as they are. */
+.home-project-mobile-image {
+  display: none;
+}
+
+@media (max-width: 900px), (hover: none), (pointer: coarse) {
+  body.page-home .home-project-preview {
+    display: none !important;
+  }
+
+  body.page-home .home-project-mobile-image {
+    display: flex;
+    justify-self: end;
+    align-items: center;
+    justify-content: center;
+    width: 46vw;
+    aspect-ratio: 4 / 3;
+  }
+
+  body.page-home .home-project-mobile-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+
+/* YouTube video placed between the project images (CMS block "YouTube video"): full width. */
+body.page-detail .detail-gallery > .detail-gallery-video {
+  grid-column: 1 / -1;
+  width: 100%;
+  margin: clamp(28px, 6vh, 72px) 0;
+}
+
+body.page-detail .detail-gallery-video .detail-showcase {
+  margin: 0;
+}
+
+/* Archive: the active year is a blue block that stays in line (not stretched out); the year sits
+   next to it, inverting over the images, like the current project on project pages.
+   Hovering another year works as before. */
+.archive-rail-block.is-active,
+.archive-rail-block.is-active:hover,
+.archive-rail-block.is-active:focus-visible {
+  width: var(--sidebar-width);
+}
+
+.archive-rail-block.is-active span {
+  opacity: 0 !important;
+}
+
+.rail-current-label--archive {
+  top: -100px;
+}
+
+/* Homepage (desktop): About, Exhibitions, Projects and Archive as evenly spaced columns. */
+@media (min-width: 901px) and (hover: hover) and (pointer: fine) {
+  body.page-home main.page-home {
+    /* Three equal columns plus Archive at its own width, so Archive ends as far from the right
+       edge as About starts from the left, with the same space between all columns. */
+    grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+    column-gap: 57.6px;
+  }
+
+  body.page-home .home-information {
+    grid-column: 1 / span 2;
+    grid-row: 1;
+    width: auto;
+    max-width: none;
+  }
+
+  body.page-home .home-about-columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 57.6px;
+  }
+
+  body.page-home .home-project-index {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  body.page-home .home-exhibition > .home-archive-link {
+    position: static;
+    grid-column: 4;
+    grid-row: 1;
+    align-self: start;
+    justify-self: end;
+    margin-right: -4px;
+  }
+}
+
+/* Tidy line breaks everywhere: no lone last words, balanced short labels (see also site.js). */
+:where(.project-overview-summary, .detail-gallery-text, .detail-description, .project-intro__text) {
+  text-wrap: pretty;
+}
+
+:where(.home-project-link span, .project-overview-label, .project-tags li, .project-step-label, .detail-gallery-text__title) {
+  text-wrap: balance;
+}
+
+/* Lightbox: keep only the zoom percentage (click to reset); no + and − buttons. */
+.lightbox-zoom .lightbox-tool[data-zoom="in"],
+.lightbox-zoom .lightbox-tool[data-zoom="out"] {
+  display: none !important;
+}
+
+/* Titles of text sections between the images: same size as the project title at the top. */
+body.page-detail .detail-gallery-text__title {
+  margin: 0 0 14px;
+  font-family: var(--title-font);
+  font-size: clamp(1.5rem, 2.3vw, 2.4rem);
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Text sections between the images: introduction and body text the same size as the project
+   text at the top of the page. */
+body.page-detail .detail-gallery-text .detail-gallery-text__intro p,
+body.page-detail .detail-gallery-text .detail-gallery-text__body p {
+  font-family: var(--body-font) !important;
+  font-size: 0.86rem !important;
+  font-weight: 500 !important;
+  line-height: 1.55;
+  letter-spacing: 0.01em;
+}
+
+.image-lightbox:focus {
+  outline: none;
+}
+
+/* Text sections between the images are laid out like the project information at the top:
+   title in columns 3-4, text in columns 5-6, on a row of their own. */
+@media (min-width: 700px) {
+  body.page-detail .detail-gallery > .detail-gallery-text,
+  body.page-detail .detail-gallery.detail-gallery--grid > .detail-gallery-text {
+    grid-column: 1 / -1 !important;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    column-gap: 28px;
+    align-items: start;
+    width: auto;
+    max-width: none !important;
+    margin: clamp(28px, 6vh, 72px) 0;
+    padding: 0;
+  }
+
+  body.page-detail .detail-gallery-text > .detail-gallery-text__title {
+    grid-column: 3 / span 2;
+    grid-row: 1 / span 2;
+  }
+
+  body.page-detail .detail-gallery-text > .detail-gallery-text__intro,
+  body.page-detail .detail-gallery-text > .detail-gallery-text__body {
+    grid-column: 5 / span 2;
+    max-width: 62ch;
+  }
+
+  body.page-detail .detail-gallery-text > .detail-gallery-text__intro + .detail-gallery-text__body {
+    margin-top: 0.9em;
+  }
+}
+
+/* Lightbox transition layer (Scripts/site.js, WebGL). */
+.lightbox-swap-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 3;
+  pointer-events: none;
+  display: none;
+}
+
+.lightbox-swap-canvas.is-active {
+  display: block;
+}

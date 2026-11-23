@@ -335,6 +335,7 @@
           el('div', { class: 'add-row' },
             el('button', { type: 'button', onclick: openPicker }, '+ Photo'),
             el('button', { type: 'button', onclick: addText }, '+ Text section'),
+            el('button', { type: 'button', onclick: addVideo }, '+ YouTube video'),
           ),
         ),
         el('aside', { id: 'panel' }),
@@ -365,7 +366,7 @@
     const order = (Array.isArray(tiles) ? tiles : []).map(pathKey).filter(Boolean);
     if (!order.length) return blocks;
     const blockImage = (entry) => pathKey(typeof entry === 'string' ? entry : entry?.image);
-    const isImageBlock = (entry) => Boolean(blockImage(entry)) && !(entry && typeof entry === 'object' && entry.type === 'text');
+    const isImageBlock = (entry) => Boolean(blockImage(entry)) && !(entry && typeof entry === 'object' && (entry.type === 'text' || entry.type === 'video'));
     const unused = blocks.filter(isImageBlock);
     const ordered = order.map((key) => {
       const index = unused.findIndex((entry) => blockImage(entry) === key);
@@ -420,6 +421,13 @@
         'data-new-row': block.new_row || null,
         onclick: () => { state.selected = index; renderGrid(); renderPanel(); },
       };
+      if (block.type === 'video') {
+        return el('div', { ...attrs, class: `block text${index === state.selected ? ' selected' : ''}` },
+          el('span', { class: 'badge' }, `${index + 1} · video`),
+          el('div', { style: 'margin-top:18px' }, el('div', { class: 't-title' }, 'YouTube video'),
+            el('div', { class: 't-body' }, 'The project video, full width')),
+        );
+      }
       if (block.type === 'text') {
         return el('div', attrs,
           el('span', { class: 'badge' }, `${index + 1} · text`),
@@ -461,7 +469,7 @@
       panel.replaceChildren(
         el('h2', {}, 'Photo settings'),
         el('p', { class: 'hint' }, 'Click a photo or text section to change it.'),
-        el('p', { class: 'hint' }, `${state.blocks.filter((b) => b.type !== 'text').length} photos, ${state.blocks.filter((b) => b.type === 'text').length} text sections.`),
+        el('p', { class: 'hint' }, `${state.blocks.filter((b) => b.type === 'image').length} photos, ${state.blocks.filter((b) => b.type === 'text').length} text sections.`),
       );
       return;
     }
@@ -506,6 +514,15 @@
       } }, 'Remove from page'),
     );
 
+    if (block.type === 'video') {
+      panel.replaceChildren(
+        el('h2', {}, `YouTube video · ${state.selected + 1}`),
+        el('p', { class: 'hint' }, 'The project video (the YouTube link in Pages CMS) is shown here, full width. Move it with the arrows.'),
+        actions,
+      );
+      return;
+    }
+
     if (block.type === 'text') {
       const textInput = (key, label, multiline) => [
         el('label', {}, label),
@@ -538,6 +555,15 @@
   }
 
   /* ---------- Adding ---------- */
+  function addVideo() {
+    if (state.blocks.some((b) => b.type === 'video')) { alert('The video is already on this page.'); return; }
+    state.blocks.push({ type: 'video', name: 'Project video' });
+    state.selected = state.blocks.length - 1;
+    markDirty();
+    renderGrid();
+    renderPanel();
+  }
+
   function addText() {
     state.blocks.push({ type: 'text', title: '', intro: '', body: '', columns: '6', start: 'auto', new_row: true });
     state.selected = state.blocks.length - 1;
@@ -599,6 +625,7 @@
 
   /* ---------- Saving ---------- */
   function cleanBlock(block) {
+    if (block.type === 'video') return { type: 'video', name: block.name || 'Project video' };
     if (block.type === 'text') {
       const out = { type: 'text' };
       ['title', 'intro', 'body'].forEach((key) => { if (block[key]) out[key] = block[key]; });
@@ -621,7 +648,7 @@
     // Same keys in the same place as before; photo_order (the Pages CMS tiles) follows the new order.
     const ordered = {};
     const place = () => {
-      ordered.photo_order = images.filter((b) => b.type !== 'text').map((b) => b.image);
+      ordered.photo_order = images.filter((b) => b.type === 'image').map((b) => b.image);
       ordered.images = images;
     };
     Object.entries(state.data).forEach(([key, value]) => {
