@@ -6614,3 +6614,18 @@ body.page-detail main.page-detail--showreel .project-intro {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
+
+/* Footer: only on project pages, right under the previous/next arrows, without its own background. */
+body:not(.page-detail) .site-footer {
+  display: none !important;
+}
+
+body.page-detail main.page-detail {
+  padding-bottom: 0 !important;
+}
+
+body.page-detail .site-footer,
+body.page-detail .site-footer.is-visible {
+  margin-top: 0 !important;
+  background: transparent !important;
+}
