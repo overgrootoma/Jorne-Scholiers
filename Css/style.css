@@ -6634,3 +6634,31 @@ body.page-detail .site-footer.is-visible {
   margin-top: 0 !important;
   background: transparent !important;
 }
+
+/* Homepage on phones: the same (cut-out) images as the Projects overview, shown whole.
+   On desktop the hover previews stay as they are. */
+.home-project-mobile-image {
+  display: none;
+}
+
+@media (max-width: 900px), (hover: none), (pointer: coarse) {
+  body.page-home .home-project-preview {
+    display: none !important;
+  }
+
+  body.page-home .home-project-mobile-image {
+    display: flex;
+    justify-self: end;
+    align-items: center;
+    justify-content: center;
+    width: 46vw;
+    aspect-ratio: 4 / 3;
+  }
+
+  body.page-home .home-project-mobile-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}

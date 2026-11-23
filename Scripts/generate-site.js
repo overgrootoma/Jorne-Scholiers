@@ -338,6 +338,14 @@ function projectIndexImagePath(project) {
   return previewImagePath(project);
 }
 
+// Image on the Projects overview (and the mobile homepage): the cut-out "overview image" from the
+// CMS, or the cover when there is none.
+function overviewImagePath(project) {
+  const overviewImage = project.pageConfig?.overview_image;
+  if (overviewImage && rootImageDimensionAttributes(overviewImage)) return overviewImage;
+  return projectIndexImagePath(project);
+}
+
 function rootImageDimensionAttributes(urlPath) {
   try {
     return imageDimensionAttributes(path.join(root, decodeURIComponent(urlPath)));
@@ -661,6 +669,9 @@ function renderHome(projects, homepageProfile) {
       <div class="home-project-preview" data-home-preview="${escapeHtml(project.slug)}" aria-hidden="true">
         ${images}
       </div>
+      <a class="home-project-mobile-image" href="${page}" tabindex="-1" aria-hidden="true">
+        <img src="${escapeHtml(overviewImagePath(project))}" alt=""${rootImageDimensionAttributes(overviewImagePath(project))} loading="lazy" decoding="async">
+      </a>
     </li>`;
   }).join('\n');
 
@@ -884,10 +895,7 @@ function renderPhotographyIndex(items) {
 function renderProjectOverview(projects) {
   const items = projects.map((project, index) => {
     const title = project.pageConfig?.index_title || project.title;
-    const overviewImage = project.pageConfig?.overview_image;
-    const image = overviewImage && rootImageDimensionAttributes(overviewImage)
-      ? overviewImage
-      : projectIndexImagePath(project);
+    const image = overviewImagePath(project);
     const dimensions = rootImageDimensionAttributes(image);
     const loading = index < 5 ? ' loading="eager"' : ' loading="lazy"';
     return `<li>
