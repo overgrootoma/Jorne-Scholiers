@@ -40,3 +40,14 @@
     history.replaceState(null, '', `#${id}`);
   });
 })();
+
+// Arriving with a place in the link (e.g. "#het-perron" from the homepage): the browser jumps
+// there before the page has its final height, so jump again once everything has loaded.
+(() => {
+  const id = decodeURIComponent(window.location.hash.slice(1));
+  if (!id) return;
+  window.addEventListener('load', () => {
+    const target = document.getElementById(id);
+    if (target) window.setTimeout(() => target.scrollIntoView(), 0);
+  });
+})();

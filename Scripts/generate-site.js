@@ -1002,7 +1002,7 @@ function renderProjectPage(item, type, nav = null) {
   };
   // Text blocks set in the CMS sit between the images, on the same grid.
   const renderTextBlock = (block) => `
-      <div class="detail-gallery-text"${layoutAttributes(block.layout)}>
+      <div class="detail-gallery-text"${block.text.title ? ` id="${slugify(block.text.title)}"` : ''}${layoutAttributes(block.layout)}>
         ${block.text.title ? `<h2 class="detail-gallery-text__title">${escapeHtml(block.text.title)}</h2>` : ''}
         ${block.text.intro ? `<div class="detail-gallery-text__intro">${textToHtml(block.text.intro)}</div>` : ''}
         ${block.text.body ? `<div class="detail-gallery-text__body">${textToHtml(block.text.body)}</div>` : ''}
