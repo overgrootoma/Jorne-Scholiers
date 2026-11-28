@@ -40,7 +40,14 @@
     "/Projects/2026 Sound Translations of Fungal Forms/STFF insta-12.webp",
     "/Projects/2026 Sound Translations of Fungal Forms/STFF_Portfolio_17.jpg",
     "/Projects/2026 Sound Translations of Fungal Forms/STFF insta-8.webp",
-    "/Projects/2026 Sound Translations of Fungal Forms/STFF insta-5.webp"
+    "/Projects/2026 Sound Translations of Fungal Forms/STFF insta-5.webp",
+    "/Projects/2026 Sound Translations of Fungal Forms/Het perron/Het perron 1.jpg",
+    "/Projects/2026 Sound Translations of Fungal Forms/Het perron/Het perron 2.jpg",
+    "/Projects/2026 Sound Translations of Fungal Forms/Het perron/Het perron 3.jpg",
+    "/Projects/2026 Sound Translations of Fungal Forms/Het perron/Het perron 4.jpg",
+    "/Projects/2026 Sound Translations of Fungal Forms/Het perron/Het perron 5.jpg",
+    "/Projects/2026 Sound Translations of Fungal Forms/Het perron/Het perron 6.jpg",
+    "/Projects/2026 Sound Translations of Fungal Forms/Het perron/Het perron 7.jpg"
   ],
   "images": [
     {
@@ -262,6 +269,70 @@
       "columns": "3",
       "start": "auto",
       "new_row": true
+    },
+    {
+      "type": "text",
+      "title": "Het Perron",
+      "intro": "STFF was part of Senses, an exhibition about the senses at cultuurcentrum Het Perron in Ieper. The images below show the installation and the artifacts in the exhibition space.",
+      "columns": "4",
+      "start": "3",
+      "new_row": true
+    },
+    {
+      "type": "image",
+      "name": "Het perron 1",
+      "image": "/Projects/2026 Sound Translations of Fungal Forms/Het perron/Het perron 1.jpg",
+      "columns": "6",
+      "start": "auto",
+      "new_row": true
+    },
+    {
+      "type": "image",
+      "name": "Het perron 2",
+      "image": "/Projects/2026 Sound Translations of Fungal Forms/Het perron/Het perron 2.jpg",
+      "columns": "2",
+      "start": "2",
+      "new_row": true
+    },
+    {
+      "type": "image",
+      "name": "Het perron 3",
+      "image": "/Projects/2026 Sound Translations of Fungal Forms/Het perron/Het perron 3.jpg",
+      "columns": "3",
+      "start": "auto",
+      "new_row": true
+    },
+    {
+      "type": "image",
+      "name": "Het perron 4",
+      "image": "/Projects/2026 Sound Translations of Fungal Forms/Het perron/Het perron 4.jpg",
+      "columns": "3",
+      "start": "auto",
+      "new_row": false
+    },
+    {
+      "type": "image",
+      "name": "Het perron 5",
+      "image": "/Projects/2026 Sound Translations of Fungal Forms/Het perron/Het perron 5.jpg",
+      "columns": "4",
+      "start": "2",
+      "new_row": true
+    },
+    {
+      "type": "image",
+      "name": "Het perron 6",
+      "image": "/Projects/2026 Sound Translations of Fungal Forms/Het perron/Het perron 6.jpg",
+      "columns": "3",
+      "start": "auto",
+      "new_row": true
+    },
+    {
+      "type": "image",
+      "name": "Het perron 7",
+      "image": "/Projects/2026 Sound Translations of Fungal Forms/Het perron/Het perron 7.jpg",
+      "columns": "3",
+      "start": "auto",
+      "new_row": false
     }
   ],
   "homepage_images": [
